@@ -1,30 +1,17 @@
 <!doctype html>
-
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Lab 3 - Basic Shapes in WebGL</title>
-        <style>
-            html, head, body {
-                margin: 0;
-                padding: 10px;
-                background-color: #000;
-            }
-            #canvas {
-                width: 800px;
-                height: 600px;
-                background-color: #6c932e;
-            }
-        </style>
-    </head>
-    <body>
-        <canvas id="canvas" width="800px" height="600px" />
-        <script src="js/objects/GameObject.js"></script>
-        <script src="js/vectors/Vector3.js"></script>
-        <script src="js/data.js"></script>
-        <script src="js/rendering/rendering.js"></script>
-        <script src="js/webGLUtils.js"></script>
-        <script src="js/main.js"></script>
-    </body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Game</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"
+      integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
+      crossorigin="anonymous"
+      defer></script>
+    <script src="js/main.js" type="module"></script>
+  </head>
+
+  <body>
+    <canvas id="gl-canvas" width="640" height="480"></canvas>
+  </body>
 </html>
