@@ -1,14 +1,20 @@
-// Main function
+import { drawScene } from "./drawing.js";
+import { initShaders } from "./shaders.js";
+import { CreateVBO } from "./buffers.js";
 
-// const canvas = document.getElementById("canvas");
-// const gl = canvas.getContext("webgl2");
+function GetGL(){
+    const canvas=document.getElementById("gl-canvas");
+    const gl=canvas.getContext("webgl");
+    if(!gl) console.log("GL is unsupported");
+    return gl;
+}
 
-// Define triangle vertices
-
-
-
-function main() {
-    MainRender();
+function main(){
+    const gl = GetGL();
+    const vbo = CreateVBO(gl);
+    const program = initShaders(gl);
+    // const buffers = initBuffers();
+    drawScene(gl, vbo, program);
 }
 
 main();
