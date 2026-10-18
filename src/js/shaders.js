@@ -1,5 +1,5 @@
-const vsSource = 
-`#version 300 es
+const vertexShaderSource =
+    `#version 300 es
 precision mediump float;
 
 in vec3 aPosition;
@@ -8,40 +8,42 @@ void main() {
     gl_Position = vec4(aPosition, 1.0);
 }`;
 
-const fsSource = 
-`#version 300 es
-precision mediump float;
+// Define fragment shader
+const fragmentShaderSource =
+    `#version 300 es
+  precision mediump float;
 
-out vec4 fragColour;
+  uniform vec4 uColour;
+  out vec4 fragColour;
 
-void main() {
-    fragColour = vec4(1.0, 0.0, 0.0, 1.0);
-}`;
+  void main() {
+      fragColour = uColour;
+  }`;
 
-function initShaders(gl){
-  const vShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
-  const fShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
-  const program = gl.createProgram();
-  
-  gl.attachShader(program, vShader);
-  gl.attachShader(program, fShader);
-  
-  gl.linkProgram(program);
 
-  return program;
+function CompileShader(gl, shaderType, shaderSource) {
+    const shader = gl.createShader(shaderType);
+    gl.shaderSource(shader, shaderSource);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.log(`Error compiling shader:\n`, gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+    }
+
+    return shader;
 }
 
-function loadShader(gl, type, source) {
-  const shader = gl.createShader(type);
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
+function CompileShaders(gl) {
+    const vertexShader = CompileShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = CompileShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.log(`Failed to load shader!! \n ${gl.getShaderInfoLog(shader)}`)
-  }
+    const program = gl.createProgram();
 
-  return shader;
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    return program;
 }
-
-export {initShaders};

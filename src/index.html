@@ -1,13 +1,26 @@
 <!doctype html>
+
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Game</title>
-
-    <script src="js/main.js" type="module"></script>
-  </head>
-
-  <body>
-    <canvas id="gl-canvas" width="640" height="480"></canvas>
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Lab 3 - Basic Shapes in WebGL</title>
+        <style>
+            html, head, body {
+                margin: 0;
+                padding: 10px;
+                background-color: white;
+            }
+            #canvas {
+                width: 800px;
+                height: 600px;
+                background-color: #FF00FF;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" width="800px" height="600px"></canvas>
+        <script src="js/shaders.js"></script>
+        <script src="js/main.js"></script>
+    </body>
 </html>
