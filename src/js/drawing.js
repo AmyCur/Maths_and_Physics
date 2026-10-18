@@ -1,8 +1,10 @@
-function ClearScene(gl){
+function ClearScene(gl, canvas){
+    gl.viewport(0, 0, canvas.width, canvas.height);
+
     gl.clearColor(
-        0.0,
-        0.0,
-        0.0,
+        0.2,
+        0.2,
+        0.3,
         1.0
     );
 
@@ -17,7 +19,7 @@ const vertices = new Float32Array([
    0.0,  0.5, 0.0, // vertex 2    0 --- 1
 ]);
 
-function drawScene(gl, vbo, program){
+function drawScene(gl, canvas, vbo, program){
     const positionLocation = gl.getAttribLocation(program, "aPosition");
     gl.enableVertexAttribArray(positionLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
@@ -30,7 +32,7 @@ function drawScene(gl, vbo, program){
         0
     );        
 
-    ClearScene(gl);
+    ClearScene(gl, canvas);
 }
 
 export {drawScene, vertices}
