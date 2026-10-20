@@ -154,13 +154,22 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
+let tick=0;
+
+function GetTPS(){
+    ct = tick;
+    setTimeout(() => )
+}
+
+
 // Main function
 function main(now) {
     now *= 0.001; // convert to seconds
     deltaTime = now - then;
     then = now;
     requestAnimationFrame(main);
-    doorColor = [Math.random(),Math.random(),Math.random(),1]
+    if(tick%100==0) doorColor = [Math.random(),Math.random(),Math.random(),1]
+    tick++;
     RenderScreen(gl, program);
 }
 
