@@ -9,7 +9,7 @@
             html, head, body {
                 margin: 0;
                 padding: 10px;
-                background-color: white;
+                background-color: #000;
             }
             #canvas {
                 width: 800px;
@@ -19,8 +19,14 @@
         </style>
     </head>
     <body>
-        <canvas id="canvas" width="800px" height="600px"></canvas>
-        <script src="js/shaders.js"></script>
-        <script src="js/main.js"></script>
+    <canvas id="canvas" width="800px" height="600px"></canvas>
+        <script src="webGLUtils.js"></script>
+        <script src="vectors.js"></script>
+
+         <div id="textDisplay" style="font-family:monospace; white-space: pre; padding:10px; color: #FFF;">
+        </div>
     </body>
+   
+
+    
 </html>
