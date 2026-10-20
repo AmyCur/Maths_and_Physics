@@ -1,32 +1,39 @@
 <!doctype html>
 
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Lab 3 - Basic Shapes in WebGL</title>
-        <style>
-            html, head, body {
-                margin: 0;
-                padding: 10px;
-                background-color: #000;
-            }
-            #canvas {
-                width: 800px;
-                height: 600px;
-                background-color: #FF00FF;
-            }
-        </style>
-    </head>
-    <body>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lab 3 - Basic Shapes in WebGL</title>
+    <style>
+        html,
+        head,
+        body {
+            margin: 0;
+            padding: 10px;
+            background-color: #000;
+        }
+
+        #canvas {
+            width: 800px;
+            height: 600px;
+            background-color: #FF00FF;
+        }
+    </style>
+</head>
+
+<body>
+
     <canvas id="canvas" width="800px" height="600px"></canvas>
-        <script src="webGLUtils.js"></script>
-        <script src="vectors.js"></script>
+    <div id="textDisplay" style="font-family:monospace; white-space: pre; padding:10px; color: #FFF;">
+    </div>
+    <script src="math.js"></script>
+    <script src="webGLUtils.js"></script>
+    <script src="vectors.js"></script>
 
-         <div id="textDisplay" style="font-family:monospace; white-space: pre; padding:10px; color: #FFF;">
-        </div>
-    </body>
-   
+</body>
 
-    
+
+
 </html>
