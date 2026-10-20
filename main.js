@@ -93,14 +93,14 @@ function RenderScreen(gl, program) {
     gl.useProgram(program);
     gl.depthFunc(gl.LEQUAL);
 
-    const sunSegments=32;
+    const sunSegments = 32;
 
     const houseBuffer = createShapeBuffer(gl, houseData);
     const doorBuffer = createShapeBuffer(gl, doorData);
     const windowBuffer = createShapeBuffer(gl, windowData);
     const grassBuffer = createShapeBuffer(gl, grassData);
     const roofLineBuffer = createShapeBuffer(gl, roofLineData);
-    const sunBuffer = createShapeBuffer(gl, GenerateCircle(sunSegments, {x: 0.2, y: 0.2}));
+    const sunBuffer = createShapeBuffer(gl, GenerateCircle(sunSegments, { x: 0.2, y: 0.2 }));
 
     const positionLocation = gl.getAttribLocation(program, "aPosition");
     const colourLocation = gl.getUniformLocation(program, 'uColour');
@@ -110,7 +110,7 @@ function RenderScreen(gl, program) {
     gl.enable(gl.DEPTH_TEST);
 
     //Draw door
-    setupDrawState(gl, doorBuffer, [0.0, 0.0, 1.0, 1.0], positionLocation, colourLocation);
+    setupDrawState(gl, doorBuffer, doorColor, positionLocation, colourLocation);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     //Draw window
@@ -129,21 +129,39 @@ function RenderScreen(gl, program) {
     gl.drawArrays(gl.LINES, 0, 2);
 
     setupDrawState(gl, sunBuffer, [1.0, 0.5, 0.0, 1.0], positionLocation, colourLocation);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, sunSegments+2);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, sunSegments + 2);
+}
+
+let doorColor = [0,0,1,1];
+
+function Loop() {
+
+}
+
+let program;
+const gl = GetGL(canvas);
+
+function start() {
+    const canvas = document.getElementById("canvas");
+    program = CompileShaders(gl);
+    requestAnimationFrame(main);
+}
+
+let deltaTime = 0;
+let then = 0;
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
 
 // Main function
-function main() {
-    // Setup WebGL
-    const canvas = document.getElementById("canvas");
-    const gl = GetGL(canvas);
-    // const vbo = CreateVBO(gl);
-
-    unbindBuffer(gl);
-
-    const program = CompileShaders(gl);
-    
+function main(now) {
+    now *= 0.001; // convert to seconds
+    deltaTime = now - then;
+    then = now;
+    requestAnimationFrame(main);
+    doorColor = [Math.random(),Math.random(),Math.random(),1]
     RenderScreen(gl, program);
 }
 
-main();
+start();
