@@ -7,12 +7,16 @@ const houseData = new Float32Array([
     0.0, 1.0, 0.0 // vertex 4     0 ---1
 ]);
 
-const doorData = new Float32Array([
-    0.0, -0.5, -0.1,
-    0.3, -0.5, -0.1,
-    0.0, -0.1, -0.1,
-    0.3, -0.1, -0.1
-]);
+
+let doorData = new GameObject(
+    new Float32Array([
+        0.0, -0.5, -0.1,
+        0.3, -0.5, -0.1,
+        0.0, -0.1, -0.1,
+        0.3, -0.1, -0.1
+    ]),
+    { x: 0, y: .1, z: 0 }
+);
 
 // Define window (Z = -0.1, in front of house)
 const windowData = new Float32Array([
@@ -96,7 +100,7 @@ function RenderScreen(gl, program) {
     const sunSegments = 32;
 
     const houseBuffer = createShapeBuffer(gl, houseData);
-    const doorBuffer = createShapeBuffer(gl, doorData);
+    const doorBuffer = createShapeBuffer(gl, doorData.data);
     const windowBuffer = createShapeBuffer(gl, windowData);
     const grassBuffer = createShapeBuffer(gl, grassData);
     const roofLineBuffer = createShapeBuffer(gl, roofLineData);
@@ -132,7 +136,7 @@ function RenderScreen(gl, program) {
     gl.drawArrays(gl.TRIANGLE_FAN, 0, sunSegments + 2);
 }
 
-let doorColor = [0,0,1,1];
+let doorColor = [0, 0, 1, 1];
 
 function Loop() {
 
@@ -145,21 +149,24 @@ function start() {
     const canvas = document.getElementById("canvas");
     program = CompileShaders(gl);
     requestAnimationFrame(main);
+    setInterval(GetTPS, 1000);
 }
 
 let deltaTime = 0;
 let then = 0;
 
 function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
+    return Math.floor(Math.random() * max);
 }
 
-let tick=0;
+let tick = 0;
+let pt = 0;
 
-function GetTPS(){
-    ct = tick;
-    setTimeout(() => )
+function GetTPS() {
+    console.log(tick - pt);
+    pt = tick;
 }
+
 
 
 // Main function
@@ -167,10 +174,12 @@ function main(now) {
     now *= 0.001; // convert to seconds
     deltaTime = now - then;
     then = now;
-    requestAnimationFrame(main);
-    if(tick%100==0) doorColor = [Math.random(),Math.random(),Math.random(),1]
+    console.log(doorData.position);
+    // if(tick%1==0) doorData.AddPos(.01,.01,0);
+    doorData.SetScale(1,1,1)
     tick++;
     RenderScreen(gl, program);
+    requestAnimationFrame(main);
 }
 
 start();
