@@ -1,18 +1,60 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <style>
-        #gameCanvas { border: 1px solid #ccc; }
-        .game-wrapper { position: relative; width: 300px; height: 300px; }
-        #scoreDisplay { position: absolute; top: 10px; left: 10px; font-family: sans-serif; font-weight: bold; z-index: 10;}
-    </style>
+  <style>
+    #gameCanvas {
+      border: 1px solid #ccc;
+    }
+
+    
+
+    #scoreDisplay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-family: sans-serif;
+      font-weight: bold;
+      z-index: 10;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="box">
     <div class="game-wrapper">
-        <canvas id="gameCanvas" width="300" height="300"></canvas>
+      <marquee behavior="alternate" direction="down" width="1920" height="1000">
+        <marquee behavior="alternate">
+          <canvas id="gameCanvas" width="700" height="700"></canvas>
+        </marquee>
+      </marquee>
     </div>
-    <div id="textDisplay">Output Text</div>
+    <marquee>
+      <div id="textDisplay">Output Text</div>
+    </marquee>
+    <marquee behaviour="alternate">
+      <div id="lifeText">Output Text</div>
+    </marquee>
+    
     <script src="webGLUtils.js"></script>
     <script src="main.js"></script>
+  </div>
+
 </body>
+
 </html>
+
+<style>
+  /* * {
+    background-color: royalblue;
+    color: white;
+    font-family: sans-serif;
+    font-size: 1em;
+  } */
+
+  /* .box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  } */
+</style>
