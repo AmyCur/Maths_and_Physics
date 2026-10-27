@@ -154,13 +154,23 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
+let tick=0;
+
 // Main function
 function main(now) {
     now *= 0.001; // convert to seconds
     deltaTime = now - then;
     then = now;
+    tick++;
     requestAnimationFrame(main);
-    doorColor = [Math.random(),Math.random(),Math.random(),1]
+    if(tick%20==0) doorColor = [Math.random(),Math.random(),Math.random(),1]
+    if(tick%4==0)
+    for(let i =0; i < houseData.length; i++){
+        houseData[i]=Math.random()*1;
+    }
+    for(let i = 0; i < roofLineData.length; i++){
+        roofLineData[i]+=Math.random()/1000;
+    }
     RenderScreen(gl, program);
 }
 
