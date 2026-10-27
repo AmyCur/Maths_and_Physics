@@ -1,150 +1,129 @@
-import { initBuffers } from "./init-buffers.js";
-import { drawScene } from "./draw-scene.js";
 
-main();
+const canvas = document.getElementById('gameCanvas');
+const textElement = document.getElementById('textDisplay');
 
-//
-// start here
-//
+/** @type {WebGL2RenderingContext} */
+const gl = initWebGL(canvas);
 
 
-function initShaderProgram(gl, vsSource, fsSource) {
-    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
-    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+const turretPos = {x: 0.0, y: -0.8};
 
-    // Create the shader program
+const shipPosition = {x:0.6, y:0.9};
+const shipSize=1;
+const shipSpeed=0.005;
 
-    const shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, vertexShader);
-    gl.attachShader(shaderProgram, fragmentShader);
-    gl.linkProgram(shaderProgram);
+const keys = {ArrowLeft: false, ArrowRight: false};
 
-    // If creating the shader program failed, alert
+let aimAngle = Math.PI/2;
+const rotationSpeed=0.04;
 
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        alert(
-            `Unable to initialize the shader program: ${gl.getProgramInfoLog(
-                shaderProgram,
-            )}`,
+
+// --- SHADER SETUP ---
+const vertexShaderSource = `#version 300 es
+    precision mediump float;
+
+    in vec3 aPosition;
+    uniform vec3 uTranslation;
+    uniform float uRotation;
+
+    void main() {
+        float s = sin(uRotation);
+        float c = cos(uRotation);
+        vec2 rotated = vec2(
+            aPosition.x*c - aPosition.y*s,
+            aPosition.x*s + aPosition.y * c
         );
-        return null;
+        gl_Position = vec4(vec3(rotated, 0.0) + uTranslation,1.0);
     }
+`;
 
-    return shaderProgram;
-}
+const fragmentShaderSource = `#version 300 es
+    precision mediump float;
+    uniform vec4 uColour;
+    out vec4 fragColour;
 
-//
-// creates a shader of the given type, uploads the source and
-// compiles it.
-//
-function loadShader(gl, type, source) {
-    const shader = gl.createShader(type);
-
-    // Send the source to the shader object
-
-    gl.shaderSource(shader, source);
-
-    // Compile the shader program
-
-    gl.compileShader(shader);
-
-    // See if it compiled successfully
-
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert(
-            `An error occurred compiling the shaders: ${gl.getShaderInfoLog(shader)}`,
-        );
-        gl.deleteShader(shader);
-        return null;
+    void main() {
+        fragColour = uColour;
     }
+`;
 
-    return shader;
+const shaderProgram = createProgram(gl, vertexShaderSource, fragmentShaderSource);
+gl.useProgram(shaderProgram);
+
+const positionAttribute = gl.getAttribLocation(shaderProgram, 'aPosition');
+const colourLocation = gl.getUniformLocation(shaderProgram, "uColour");
+const translationLocation = gl.getUniformLocation(shaderProgram, "uTranslation");
+const rotationLocation = gl.getUniformLocation(shaderProgram, "uRotation");
+
+const turretSegments = 32;
+const baseRadius = 0.15;
+const turretVerticies = [];
+
+for(let i = 0; i <= turretSegments; i++){
+    const angleCircle = (i * 2 * Math.PI) / turretSegments;
+    turretVerticies.push(baseRadius * Math.cos(angleCircle),
+    baseRadius * Math.sin(angleCircle));
 }
 
-function RenderScreen(gl, program) {
-    ClearScreen(gl, canvas);
-    gl.useProgram(program);
-    gl.depthFunc(gl.LEQUAL);
+turretVerticies.push(0.0,0.0,0.3,0.0);
 
-    const sunSegments = 32;
+const turretBuffer = createShapeBuffer(gl, turretVerticies);
 
-    const houseBuffer = createShapeBuffer(gl, houseData);
-    const doorBuffer = createShapeBuffer(gl, doorData);
-    const windowBuffer = createShapeBuffer(gl, windowData);
-    const grassBuffer = createShapeBuffer(gl, grassData);
-    const roofLineBuffer = createShapeBuffer(gl, roofLineData);
-    const sunBuffer = createShapeBuffer(gl, GenerateCircle(sunSegments, { x: 0.2, y: 0.2 }));
-
-    const positionLocation = gl.getAttribLocation(program, "aPosition");
-    const colourLocation = gl.getUniformLocation(program, 'uColour');
-    // setupDrawState(gl, houseBuffer, [1.0, 1.0, 0.0, 1.0], positionLocation, colourLocation);
-
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.enable(gl.DEPTH_TEST);
-
-    //Draw door
-    setupDrawState(gl, doorBuffer, doorColor, positionLocation, colourLocation);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-    //Draw window
-    setupDrawState(gl, windowBuffer, [1.0, 0.0, 0.5, 1.0], positionLocation, colourLocation);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-    //Draw grass
-    setupDrawState(gl, grassBuffer, [0.0, 1.0, 0.0, 1.0], positionLocation, colourLocation);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-    //Draw house
-    setupDrawState(gl, houseBuffer, [1.0, 1.0, 0.0, 1.0], positionLocation, colourLocation);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 5);
-
-    setupDrawState(gl, roofLineBuffer, [0.6, 0.4, 0.3, 1.0], positionLocation, colourLocation);
-    gl.drawArrays(gl.LINES, 0, 2);
-
-    setupDrawState(gl, sunBuffer, [1.0, 0.5, 0.0, 1.0], positionLocation, colourLocation);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, sunSegments + 2);
+function processInput(){
+    if(!textElement) return;
+    if(keys.ArrowLeft) aimAngle+=rotationSpeed;
+    if(keys.ArrowRight) aimAngle-=rotationSpeed;
 }
 
-let doorColor = [0,0,1,1];
-
-function Loop() {
+function update(){
 
 }
 
-let program;
-const gl = GetGL(canvas);
-
-function start() {
-    const canvas = document.getElementById("canvas");
-    program = CompileShaders(gl);
-    requestAnimationFrame(main);
+function GameLoop(){
+    processInput();
+    update();
+    render();
+    requestAnimationFrame(GameLoop);
 }
 
-let deltaTime = 0;
-let then = 0;
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
-
-let tick=0;
-
-// Main function
-function main(now) {
-    now *= 0.001; // convert to seconds
-    deltaTime = now - then;
-    then = now;
-    tick++;
-    requestAnimationFrame(main);
-    if(tick%20==0) doorColor = [Math.random(),Math.random(),Math.random(),1]
-    if(tick%4==0)
-    for(let i =0; i < houseData.length; i++){
-        houseData[i]=Math.random()*1;
+window.addEventListener("keydown", (event) => {
+    if(event.key === "ArrowLeft" || event.key === "ArrowRight"){
+        keys[event.key]=true;
+        event.preventDefault();
     }
-    for(let i = 0; i < roofLineData.length; i++){
-        roofLineData[i]+=Math.random()/1000;
+})
+
+window.addEventListener("keyup", (event) => {
+    if(event.key === "ArrowLeft" || event.key === "ArrowRight"){
+        keys[event.key]=false;
+        event.preventDefault();
     }
-    RenderScreen(gl, program);
+})
+
+
+// --- RENDER HELPERS ---
+function bindStateAndUniforms(buffer, colour, x, y, rotation) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.enableVertexAttribArray(positionAttribute);
+    gl.vertexAttribPointer(positionAttribute, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform4fv(colourLocation, colour);
+    gl.uniform3f(translationLocation, x, y, 0.0);
+    gl.uniform1f(rotationLocation, rotation);
 }
 
-start();
+function drawGunTurret(x,y,color, aimAngle){
+    bindStateAndUniforms(turretBuffer,  color, x, y, aimAngle);
+    gl.drawArrays(gl.LINE_LOOP, 0, turretSegments + 1);
+    gl.drawArrays(gl.LINES, turretSegments + 1, 2);
+}
+
+// --- RENDER ---
+function render() {
+    gl.clearColor(1.0, 1.0, 1.0, 1.0); 
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    
+    const turretColor = [0.0, 0.584, 0.867, 1];
+    drawGunTurret(turretPos.x, turretPos.y, turretColor, aimAngle);
+}
+
+requestAnimationFrame(GameLoop);
