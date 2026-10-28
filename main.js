@@ -1,30 +1,40 @@
 import { initBuffers } from "./init-buffers.js";
 import { drawScene } from "./draw-scene.js";
 
-main();
+let cubeRotation = 0.0;
+let deltaTime = 0;
 
 //
 // start here
 //
 function main() {
-    const canvas = document.querySelector("#gl-canvas");
-    // Initialize the GL context
-    const gl = canvas.getContext("webgl");
-
+    // Vertex shader program
     const vsSource = `
     attribute vec4 aVertexPosition;
+    attribute vec4 aVertexColor;
+
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
-    void main() {
+
+    varying lowp vec4 vColor;
+
+    void main(void) {
       gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+      vColor = aVertexColor;
     }
   `;
 
     const fsSource = `
-    void main() {
-      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    varying lowp vec4 vColor;
+
+    void main(void) {
+      gl_FragColor = vColor;
     }
   `;
+
+    const canvas = document.querySelector("#gl-canvas");
+    // Initialize the GL context
+    const gl = canvas.getContext("webgl");
 
     // Only continue if WebGL is available and working
     if (gl === null) {
@@ -39,24 +49,54 @@ function main() {
     // Clear the color buffer with specified clear color
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+    // Initialize a shader program; this is where all the lighting
+    // for the vertices and so forth is established.
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
     const programInfo = {
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+            vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor"),
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
         },
     };
+
+    // Here's where we call the routine that builds all the
+    // objects we'll be drawing.
     const buffers = initBuffers(gl);
 
     // Draw the scene
-    drawScene(gl, programInfo, buffers);
+    let then = 0;
+
+    // Draw the scene repeatedly
+    function render(now) {
+        now *= 0.001; // convert to seconds
+        deltaTime = now - then;
+        then = now;
+
+        drawScene(gl, programInfo, buffers, cubeRotation, deltaMouse, playerPos);
+
+        if(keysDown.a) playerPos.x+=.1;
+        if(keysDown.d) playerPos.x-=.1;
+        if(keysDown.w) playerPos.y-=.1;
+        if(keysDown.s) playerPos.y+=.1;
+
+        requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
 }
 
+const playerPos= {x: 0,y: 0,z: 0};
+
+
+//
+// Initialize a shader program, so WebGL knows how to draw our data
+//
 function initShaderProgram(gl, vsSource, fsSource) {
     const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
     const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
@@ -86,6 +126,9 @@ function initShaderProgram(gl, vsSource, fsSource) {
 // creates a shader of the given type, uploads the source and
 // compiles it.
 //
+
+
+
 function loadShader(gl, type, source) {
     const shader = gl.createShader(type);
 
@@ -109,3 +152,28 @@ function loadShader(gl, type, source) {
 
     return shader;
 }
+
+const deltaMouse = { x: 0, y: 0 };
+const keysDown = {w: false, a: false, s: false, d: false};
+
+
+window.addEventListener("mousemove", (e) => {
+    deltaMouse.x=e.clientX,
+    deltaMouse.y=e.clientY    
+});
+
+window.addEventListener("keydown", (e) => {
+    if(e.key == "w" || e.key=="a" || e.key == "s" || e.key == "d"){
+        keysDown[e.key]=true;
+    }
+})
+
+window.addEventListener("keyup", (e) => {
+    if(e.key == "w" || e.key=="a" || e.key == "s" || e.key == "d"){
+        keysDown[e.key]=false;
+    }
+})
+
+
+
+main();
