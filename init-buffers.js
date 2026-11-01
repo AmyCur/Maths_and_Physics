@@ -46,6 +46,29 @@ function initPositionBuffer(gl) {
     // JavaScript array, then use it to fill the current buffer.
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
+    const bb = [
+        // Front face
+        -5.0, -5.0, 5.0, 5.0, -5.0, 5.0, 5.0, 5.0, 5.0, -5.0, 5.0, 5.0,
+
+        // Back face
+        -5.0, -5.0, -5.0, -5.0, 5.0, -5.0, 5.0, 5.0, -5.0, 5.0, -5.0, -5.0,
+
+        // Top face
+        -5.0, 5.0, -5.0, -5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, -5.0,
+
+        // Bottom face
+        -5.0, -5.0, -5.0, 5.0, -5.0, -5.0, 5.0, -5.0, 5.0, -5.0, -5.0, 5.0,
+
+        // Right face
+        5.0, -5.0, -5.0, 5.0, 5.0, -5.0, 5.0, 5.0, 5.0, 5.0, -5.0, 5.0,
+
+        // Left face
+        -5.0, -5.0, -5.0, -5.0, -5.0, 5.0, -5.0, 5.0, 5.0, -5.0, 5.0, -5.0,
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bb), gl.STATIC_DRAW);
+
+
     return positionBuffer;
 }
 

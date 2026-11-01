@@ -37,27 +37,39 @@ function drawScene(gl, programInfo, buffers, cubeRotation, rotation, playerPos) 
         [playerPos.x, playerPos.y, playerPos.z],
     ); // amount to translate
 
+    const sens=1;
 
+    // mat4.rotateX(
+    //     projectionMatrix,
+    //     projectionMatrix,
+    //     sens*rotation.y/100
+    // )
+    // mat4.rotateY(
+    //     projectionMatrix,
+    //     projectionMatrix,
+    //     sens*rotation.x/100
+    // )
 
-    mat4.rotate(
-        projectionMatrix, // destination matrix
-        projectionMatrix, // matrix to rotate
-        rotation.x/100, // amount to rotate in radians
-        [0, 1, 0],
-    ); // axis to rotate around (Z)
-    mat4.rotate(
-        projectionMatrix, // destination matrix
-        projectionMatrix, // matrix to rotate
-        rotation.y/100, // amount to rotate in radians
-        [1, 0, 0],
-    ); // axis to rotate around (Y)
     
-    mat4.rotate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to rotate
-        cubeRotation * 0.3, // amount to rotate in radians
-        [1, 0, 0],
-    ); // axis to rotate around (X)
+
+    // mat4.rotateY(
+    //     projectionMatrix, // destination matrix
+    //     projectionMatrix, // matrix to rotate
+    //     rotation.x/100 // amount to rotate in radians
+    // ); // axis to rotate around (Z)
+    
+    // mat4.rotateX(
+    //     projectionMatrix, // destination matrix
+    //     projectionMatrix, // matrix to rotate
+    //     rotation.y/100 // amount to rotate in radians
+    // ); // axis to rotate around (Y)
+    
+    // mat4.rotate(
+    //     modelViewMatrix, // destination matrix
+    //     modelViewMatrix, // matrix to rotate
+    //     cubeRotation * 0.3, // amount to rotate in radians
+    //     [1, 0, 0],
+    // ); // axis to rotate around (X)
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
@@ -126,6 +138,10 @@ function setColorAttribute(gl, buffers, programInfo) {
         offset,
     );
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
+}
+
+function forward(mat){
+
 }
 
 export { drawScene };

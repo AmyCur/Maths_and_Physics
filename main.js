@@ -72,6 +72,25 @@ function main() {
     // Draw the scene
     let then = 0;
 
+    const speed=2;
+    const gravityRate=0.5;
+
+    function Gravity(){
+        if(playerPos.y < 0){
+            playerPos.y+=gravityRate;
+            if(playerPos.y>0) playerPos.y=0
+        }
+       
+    }
+    let jumped=false;
+
+    function Jump(){
+        jumped=true;
+        setTimeout(() => {jumped=false}, 1000);
+       
+        
+    }
+
     // Draw the scene repeatedly
     function render(now) {
         now *= 0.001; // convert to seconds
@@ -80,10 +99,22 @@ function main() {
 
         drawScene(gl, programInfo, buffers, cubeRotation, deltaMouse, playerPos);
 
-        if(keysDown.a) playerPos.x+=.1;
-        if(keysDown.d) playerPos.x-=.1;
-        if(keysDown.w) playerPos.y-=.1;
-        if(keysDown.s) playerPos.y+=.1;
+        if(!jumped) Gravity();
+
+        document.getElementById("player-pos").innerHTML=`x: ${playerPos.x.toString().slice(0, 4)} | y: ${playerPos.y.toString().slice(0, 4)} | z: ${playerPos.z.toString().slice(0, 4)}`;
+
+        
+        if(keysDown.a) playerPos.x+=.1*speed;
+        if(keysDown.d) playerPos.x-=.1*speed;
+        if(keysDown.w) playerPos.z+=.1*speed;
+        if(keysDown.s) playerPos.z-=.1*speed;
+        if(keysDown.space && Grounded()) Jump();
+
+        if(jumped){
+            playerPos.y-=0.3
+        }
+
+
 
         requestAnimationFrame(render);
     }
@@ -154,8 +185,11 @@ function loadShader(gl, type, source) {
 }
 
 const deltaMouse = { x: 0, y: 0 };
-const keysDown = {w: false, a: false, s: false, d: false};
+const keysDown = {w: false, a: false, s: false, d: false, space:false};
 
+function Grounded(){
+    return playerPos.y===0;
+}
 
 window.addEventListener("mousemove", (e) => {
     deltaMouse.x=e.clientX,
@@ -163,14 +197,16 @@ window.addEventListener("mousemove", (e) => {
 });
 
 window.addEventListener("keydown", (e) => {
-    if(e.key == "w" || e.key=="a" || e.key == "s" || e.key == "d"){
-        keysDown[e.key]=true;
+    if(e.key == "w" || e.key=="a" || e.key == "s" || e.key == "d" || e.key === " "){
+        if(e.key!=" ") keysDown[e.key]=true;
+        else keysDown["space"]=true;
     }
 })
 
 window.addEventListener("keyup", (e) => {
-    if(e.key == "w" || e.key=="a" || e.key == "s" || e.key == "d"){
-        keysDown[e.key]=false;
+    if(e.key == "w" || e.key=="a" || e.key == "s" || e.key == "d"|| e.key==" "){
+        if(e.key!=" ") keysDown[e.key]=false;
+        else keysDown["space"]=false;
     }
 })
 
