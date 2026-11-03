@@ -15,13 +15,22 @@ let lastSpawnTime = 0;
 const shipSize = 0.5;
 const shipSpeed = 0.01;
 
-const shipVerticies = [
-    0.05, -0.05, 0, 0, 0.1, 0, 0, 0.1, 0.1, 0.1
-];
+const rightBoundry = 0.95;
+const leftBoundry = -0.95;
+const topBoundry = 0.95;
+const buttomBoundry = -0.95;
 
-const shipBuffer = createShapeBuffer(gl, shipVerticies);
 
-const keys = { ArrowLeft: false, ArrowRight: false, Space: false };
+const keys = { 
+    ArrowLeft: false,
+    ArrowRight: false,
+    ArrowUp: false,
+    ArrowDown: false,
+    w: false,
+    a: false,
+    s: false,
+    d: false
+};
 
 let aimAngle = Math.PI / 2;
 const rotationSpeed = 0.04;
@@ -36,12 +45,29 @@ let lastFireTime = 0;
 const laserVertices = [0, 0, 0.1, 0];
 const laserIndicies = [0, 1];
 
+const playerPos = {x: 0, y: 0.2, z: 0};
+const playerSpeed = 0.015;
+const playerSize =0.1;
+const playerRadius = 0.04;
+
+const playerVerticies = [
+    0,0.5,
+    -0.4,-0.5,
+    0,-0.2,
+    0.4,-0.5
+];
+
+const playerIndicies = [
+    0,1,2,
+    0,2,3
+];
+
 
 function DrawLaser(laserInstance) {
-    setUniforms(laserBuffer, [1, 0, 0, 1],
-        laserInstance.x, laserInstance.y, laserInstance.angle
-    );
-    gl.drawArrays(gl.LINES, 0, 2);
+    gl.bindVertexArray(laserMesh.vao)
+    setUniforms([0,0.4,0.8,1], laserInstance.x, laserInstance.y, laserInstance.angle);
+    gl.drawElements(gl.LINES, laserMesh.indexCount, gl.UNSIGNED_SHORT, 0);
+    gl.bindVertexArray(null);
 }
 
 
@@ -52,13 +78,15 @@ const vertexShaderSource = `#version 300 es
     in vec3 aPosition;
     uniform vec3 uTranslation;
     uniform float uRotation;
+    uniform vec3 uScale;
 
     void main() {
+        vec3 scaled = aPosition * uScale;
         float s = sin(uRotation);
         float c = cos(uRotation);
         vec2 rotated = vec2(
-            aPosition.x*c - aPosition.y*s,
-            aPosition.x*s + aPosition.y * c
+            scaled.x * c - scaled.y * s,
+            scaled.x * s + scaled.y * c
         );
         gl_Position = vec4(vec3(rotated, 0.0) + uTranslation,1.0);
     }
@@ -83,6 +111,9 @@ const positionAttribute = gl.getAttribLocation(shaderProgram, 'aPosition');
 const colourLocation = gl.getUniformLocation(shaderProgram, "uColour");
 const translationLocation = gl.getUniformLocation(shaderProgram, "uTranslation");
 const rotationLocation = gl.getUniformLocation(shaderProgram, "uRotation");
+const scaledLocation = gl.getUniformLocation(shaderProgram, "uScale");
+const laserMesh = createMesh(gl, laserVertices, laserIndicies, positionAttribute);
+const playerMesh = createMesh(gl, playerVerticies, playerIndicies, positionAttribute);
 
 const turretSegments = 32;
 const baseRadius = 0.15;
@@ -101,95 +132,42 @@ turretVerticies.push(0.0, 0.0, 0.3, 0.0);
 const turretBuffer = createShapeBuffer(gl, turretVerticies);
 
 function processInput(currentTime) {
-    if (!textElement) return;
-    if (keys.ArrowLeft) aimAngle += rotationSpeed;
-    if (keys.ArrowRight) aimAngle -= rotationSpeed;
-
-    const elapsedTime =  currentTime-lastFireTime;
-
-    if(keys.Space && elapsedTime >= fireCooldown){
-        activeLasers.push({
-            x: turretPos.x,
-            y: turretPos.y,
-            vx: Math.cos(aimAngle) * laserSpeed,
-            vy: Math.sin(aimAngle) * laserSpeed,
-            angle: aimAngle
-        })
-        lastFireTime=currentTime;
-    }
+    if(keys.ArrowUp || keys.w) playerPos.y+=playerSpeed
+    if(keys.ArrowDown || keys.s) playerPos.y-=playerSpeed
+    if(keys.ArrowLeft|| keys.a) playerPos.x-=playerSpeed
+    if(keys.ArrowRight || keys.d) playerPos.x+=playerSpeed
 }
-const laserMesh = createMesh(gl, laserVertices, laserIndicies, positionAttribute);
 let lives=3;
 
 function update(currentTime) {
     // if(lives<=0) close();
 
-    const elapsedTime = currentTime - lastSpawnTime;
-    // @ts-ignore
-    textElement.innerHTML=(`Score: ${score}`);
-    // @ts-ignore
-    lifeText.innerHTML=`Lives: ${lives}`;
-
-    if (elapsedTime >= shipGenTime) {
-        let randomX = (Math.random() * (2.0 - shipSize)) - 1;
-        activeShips.push({ x: randomX, y: 1.0 });
-        lastSpawnTime = currentTime;
-    }
-
-    for (let i = 0; i < activeShips.length; i++) {
-        const shipPosition = activeShips[i];
-        shipPosition.y -= shipSpeed;
-
-        isAimingAtShip = false;
-        const turretDirVector = { x: Math.cos(aimAngle), y: Math.sin(aimAngle) };
-
-        const shipCentre = {
-            x: shipPosition.x + (shipSize / 2),
-            y: shipPosition.y + (shipSize / 2)
-        };
-
-        const targetDirVector = { x: shipCentre.x - turretPos.x, y: shipCentre.y - turretPos.y };
-        const targetDirLength = Math.sqrt(targetDirVector.x * targetDirVector.x + targetDirVector.y * targetDirVector.y);
-        const unitTargetDirVector = { x: targetDirVector.x / targetDirLength, y: targetDirVector.y / targetDirLength };
-        if (targetDirLength > 0) {
-            const dp = DotProduct(turretDirVector, unitTargetDirVector);
-            if (dp > 0.98) isAimingAtShip = true;
-        }
-
-        if(shipPosition.y < -1.1){
-            lives--;
-            activeShips.splice(i,1);
-        }
-    }
-
-    for(let i = 0; i < activeLasers.length; i++){
+    // isAimingAtShip=false;
+    // const turretDirVector = {x: Math.cos(aimAngle), y: Math.sin(aimAngle)};
+    // const targetDirVector = {
+    //     x: shipCentre.x - turretPos.x,
+    //     y: shipCentre.y - turretPos.y
+    // };
+    // const targetDirLength = Math.sqrt(targetDirVector.x * targetDirVector.x + targetDirVector.y * targetDirVector.y);
+    // const unitTargetDirVector = {
+    //     x:targetDirVector.x/targetDirLength,
+    //     y:targetDirVector.y/targetDirLength
+    // };
+    
+    // if(targetDirLength>0){
+    //     const dotProduct = DotProduct(turretDirVector, unitTargetDirVector);
+    //     if(dotProduct > 0.98) isAimingAtShip=true;
+    // }
+    for(let i = activeLasers.length-1; i >= 0; i--){
         const laser=activeLasers[i];
         laser.x+=laser.vx;
-        laser.y+=laser.vy ;
+        laser.y+=laser.vy;
 
-        if(laser.y>1.1 || laser.x >1.1 || laser.y <-1.1 || laser.x < -1.1){
-            activeLasers.splice(i,1);
+        if(laser.y > 1.1 || laser.x > 1.1 || laser.x < -1.1 || laser.y < -1.1){
+            activeLasers.splice(i, 1);
             continue;
         }
-
-        for(let j = activeShips.length-1; j >= 0; j--){
-            const shipPos=activeShips[j];
-            if(laser.x >= shipPos.x
-                && laser.x <= shipPos.x + shipSize
-                && laser.y >= shipPos.y
-                && laser.y <= shipPos.y + shipSize
-            ){
-                activeShips.splice(j,1);
-                activeLasers.splice(i,1);
-                score++;
-                break;
-            }
-        }
     }
-
-
-
-
 }
 
 let score =0;
@@ -202,39 +180,32 @@ function GameLoop(timestamp) {
 }
 
 window.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-        keys[event.key] = true;
-        event.preventDefault();
-    }
-
-    if (event.key === " " || event.code === "Space    ") {
-        keys.Space = true;
-        event.preventDefault();
-    }
+    if(keys.hasOwnProperty(event.key)) keys[event.key]=true;
 })
 
 window.addEventListener("keyup", (event) => {
-    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-        keys[event.key] = false;
-        event.preventDefault();
-    }
-
-    if (event.key === " " || event.code === "Space    ") {
-        keys.Space = false;
-        event.preventDefault();
-    }
+    if(keys.hasOwnProperty(event.key)) keys[event.key]=false;
 })
 
 function DotProduct(a, b) {
     return (a.x * b.x) + (a.y * b.y)
 }
 
+function drawPlayer(currentPlayerPos){
+    gl.bindVertexArray(playerMesh.vao);
+    setUniforms([0.0,0.4,0.8,1.0],  
+    currentPlayerPos.x,currentPlayerPos.y,Math.PI,playerSize);
+    gl.drawElements(gl.TRIANGLES, playerMesh.indexCount, gl.UNSIGNED_SHORT,0);
+    gl.bindVertexArray(null);
+}
+
 
 // --- RENDER HELPERS ---
-function setUniforms(colour, transX, transY, rotation) {
+function setUniforms(colour, transX, transY, rotation, scale=1) {
     gl.uniform4fv(colourLocation, colour);
-    gl.uniform3fv(translationLocation, transX, transY, 0);
+    gl.uniform3f(translationLocation, transX, transY, 0);
     gl.uniform1f(rotationLocation, rotation);
+    gl.uniform3f(scaledLocation, scale, scale, 1.0);
 }
 
 
@@ -244,7 +215,7 @@ const turretMesh=createMesh(gl, turretVerticies, turretIndicies, positionAttribu
 
 
 function drawGunTurret(x, y, color, rotation) {
-    gl.bindVertexArray(turretMesh);
+    gl.bindVertexArray(turretMesh.vao);
     setUniforms(color, x,y,rotation);
     gl.drawArrays(gl.LINE_LOOP,0,turretSegments+1);
     gl.drawArrays(gl.LINES, turretSegments+1, 2);
@@ -252,10 +223,7 @@ function drawGunTurret(x, y, color, rotation) {
     gl.drawElements(gl.LINES, 2, gl.UNSIGNED_SHORT, (turretSegments+1)*2);
 }
 
-function drawShip(x, y) {
-    setUniforms(shipBuffer, [0.0, 0.0, 0.0, 1.0], x, y, 0.0);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 5);
-}
+
 
 // --- RENDER ---
 function render() {
@@ -267,11 +235,7 @@ function render() {
         turretColor = [1, 0, 0, 1];
     }
     drawGunTurret(turretPos.x, turretPos.y, turretColor, aimAngle);
-    for (let i = 0; i < activeShips.length; i++) {
-        const shipPosition = activeShips[i];
-        drawShip(shipPosition.x, shipPosition.y);
-    }
-
+    drawPlayer(playerPos);
     for (let i = 0; i < activeLasers.length; i++) {
         DrawLaser(activeLasers[i]);
     }

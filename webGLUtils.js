@@ -27,16 +27,16 @@ function createMesh(gl, verts, indicies, posLoc){
 
     const vbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-    gl.bindBuffer(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
 
     gl.enableVertexAttribArray(posLoc);
     gl.vertexAttribPointer(posLoc,2,gl.FLOAT, false, 0, 0);
 
     const ebo = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indicies), gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indicies), gl.STATIC_DRAW);
 
-    return {vao: vao, vertexCount: verts.length/2}; 
+    return {vao, indexCount: indicies.length}; 
 }
 
 // Create shader program
