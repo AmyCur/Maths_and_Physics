@@ -23,11 +23,7 @@
 <body>
   <div class="box">
     <div class="game-wrapper">
-      <marquee behavior="alternate" direction="down" width="1920" height="1000">
-        <marquee behavior="alternate">
           <canvas id="gameCanvas" width="700" height="700"></canvas>
-        </marquee>
-      </marquee>
     </div>
     <marquee>
       <div id="textDisplay">Output Text</div>
@@ -45,6 +41,13 @@
 </html>
 
 <style>
+  #box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50vw;
+  }
   /* * {
     background-color: royalblue;
     color: white;

@@ -13,7 +13,7 @@ const activeShips = [];
 const shipGenTime = 700;
 let lastSpawnTime = 0;
 const shipSize = 0.5;
-const shipSpeed = 0.05;
+const shipSpeed = 0.01;
 
 const shipVerticies = [
     0.05, -0.05, 0, 0, 0.1, 0, 0, 0.1, 0.1, 0.1
@@ -33,11 +33,12 @@ const laserSpeed = 0.03;
 const fireCooldown = 150;
 let lastFireTime = 0;
 
-const laserVerticies = [0, 0, 0.1, 0];
-const laserBuffer = createShapeBuffer(gl, laserVerticies);
+const laserVertices = [0, 0, 0.1, 0];
+const laserIndicies = [0, 1];
+
 
 function DrawLaser(laserInstance) {
-    bindStateAndUniforms(laserBuffer, [1, 0, 0, 1],
+    setUniforms(laserBuffer, [1, 0, 0, 1],
         laserInstance.x, laserInstance.y, laserInstance.angle
     );
     gl.drawArrays(gl.LINES, 0, 2);
@@ -77,6 +78,8 @@ const shaderProgram = createProgram(gl, vertexShaderSource, fragmentShaderSource
 gl.useProgram(shaderProgram);
 
 const positionAttribute = gl.getAttribLocation(shaderProgram, 'aPosition');
+
+
 const colourLocation = gl.getUniformLocation(shaderProgram, "uColour");
 const translationLocation = gl.getUniformLocation(shaderProgram, "uTranslation");
 const rotationLocation = gl.getUniformLocation(shaderProgram, "uRotation");
@@ -84,11 +87,13 @@ const rotationLocation = gl.getUniformLocation(shaderProgram, "uRotation");
 const turretSegments = 32;
 const baseRadius = 0.15;
 const turretVerticies = [];
+const turretIndicies=[];    
 
 for (let i = 0; i <= turretSegments; i++) {
     const angleCircle = (i * 2 * Math.PI) / turretSegments;
     turretVerticies.push(baseRadius * Math.cos(angleCircle),
         baseRadius * Math.sin(angleCircle));
+    turretIndicies.push(i);
 }
 
 turretVerticies.push(0.0, 0.0, 0.3, 0.0);
@@ -113,11 +118,11 @@ function processInput(currentTime) {
         lastFireTime=currentTime;
     }
 }
-
+const laserMesh = createMesh(gl, laserVertices, laserIndicies, positionAttribute);
 let lives=3;
 
 function update(currentTime) {
-    if(lives<=0) close();
+    // if(lives<=0) close();
 
     const elapsedTime = currentTime - lastSpawnTime;
     // @ts-ignore
@@ -226,23 +231,29 @@ function DotProduct(a, b) {
 
 
 // --- RENDER HELPERS ---
-function bindStateAndUniforms(buffer, colour, x, y, rotation) {
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.enableVertexAttribArray(positionAttribute);
-    gl.vertexAttribPointer(positionAttribute, 2, gl.FLOAT, false, 0, 0);
+function setUniforms(colour, transX, transY, rotation) {
     gl.uniform4fv(colourLocation, colour);
-    gl.uniform3f(translationLocation, x, y, 0.0);
+    gl.uniform3fv(translationLocation, transX, transY, 0);
     gl.uniform1f(rotationLocation, rotation);
 }
 
-function drawGunTurret(x, y, color, aimAngle) {
-    bindStateAndUniforms(turretBuffer, color, x, y, aimAngle);
-    gl.drawArrays(gl.LINE_LOOP, 0, turretSegments + 1);
-    gl.drawArrays(gl.LINES, turretSegments + 1, 2);
+
+const barrelIndex = turretSegments+1;
+turretIndicies.push(barrelIndex, barrelIndex+1);
+const turretMesh=createMesh(gl, turretVerticies, turretIndicies, positionAttribute);
+
+
+function drawGunTurret(x, y, color, rotation) {
+    gl.bindVertexArray(turretMesh);
+    setUniforms(color, x,y,rotation);
+    gl.drawArrays(gl.LINE_LOOP,0,turretSegments+1);
+    gl.drawArrays(gl.LINES, turretSegments+1, 2);
+    gl.drawElements(gl.LINE_LOOP, turretSegments+1, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(gl.LINES, 2, gl.UNSIGNED_SHORT, (turretSegments+1)*2);
 }
 
 function drawShip(x, y) {
-    bindStateAndUniforms(shipBuffer, [0.0, 0.0, 0.0, 1.0], x, y, 0.0);
+    setUniforms(shipBuffer, [0.0, 0.0, 0.0, 1.0], x, y, 0.0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 5);
 }
 

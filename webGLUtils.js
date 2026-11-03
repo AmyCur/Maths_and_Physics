@@ -21,6 +21,24 @@ function compileShader(gl, source, type) {
     return shader;
 }
 
+function createMesh(gl, verts, indicies, posLoc){
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+
+    const vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bindBuffer(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc,2,gl.FLOAT, false, 0, 0);
+
+    const ebo = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indicies), gl.STATIC_DRAW);
+
+    return {vao: vao, vertexCount: verts.length/2}; 
+}
+
 // Create shader program
 function createProgram(gl, vertexSource, fragmentSource) {
     const vertexShader = compileShader(gl, vertexSource, gl.VERTEX_SHADER);
