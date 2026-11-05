@@ -1,5 +1,6 @@
 import { InitShaders } from "./shaders.js";
 import { ClearScreen, DrawScreen } from "./draw-screen.js";
+import { InitBuffers } from "./buffers.js";
 
 function InitWebGL() {
     const canvas = document.getElementById("canvas");
@@ -26,7 +27,9 @@ function render() {
         },
     };
 
-    DrawScreen(gl);
+    const buffer=InitBuffers(gl);
+
+    DrawScreen(gl,buffer,programInfo);
 
 
 

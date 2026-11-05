@@ -20,6 +20,14 @@ function GetZeroMatrix(){
     return DOMMatrix.fromFloat32Array(f32Array);
 }
 
+function TranslateMatrix(matrix, translation){
+    matrix[3]+=translation.x;
+    matrix[7]+=translation.y;
+    matrix[11]+=translation.z;
+
+    return matrix;
+}
+
 function GetPerspectiveMatrix(fovy, aspectRatio, nearDistance,farDistance){
     const mat = GetZeroMatrix();
 
@@ -41,4 +49,4 @@ function GetPerspectiveMatrix(fovy, aspectRatio, nearDistance,farDistance){
     return mat;
 }
 
-export { GetIdentityMatrix, GetPerspectiveMatrix };
+export { GetIdentityMatrix, GetPerspectiveMatrix, TranslateMatrix };

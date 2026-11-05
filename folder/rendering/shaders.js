@@ -10,10 +10,10 @@ const vsSource = `
 `
 
 const fsSource = `
-    uniform vec4 color;
+    
 
     void main(){
-        gl_FragColor = color;
+        gl_FragColor = new vec4(1,0,0,1);
     }
 `
 
