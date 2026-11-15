@@ -3,7 +3,8 @@ import * as draw from "./rendering/draw-scene.js";
 import { input } from "./input/input.js";
 import { camera } from "./input/camera.js";
 import { Vector2 } from "./vectors/Vector2.js";
-
+import { player } from "./input/Player.js";
+import { ReadObj } from "./models/ReadObj.js";
 
 function Main() {
     const rendering = InitRendering();
@@ -16,8 +17,10 @@ function Main() {
 
     input.AddListeners();
     camera.AddListeners(gl.canvas);
+
+    ReadObj("");
     
-    const playerPos = new Vector2(0,-30);
+
 
     function GameLoop(now) {
         //#region Timing
@@ -26,8 +29,9 @@ function Main() {
         then = now;
         //#endregion
 
-        Render(gl, programInfo, buffers, playerPos);
-        playerPos.Add(input.GetPlayerMovementInput(camera.rotation));
+        Render(gl, programInfo, buffers);
+        player.position.Add(input.GetPlayerMovementInput(camera.rotation.x));
+
 
         requestAnimationFrame(GameLoop);
     }

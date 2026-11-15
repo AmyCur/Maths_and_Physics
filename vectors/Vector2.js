@@ -1,10 +1,14 @@
-export class Vector2 {
+import { Vector } from "./Vector.js";
+import { Vector3 } from "./Vector3.js";
+
+export class Vector2 extends Vector{
     x;
     y;
 
-    Deg2Rad=0.01745329252;
+    
 
     constructor(x, y) {
+        super();
         this.x = x;
         this.y = y;
     }
@@ -14,6 +18,10 @@ export class Vector2 {
         const ny = this.y * f;
 
         return new Vector2(nx, ny);
+    }
+
+    ToVector3(){
+        return new Vector3(this.x,0,this.y);
     }
 
     Invert() {

@@ -1,3 +1,5 @@
+import { ReadObj } from "../models/ReadObj.js";
+
 function initBuffers(gl) {
     const positionBuffer = initPositionBuffer(gl);
 
@@ -21,53 +23,20 @@ function initPositionBuffer(gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Now create an array of positions for the square.
-    const positions = [
-        // Front face
-        -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
-
-        // Back face
-        -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0,
-
-        // Top face
-        -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,
-
-        // Bottom face
-        -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0,
-
-        // Right face
-        1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0,
-
-        // Left face
-        -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0,
-    ];
+    
+    const positions = ReadObj().verts;
 
     // Now pass the list of positions into WebGL to build the
     // shape. We do this by creating a Float32Array from the
     // JavaScript array, then use it to fill the current buffer.
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    const bb = [
-        // Front face
-        -5.0, -5.0, 5.0, 5.0, -5.0, 5.0, 5.0, 5.0, 5.0, -5.0, 5.0, 5.0,
 
-        // Back face
-        -5.0, -5.0, -5.0, -5.0, 5.0, -5.0, 5.0, 5.0, -5.0, 5.0, -5.0, -5.0,
 
-        // Top face
-        -5.0, 5.0, -5.0, -5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, -5.0,
+    const bb = ReadObj().verts;
 
-        // Bottom face
-        -5.0, -5.0, -5.0, 5.0, -5.0, -5.0, 5.0, -5.0, 5.0, -5.0, -5.0, 5.0,
-
-        // Right face
-        5.0, -5.0, -5.0, 5.0, 5.0, -5.0, 5.0, 5.0, 5.0, 5.0, -5.0, 5.0,
-
-        // Left face
-        -5.0, -5.0, -5.0, -5.0, -5.0, 5.0, -5.0, 5.0, 5.0, -5.0, 5.0, -5.0,
-    ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bb), gl.STATIC_DRAW);
-
 
     return positionBuffer;
 }

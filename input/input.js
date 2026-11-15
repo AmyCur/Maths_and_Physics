@@ -8,6 +8,7 @@ class Input{
         KeyS: false,
         KeyA: false,
         KeyD: false,
+        ShiftLeft: false
     }
 
     GetKey(code){
@@ -29,10 +30,13 @@ class Input{
         });
     }
 
-    GetPlayerMovementInput(cameraRotation){
-        const forwards = new Vector2(0,1).Rotate(cameraRotation.x);
+    GetPlayerMovementInput(cameraRotationX){
+        const forwards = new Vector2(
+            Math.sin(cameraRotationX),
+            Math.cos(cameraRotationX)
+        );
         const backwards = forwards.Invert();
-        const right = new Vector2(1,0).Rotate(cameraRotation.x);
+        const right = forwards.Rotate(270);
         const left = right.Invert();
         
         const movementVector = new Vector2(0,0);
@@ -41,9 +45,12 @@ class Input{
         if(this.GetKey("KeyS")) movementVector.Add(backwards);
         if(this.GetKey("KeyD")) movementVector.Add(left);
         if(this.GetKey("KeyA")) movementVector.Add(right);
+        // if(this.GetKey("Space")) 
+
+        // console.log(movementVector);
 
 
-        return movementVector;
+        return movementVector.ToVector3();
     }
 
 }

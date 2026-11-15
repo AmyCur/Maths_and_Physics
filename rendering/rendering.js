@@ -81,25 +81,12 @@ export function InitRendering() {
 
 
 
-export function Render(gl, programInfo, buffers, playerPos){
-    draw.drawScene(gl, programInfo, buffers, playerPos);
+export function Render(gl, programInfo, buffers){
+    draw.drawScene(gl, programInfo, buffers);
 }
-
-const playerPos = { x: 0, y: 0, z: 0 };
 
 
 //
 // Initialize a shader program, so WebGL knows how to draw our data
 //
 
-
-const deltaMouse = { x: 0, y: 0 };
-
-function Grounded() {
-    return playerPos.y === 0;
-}
-
-window.addEventListener("mousemove", (e) => {
-    deltaMouse.x = e.clientX,
-        deltaMouse.y = e.clientY
-});
