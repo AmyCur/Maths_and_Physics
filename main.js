@@ -15,7 +15,7 @@ function Main() {
     let deltaTime=0;
 
     input.AddListeners();
-    camera.AddListeners();
+    camera.AddListeners(gl.canvas);
     
     const playerPos = new Vector2(0,-30);
 

@@ -15,13 +15,13 @@ class Camera{
         this.rotation.y+=y;
     }
 
-    AddListeners(){
+    AddListeners(canvas){
         document.addEventListener("mousemove", (e) => {
             this.deltaMouse= {x: e.clientX,y : e.clientY};
             // this.currentMouse= {x: this.currentMouse.x -this.deltaMouse.x, y: this.currentMouse.y-this.deltaMouse.y};
             
 
-            this.Add(this.currentMouse.x/10000, this.currentMouse.y/10000);
+            this.Add((-canvas.width/2-this.deltaMouse.x)/10000, (-canvas.height/2-this.deltaMouse.y)/10000);
         });
     }
 }

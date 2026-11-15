@@ -62,9 +62,9 @@ function drawScene(gl, programInfo, buffers, playerPos) {
     );
 
     mat4.rotateY(
-        projectionMatrix,
-        projectionMatrix,
-        camera.rotation.x/360
+        modelViewMatrix,
+        modelViewMatrix,
+        camera.rotation.x
     )
 
     // Now move the drawing position a bit to where we want to
