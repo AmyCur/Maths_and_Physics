@@ -1,4 +1,22 @@
-function drawScene(gl, programInfo, buffers, cubeRotation, rotation, playerPos) {
+export const cameraRot = {x: 0, y: 0};
+
+
+function GetSceneSettings(gl){
+    const fieldOfView = (45 * Math.PI) / 180; // in radians
+    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    const zNear = 0.1;
+    const zFar = 100.0;
+
+    return {
+        fieldOfView: fieldOfView,
+        aspect: aspect,
+        zNear: zNear,
+        zFar: zFar
+    };
+}
+
+
+function ReadyScene(gl){
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
     gl.clearDepth(1.0); // Clear everything
     gl.enable(gl.DEPTH_TEST); // Enable depth testing
@@ -7,6 +25,11 @@ function drawScene(gl, programInfo, buffers, cubeRotation, rotation, playerPos) 
     // Clear the canvas before we start drawing on it.
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+}
+
+function drawScene(gl, programInfo, buffers) {
+    
+    ReadyScene(gl);
 
     // Create a perspective matrix, a special matrix that is
     // used to simulate the distortion of perspective in a camera.
@@ -15,29 +38,41 @@ function drawScene(gl, programInfo, buffers, cubeRotation, rotation, playerPos) 
     // and we only want to see objects between 0.1 units
     // and 100 units away from the camera.
 
-    const fieldOfView = (45 * Math.PI) / 180; // in radians
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    const zNear = 0.1;
-    const zFar = 100.0;
+
+    const ss = GetSceneSettings(gl);
+
     const projectionMatrix = mat4.create();
 
     // note: glMatrix always has the first argument
     // as the destination to receive the result.
-    mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
+    mat4.perspective(projectionMatrix, ss.fieldOfView, ss.aspect, ss.zNear, ss.zFar);
 
     // Set the drawing position to the "identity" point, which is
     // the center of the scene.
     const modelViewMatrix = mat4.create();
 
+    
+
+    mat4.translate(
+        modelViewMatrix,
+        modelViewMatrix,
+        [-10,0,-30]
+    );
+
     // Now move the drawing position a bit to where we want to
     // start drawing the square.
-    mat4.translate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to translate
-        [playerPos.x, playerPos.y, playerPos.z],
-    ); // amount to translate
+    // mat4.translate(
+    //     modelViewMatrix, // destination matrix
+    //     modelViewMatrix, // matrix to translate
+    //     [playerPos.x, playerPos.y, playerPos.z],
+    // ); // amount to translate
 
-    const sens=1;
+
+
+    const sens = 1;
+
+    // cameraRot.y+=sens*rotation.y/100;
+    // cameraRot.x+=sens*rotation.x/100;
 
     // mat4.rotateX(
     //     projectionMatrix,
@@ -50,20 +85,20 @@ function drawScene(gl, programInfo, buffers, cubeRotation, rotation, playerPos) 
     //     sens*rotation.x/100
     // )
 
-    
+
 
     // mat4.rotateY(
     //     projectionMatrix, // destination matrix
     //     projectionMatrix, // matrix to rotate
     //     rotation.x/100 // amount to rotate in radians
     // ); // axis to rotate around (Z)
-    
+
     // mat4.rotateX(
     //     projectionMatrix, // destination matrix
     //     projectionMatrix, // matrix to rotate
     //     rotation.y/100 // amount to rotate in radians
     // ); // axis to rotate around (Y)
-    
+
     // mat4.rotate(
     //     modelViewMatrix, // destination matrix
     //     modelViewMatrix, // matrix to rotate
@@ -140,7 +175,7 @@ function setColorAttribute(gl, buffers, programInfo) {
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 }
 
-function forward(mat){
+function forward(mat) {
 
 }
 

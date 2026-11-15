@@ -1,215 +1,35 @@
-import { initBuffers } from "./init-buffers.js";
-import { drawScene } from "./draw-scene.js";
+import { InitRendering, Render } from "./rendering/rendering.js";
+import * as draw from "./rendering/draw-scene.js";
+import { input } from "./input/input.js";
+import { camera } from "./input/camera.js";
 
-let cubeRotation = 0.0;
-let deltaTime = 0;
 
-//
-// start here
-//
-function main() {
-    // Vertex shader program
-    const vsSource = `
-    attribute vec4 aVertexPosition;
-    attribute vec4 aVertexColor;
+function Main() {
+    const rendering = InitRendering();
+    const gl = rendering.gl;
+    const programInfo = rendering.programInfo;
+    const buffers = rendering.buffers;
 
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
+    let then=0;
+    let deltaTime=0;
 
-    varying lowp vec4 vColor;
+    input.AddListeners();
 
-    void main(void) {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-      vColor = aVertexColor;
-    }
-  `;
-
-    const fsSource = `
-    varying lowp vec4 vColor;
-
-    void main(void) {
-      gl_FragColor = vColor;
-    }
-  `;
-
-    const canvas = document.querySelector("#gl-canvas");
-    // Initialize the GL context
-    const gl = canvas.getContext("webgl");
-
-    // Only continue if WebGL is available and working
-    if (gl === null) {
-        alert(
-            "Unable to initialize WebGL. Your browser or machine may not support it.",
-        );
-        return;
-    }
-
-    // Set clear color to black, fully opaque
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    // Clear the color buffer with specified clear color
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // Initialize a shader program; this is where all the lighting
-    // for the vertices and so forth is established.
-    const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
-
-    const programInfo = {
-        program: shaderProgram,
-        attribLocations: {
-            vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
-            vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor"),
-        },
-        uniformLocations: {
-            projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
-        },
-    };
-
-    // Here's where we call the routine that builds all the
-    // objects we'll be drawing.
-    const buffers = initBuffers(gl);
-
-    // Draw the scene
-    let then = 0;
-
-    const speed=2;
-    const gravityRate=0.5;
-
-    function Gravity(){
-        if(playerPos.y < 0){
-            playerPos.y+=gravityRate;
-            if(playerPos.y>0) playerPos.y=0
-        }
-       
-    }
-    let jumped=false;
-
-    function Jump(){
-        jumped=true;
-        setTimeout(() => {jumped=false}, 1000);
-       
-        
-    }
-
-    // Draw the scene repeatedly
-    function render(now) {
+    function GameLoop(now) {
+        //#region Timing
         now *= 0.001; // convert to seconds
         deltaTime = now - then;
         then = now;
+        //#endregion
 
-        drawScene(gl, programInfo, buffers, cubeRotation, deltaMouse, playerPos);
+        Render(gl, programInfo, buffers);
+        input.GetPlayerMovementInput(camera.rotation);
 
-        if(!jumped) Gravity();
-
-        document.getElementById("player-pos").innerHTML=`x: ${playerPos.x.toString().slice(0, 4)} | y: ${playerPos.y.toString().slice(0, 4)} | z: ${playerPos.z.toString().slice(0, 4)}`;
-
-        
-        if(keysDown.a) playerPos.x+=.1*speed;
-        if(keysDown.d) playerPos.x-=.1*speed;
-        if(keysDown.w) playerPos.z+=.1*speed;
-        if(keysDown.s) playerPos.z-=.1*speed;
-        if(keysDown.space && Grounded()) Jump();
-
-        if(jumped){
-            playerPos.y-=0.3
-        }
-
-
-
-        requestAnimationFrame(render);
+        requestAnimationFrame(GameLoop);
     }
 
-    requestAnimationFrame(render);
+    requestAnimationFrame(GameLoop);
 }
 
-const playerPos= {x: 0,y: 0,z: 0};
 
-
-//
-// Initialize a shader program, so WebGL knows how to draw our data
-//
-function initShaderProgram(gl, vsSource, fsSource) {
-    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
-    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
-
-    // Create the shader program
-
-    const shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, vertexShader);
-    gl.attachShader(shaderProgram, fragmentShader);
-    gl.linkProgram(shaderProgram);
-
-    // If creating the shader program failed, alert
-
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        alert(
-            `Unable to initialize the shader program: ${gl.getProgramInfoLog(
-                shaderProgram,
-            )}`,
-        );
-        return null;
-    }
-
-    return shaderProgram;
-}
-
-//
-// creates a shader of the given type, uploads the source and
-// compiles it.
-//
-
-
-
-function loadShader(gl, type, source) {
-    const shader = gl.createShader(type);
-
-    // Send the source to the shader object
-
-    gl.shaderSource(shader, source);
-
-    // Compile the shader program
-
-    gl.compileShader(shader);
-
-    // See if it compiled successfully
-
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert(
-            `An error occurred compiling the shaders: ${gl.getShaderInfoLog(shader)}`,
-        );
-        gl.deleteShader(shader);
-        return null;
-    }
-
-    return shader;
-}
-
-const deltaMouse = { x: 0, y: 0 };
-const keysDown = {w: false, a: false, s: false, d: false, space:false};
-
-function Grounded(){
-    return playerPos.y===0;
-}
-
-window.addEventListener("mousemove", (e) => {
-    deltaMouse.x=e.clientX,
-    deltaMouse.y=e.clientY    
-});
-
-window.addEventListener("keydown", (e) => {
-    if(e.key == "w" || e.key=="a" || e.key == "s" || e.key == "d" || e.key === " "){
-        if(e.key!=" ") keysDown[e.key]=true;
-        else keysDown["space"]=true;
-    }
-})
-
-window.addEventListener("keyup", (e) => {
-    if(e.key == "w" || e.key=="a" || e.key == "s" || e.key == "d"|| e.key==" "){
-        if(e.key!=" ") keysDown[e.key]=false;
-        else keysDown["space"]=false;
-    }
-})
-
-
-
-main();
+Main();
