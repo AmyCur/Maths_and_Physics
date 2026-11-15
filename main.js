@@ -2,6 +2,7 @@ import { InitRendering, Render } from "./rendering/rendering.js";
 import * as draw from "./rendering/draw-scene.js";
 import { input } from "./input/input.js";
 import { camera } from "./input/camera.js";
+import { Vector2 } from "./vectors/Vector2.js";
 
 
 function Main() {
@@ -14,6 +15,9 @@ function Main() {
     let deltaTime=0;
 
     input.AddListeners();
+    camera.AddListeners();
+    
+    const playerPos = new Vector2(0,-30);
 
     function GameLoop(now) {
         //#region Timing
@@ -22,8 +26,8 @@ function Main() {
         then = now;
         //#endregion
 
-        Render(gl, programInfo, buffers);
-        input.GetPlayerMovementInput(camera.rotation);
+        Render(gl, programInfo, buffers, playerPos);
+        playerPos.Add(input.GetPlayerMovementInput(camera.rotation));
 
         requestAnimationFrame(GameLoop);
     }

@@ -1,3 +1,5 @@
+import { camera } from "../input/camera.js";
+
 export const cameraRot = {x: 0, y: 0};
 
 
@@ -27,7 +29,7 @@ function ReadyScene(gl){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
-function drawScene(gl, programInfo, buffers) {
+function drawScene(gl, programInfo, buffers, playerPos) {
     
     ReadyScene(gl);
 
@@ -56,8 +58,14 @@ function drawScene(gl, programInfo, buffers) {
     mat4.translate(
         modelViewMatrix,
         modelViewMatrix,
-        [-10,0,-30]
+        [playerPos.x,0,playerPos.y]
     );
+
+    mat4.rotateY(
+        projectionMatrix,
+        projectionMatrix,
+        camera.rotation.x/360
+    )
 
     // Now move the drawing position a bit to where we want to
     // start drawing the square.

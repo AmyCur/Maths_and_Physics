@@ -2,6 +2,8 @@ export class Vector2 {
     x;
     y;
 
+    Deg2Rad=0.01745329252;
+
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -29,6 +31,7 @@ export class Vector2 {
     }
 
     Rotate(angle) {
+        angle*=this.Deg2Rad;
         const nx = (this.x * Math.cos(angle)) - (this.y * Math.sin(angle));
         const ny = (this.x * Math.sin(angle)) + (this.y * Math.cos(angle));
 

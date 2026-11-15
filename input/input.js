@@ -30,22 +30,19 @@ class Input{
     }
 
     GetPlayerMovementInput(cameraRotation){
-        const forwards = new Vector2(0,1).Rotate(cameraRotation);
+        const forwards = new Vector2(0,1).Rotate(cameraRotation.x);
         const backwards = forwards.Invert();
-        const right = new Vector2(1,0).Rotate(cameraRotation);
+        const right = new Vector2(1,0).Rotate(cameraRotation.x);
         const left = right.Invert();
-
-
         
         const movementVector = new Vector2(0,0);
 
         if(this.GetKey("KeyW")) movementVector.Add(forwards);
         if(this.GetKey("KeyS")) movementVector.Add(backwards);
-        if(this.GetKey("KeyD")) movementVector.Add(right);
-        if(this.GetKey("KeyA")) movementVector.Add(left);
+        if(this.GetKey("KeyD")) movementVector.Add(left);
+        if(this.GetKey("KeyA")) movementVector.Add(right);
 
 
-        console.log(movementVector);
         return movementVector;
     }
 

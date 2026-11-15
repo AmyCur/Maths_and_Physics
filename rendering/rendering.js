@@ -81,8 +81,8 @@ export function InitRendering() {
 
 
 
-export function Render(gl, programInfo, buffers){
-    draw.drawScene(gl, programInfo, buffers);
+export function Render(gl, programInfo, buffers, playerPos){
+    draw.drawScene(gl, programInfo, buffers, playerPos);
 }
 
 const playerPos = { x: 0, y: 0, z: 0 };
@@ -94,7 +94,6 @@ const playerPos = { x: 0, y: 0, z: 0 };
 
 
 const deltaMouse = { x: 0, y: 0 };
-const keysDown = { w: false, a: false, s: false, d: false, space: false };
 
 function Grounded() {
     return playerPos.y === 0;
@@ -104,17 +103,3 @@ window.addEventListener("mousemove", (e) => {
     deltaMouse.x = e.clientX,
         deltaMouse.y = e.clientY
 });
-
-window.addEventListener("keydown", (e) => {
-    if (e.key == "w" || e.key == "a" || e.key == "s" || e.key == "d" || e.key === " ") {
-        if (e.key != " ") keysDown[e.key] = true;
-        else keysDown["space"] = true;
-    }
-})
-
-window.addEventListener("keyup", (e) => {
-    if (e.key == "w" || e.key == "a" || e.key == "s" || e.key == "d" || e.key == " ") {
-        if (e.key != " ") keysDown[e.key] = false;
-        else keysDown["space"] = false;
-    }
-})
