@@ -2,6 +2,7 @@ import { initBuffers } from "./init-buffers.js";
 import * as draw from "./draw-scene.js";
 import { input } from "../input/input.js";
 import { initShaderProgram } from "./shaders.js";
+import { cube } from "./Primative.js";
 
 
 let cubeRotation = 0.0;
@@ -44,7 +45,9 @@ export function InitRendering() {
 
     // Here's where we call the routine that builds all the
     // objects we'll be drawing.
-    const buffers = initBuffers(gl);
+    
+
+    const buffers = initBuffers(gl, cube.positions, cube.colors, cube.indicies);
 
     // // Draw the scene
     // let then = 0;
@@ -81,7 +84,7 @@ export function InitRendering() {
 
 
 
-export function Render(gl, programInfo, buffers){
+export function Render(gl, programInfo, buffers) {
     draw.drawScene(gl, programInfo, buffers);
 }
 

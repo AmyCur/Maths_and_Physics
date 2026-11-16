@@ -42,13 +42,13 @@ function drawScene(gl, programInfo, buffers) {
     // and 100 units away from the camera.
 
 
-    const ss = GetSceneSettings(gl);
+    const s = GetSceneSettings(gl);
 
     const projectionMatrix = mat4.create();
 
     // note: glMatrix always has the first argument
     // as the destination to receive the result.
-    mat4.perspective(projectionMatrix, ss.fieldOfView, ss.aspect, ss.zNear, ss.zFar);
+    mat4.perspective(projectionMatrix, s.fieldOfView, s.aspect, s.zNear, s.zFar);
 
     // Set the drawing position to the "identity" point, which is
     // the center of the scene.
@@ -74,47 +74,6 @@ function drawScene(gl, programInfo, buffers) {
         -camera.rotation.x
     )
 
-    
-
-
-
-    const sens = 1;
-
-    // cameraRot.y+=sens*rotation.y/100;
-    // cameraRot.x+=sens*rotation.x/100;
-
-    // mat4.rotateX(
-    //     projectionMatrix,
-    //     projectionMatrix,
-    //     sens*rotation.y/100
-    // )
-    // mat4.rotateY(
-    //     projectionMatrix,
-    //     projectionMatrix,
-    //     sens*rotation.x/100
-    // )
-
-
-
-    // mat4.rotateY(
-    //     projectionMatrix, // destination matrix
-    //     projectionMatrix, // matrix to rotate
-    //     rotation.x/100 // amount to rotate in radians
-    // ); // axis to rotate around (Z)
-
-    // mat4.rotateX(
-    //     projectionMatrix, // destination matrix
-    //     projectionMatrix, // matrix to rotate
-    //     rotation.y/100 // amount to rotate in radians
-    // ); // axis to rotate around (Y)
-
-    // mat4.rotate(
-    //     modelViewMatrix, // destination matrix
-    //     modelViewMatrix, // matrix to rotate
-    //     cubeRotation * 0.3, // amount to rotate in radians
-    //     [1, 0, 0],
-    // ); // axis to rotate around (X)
-
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
     setPositionAttribute(gl, buffers, programInfo);
@@ -122,7 +81,7 @@ function drawScene(gl, programInfo, buffers) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
     // Tell WebGL to use our program when drawing
     gl.useProgram(programInfo.program);
-    const f = 24;
+    const f = 36;
     console.log(f);
 
     {

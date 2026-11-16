@@ -36,4 +36,4 @@ class Camera {
     }
 }
 
-export const camera = new Camera(new Vector2(0, 0));
+export const camera = new Camera(new Vector2(-0.9, 0));

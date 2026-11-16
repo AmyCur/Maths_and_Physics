@@ -4,7 +4,6 @@ import { input } from "./input/input.js";
 import { camera } from "./input/camera.js";
 import { Vector2 } from "./vectors/Vector2.js";
 import { player } from "./input/Player.js";
-import { ReadObj } from "./models/ReadObj.js";
 
 function Main() {
     const rendering = InitRendering();
