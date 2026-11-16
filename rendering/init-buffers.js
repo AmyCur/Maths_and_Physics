@@ -13,7 +13,7 @@ function initBuffers(gl) {
         position: positionBuffer,
         color: colorBuffer,
         indices: indexBuffer,
-        obj : obj
+        obj: obj
     };
 }
 
@@ -26,8 +26,26 @@ function initPositionBuffer(gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Now create an array of positions for the square.
-    
-    const positions = obj.verts;
+
+    const positions = [
+        // Front face
+        -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
+
+        // Back face
+        -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0,
+
+        // Top face
+        -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,
+
+        // Bottom face
+        -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0,
+
+        // Right face
+        1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0,
+
+        // Left face
+        -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0,
+    ];
 
     // Now pass the list of positions into WebGL to build the
     // shape. We do this by creating a Float32Array from the
@@ -36,7 +54,7 @@ function initPositionBuffer(gl) {
 
 
 
-    const bb = obj.verts;
+    const bb = positions;
 
 
     gl.bufferData(gl.ARRAY_BUFFER, bb, gl.STATIC_DRAW);
@@ -79,13 +97,20 @@ function initIndexBuffer(gl) {
     // position.
 
     // prettier-ignore
-  
+    const indices = [
+        0, 1, 2, 0, 2, 3,    // front
+        4, 5, 6, 4, 6, 7,    // back
+        8, 9, 10, 8, 10, 11,   // top
+        12, 13, 14, 12, 14, 15,   // bottom
+        16, 17, 18, 16, 18, 19,   // right
+        20, 21, 22, 20, 22, 23,   // left
+    ];
 
     // Now send the element array to GL
 
     gl.bufferData(
         gl.ELEMENT_ARRAY_BUFFER,
-        obj.indicies,
+        indices,
         gl.STATIC_DRAW,
     );
 

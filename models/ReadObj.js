@@ -1,4 +1,3 @@
-
 function CleanData(data) {
     const cleanData = []
 

@@ -8,14 +8,14 @@ let cubeRotation = 0.0;
 let deltaTime = 0;
 
 export function InitRendering() {
-    // Vertex shader program
-    const canvas = document.querySelector("#gl-canvas");
-    // Initialize the GL context
+
+    const canvas = document.getElementById("gl-canvas");
+
     const gl = canvas.getContext("webgl");
 
     // Only continue if WebGL is available and working
     if (gl === null) {
-        alert(
+        console.warn(
             "Unable to initialize WebGL. Your browser or machine may not support it.",
         );
         return;
