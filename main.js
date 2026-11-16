@@ -18,10 +18,6 @@ function Main() {
     input.AddListeners();
     camera.AddListeners(gl.canvas);
 
-    ReadObj("");
-    
-
-
     function GameLoop(now) {
         //#region Timing
         now *= 0.001; // convert to seconds

@@ -1,5 +1,7 @@
 import { ReadObj } from "../models/ReadObj.js";
 
+const obj = ReadObj();
+
 function initBuffers(gl) {
     const positionBuffer = initPositionBuffer(gl);
 
@@ -11,6 +13,7 @@ function initBuffers(gl) {
         position: positionBuffer,
         color: colorBuffer,
         indices: indexBuffer,
+        obj : obj
     };
 }
 
@@ -24,19 +27,19 @@ function initPositionBuffer(gl) {
 
     // Now create an array of positions for the square.
     
-    const positions = ReadObj().verts;
+    const positions = obj.verts;
 
     // Now pass the list of positions into WebGL to build the
     // shape. We do this by creating a Float32Array from the
     // JavaScript array, then use it to fill the current buffer.
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
 
 
-    const bb = ReadObj().verts;
+    const bb = obj.verts;
 
 
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bb), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, bb, gl.STATIC_DRAW);
 
     return positionBuffer;
 }
@@ -76,20 +79,13 @@ function initIndexBuffer(gl) {
     // position.
 
     // prettier-ignore
-    const indices = [
-        0, 1, 2, 0, 2, 3,    // front
-        4, 5, 6, 4, 6, 7,    // back
-        8, 9, 10, 8, 10, 11,   // top
-        12, 13, 14, 12, 14, 15,   // bottom
-        16, 17, 18, 16, 18, 19,   // right
-        20, 21, 22, 20, 22, 23,   // left
-    ];
+  
 
     // Now send the element array to GL
 
     gl.bufferData(
         gl.ELEMENT_ARRAY_BUFFER,
-        new Uint16Array(indices),
+        obj.indicies,
         gl.STATIC_DRAW,
     );
 

@@ -122,9 +122,11 @@ function drawScene(gl, programInfo, buffers) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
     // Tell WebGL to use our program when drawing
     gl.useProgram(programInfo.program);
+    const f = 24;
+    console.log(f);
 
     {
-        const vertexCount = 36;
+        const vertexCount = f;
         const type = gl.UNSIGNED_SHORT;
         const offset = 0;
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
@@ -184,8 +186,5 @@ function setColorAttribute(gl, buffers, programInfo) {
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 }
 
-function forward(mat) {
-
-}
 
 export { drawScene };
