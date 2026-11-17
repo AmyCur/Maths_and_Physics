@@ -1,21 +1,105 @@
 import { Vector3 } from "../vectors/Vector3.js";
 
 export class Primative {
-    Translate(){
+    Translate() {
         const mat = mat4.create(new Float32Array(this.positions));
         // mat4.translate(vec3.create(0,0,0));
         // this.positions=mat4.getTranslation(mat);
+    }
+
+    copy(prim) {
+        return prim;
     }
 
     constructor(positions, colors, indices, position, scale) {
         this.positions = positions;
         this.colors = colors;
         this.indices = indices;
-        this.position=position;
-        this.scale=scale;
+        this.position = position;
+        this.scale = scale;
 
         this.Translate();
     }
+
+    MakeCube() {
+        return new Primative(
+            defaultCubeData.positions,
+            defaultCubeData.colors,
+            defaultCubeData.indicies,
+            defaultCubeData.position,
+            defaultCubeData.scale
+        )
+    }
+}
+
+export const defaultCubeData = {
+    positions: [
+        // Front face
+        -1, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
+
+        // Back face
+        -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0,
+
+        // Top face
+        -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,
+
+        // Bottom face
+        -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0,
+
+        // Right face
+        1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0,
+
+        // Left face
+        -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0,
+    ],
+    colors: [
+        [1.0, 1.0, 1.0, 1.0], // Front face: white
+        [1.0, 0.0, 0.0, 1.0], // Back face: red
+        [0.0, 1.0, 0.0, 1.0], // Top face: green
+        [0.0, 0.0, 1.0, 1.0], // Bottom face: blue
+        [1.0, 1.0, 0.0, 1.0], // Right face: yellow
+        [1.0, 0.0, 1.0, 1.0], // Left face: purple
+    ],
+    indicies: [
+        0,
+        1,
+        2,
+        0,
+        2,
+        3, // front
+        4,
+        5,
+        6,
+        4,
+        6,
+        7, // back
+        8,
+        9,
+        10,
+        8,
+        10,
+        11, // top
+        12,
+        13,
+        14,
+        12,
+        14,
+        15, // bottom
+        16,
+        17,
+        18,
+        16,
+        18,
+        19, // right
+        20,
+        21,
+        22,
+        20,
+        22,
+        23, // left
+    ],
+    position: new Vector3(0, 0, 0),
+    scale: new Vector3(2, 2, 2)
 }
 
 export const cube = new Primative(
@@ -84,8 +168,8 @@ export const cube = new Primative(
         22,
         23, // left
     ],
-    new Vector3(0,0,0),
-    new Vector3(2,2,2)
+    new Vector3(0, 0, 0),
+    new Vector3(2, 2, 2)
 );
 
 export const floor = new Primative(
@@ -154,6 +238,6 @@ export const floor = new Primative(
         22,
         23, // left
     ],
-    new Vector3(0,-10,0),
-    new Vector3(100,0.1,100)
+    new Vector3(0, -10, 0),
+    new Vector3(100, 0.1, 100)
 );

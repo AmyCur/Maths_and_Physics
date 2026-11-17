@@ -1,4 +1,5 @@
 import { MUtil } from "../util/MathUtil.js";
+import { Time } from "../util/Time.js";
 import { Vector3 } from "../vectors/Vector3.js";
 
 class Player{ 
@@ -7,7 +8,6 @@ class Player{
         this.position=position;
         this.jumping=false;
         this.text = document.getElementById("player-pos");
-        this.deltaTime=0;
         this.jumpForce=jumpForce/100;
     }
 
@@ -45,11 +45,11 @@ class Player{
             this.position.y-=this.jumpForce;
             i++;
             if(i>=150 || this.Grounded()) clearInterval(interval);
-        }, 1*player.deltaTime)
+        }, 1*Time.deltaTime)
             
         
         this.jumping=false;
     }
 }
 
-export const player = new Player(new Vector3(15, 0, -10), 15);
+export const player = new Player(new Vector3(0, 0, 0), 15);

@@ -2,6 +2,7 @@ import { InitRendering, Render } from "./rendering/rendering.js";
 import { input } from "./input/input.js";
 import { camera } from "./game_objects/camera.js";
 import { player } from "./game_objects/Player.js";
+import { Time } from "./util/Time.js";
 
 
 function Main() {
@@ -20,12 +21,12 @@ function Main() {
     function GameLoop(now) {
         //#region Timing
         now *= 0.001; // convert to seconds
-        player.deltaTime = now - then;
+        Time.deltaTime = now - then;
         then = now;
         //#endregion
 
         Render(gl, programInfo, buffers);
-        player.position.Add(input.GetPlayerMovementInput(camera.rotation.x));
+        player.position.Add(input.GetPlayerMovementInput());
         player.Gravity();
         player.UpdateUI();
         camera.UpdateUI();

@@ -1,3 +1,4 @@
+import { camera } from "../game_objects/camera.js";
 import { player } from "../game_objects/Player.js";
 import { Vector2 } from "../vectors/Vector2.js";
 
@@ -10,6 +11,13 @@ class Input{
         KeyA: false,
         KeyD: false,
         ShiftLeft: false
+    }
+
+    forwards(cameraRotationX){
+        return new Vector2(
+            Math.sin(cameraRotationX),
+            Math.cos(cameraRotationX)
+        );
     }
 
     angle=0;
@@ -33,11 +41,9 @@ class Input{
         });
     }
 
-    GetPlayerMovementInput(cameraRotationX){
-        const forwards = new Vector2(
-            Math.sin(cameraRotationX),
-            Math.cos(cameraRotationX)
-        );
+    GetPlayerMovementInput(){
+        const forwards=this.forwards(camera.rotation.x);
+
         const backwards = forwards.Invert();
         const right = forwards.Rotate(270);
         const left = right.Invert();

@@ -1,19 +1,17 @@
 import { initBuffersPrimative } from "./init-buffers.js";
 import { input } from "../input/input.js";
 import { initShaderProgram } from "./shaders.js";
-import { cube, floor } from "./Primative.js";
+import { cube, defaultCubeData, floor, Primative } from "./Primative.js";
 import { player } from "../game_objects/Player.js";
 import { camera } from "../game_objects/camera.js";
-
-let cubeRotation = 0.0;
-let deltaTime = 0;
+import { Vector3 } from "../vectors/Vector3.js";
 
 //#region Initialisation
 function GetSceneSettings(gl) {
     const fieldOfView = (45 * Math.PI) / 180; // in radians
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
-    const zFar = 100.0;
+    const zFar = 1000.0;
 
     return {
         fieldOfView: fieldOfView,
@@ -71,14 +69,21 @@ export function InitRendering() {
         },
     };
 
-
+    //* Create the buffers
     const cb = initBuffersPrimative(gl, cube);
     const fb = initBuffersPrimative(gl, floor);
+    
+    const crossHair = initBuffersPrimative(gl, new Primative().MakeCube());
+
+    // crossHair.prim.position=new Vector3(1,5,0);
 
     return {
         gl: gl,
         programInfo: programInfo,
-        buffers: [cb, fb]
+        buffers: {
+            UI: [crossHair],
+            D3: [fb]
+        }
     }
 }
 //#endregion
@@ -118,7 +123,7 @@ export function Render(gl, programInfo, buffers) {
     mat4.translate(
         projectionMatrix,
         projectionMatrix,
-        [0, Math.sin(input.angle)/7, 0]
+        [0, Math.sin(input.angle) / 7, 0]
     );
 
     mat4.rotateX(
@@ -139,42 +144,17 @@ export function Render(gl, programInfo, buffers) {
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
-    for (const b of buffers) {
-        gl.uniform4fv(
-            programInfo.uniformLocations.position,
-            [
-                b.prim.position.x,
-                b.prim.position.y,
-                b.prim.position.z,
-                1
-            ],
-        );
 
-        gl.uniform4fv(
-            programInfo.uniformLocations.scale,
-            [
-                b.prim.scale.x,
-                b.prim.scale.y,
-                b.prim.scale.z,
-                1
-            ]
-        );
-
-        setPositionAttribute(gl, b, programInfo);
-        setColorAttribute(gl, b, programInfo);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.indices);
-        gl.useProgram(programInfo.program);
-
-        const f = 36;
-
-        {
-            const vertexCount = f;
-            const type = gl.UNSIGNED_SHORT;
-            const offset = 0;
-            gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
-        }
-
+    for (const b of buffers.D3) {
+        RenderBuffer(gl, b, programInfo);
     }
+
+
+    for (const b of buffers.UI) {
+        RenderBuffer(gl, b, programInfo);
+    }
+    
+
 
     // Tell WebGL to use our program when drawing
 
@@ -191,7 +171,42 @@ export function Render(gl, programInfo, buffers) {
         false,
         modelViewMatrix,
     );
+}
 
+function RenderBuffer(gl, b, programInfo) {
+    gl.uniform4fv(
+        programInfo.uniformLocations.position,
+        [
+            b.prim.position.x,
+            b.prim.position.y,
+            b.prim.position.z,
+            1
+        ],
+    );
+
+    gl.uniform4fv(
+        programInfo.uniformLocations.scale,
+        [
+            b.prim.scale.x,
+            b.prim.scale.y,
+            b.prim.scale.z,
+            1
+        ]
+    );
+
+    setPositionAttribute(gl, b, programInfo);
+    setColorAttribute(gl, b, programInfo);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.indices);
+    gl.useProgram(programInfo.program);
+
+    const f = 36;
+
+    {
+        const vertexCount = f;
+        const type = gl.UNSIGNED_SHORT;
+        const offset = 0;
+        gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+    }
 }
 
 // Tell WebGL how to pull out the positions from the position
