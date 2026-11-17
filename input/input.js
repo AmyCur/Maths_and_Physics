@@ -1,3 +1,4 @@
+import { player } from "../game_objects/Player.js";
 import { Vector2 } from "../vectors/Vector2.js";
 
 
@@ -10,6 +11,8 @@ class Input{
         KeyD: false,
         ShiftLeft: false
     }
+
+    angle=0;
 
     GetKey(code){
         if(this.keysDown.hasOwnProperty(code)) return this.keysDown[code];
@@ -45,6 +48,9 @@ class Input{
         if(this.GetKey("KeyS")) movementVector.Add(backwards);
         if(this.GetKey("KeyD")) movementVector.Add(left);
         if(this.GetKey("KeyA")) movementVector.Add(right);
+
+        if((movementVector.x!=0 || movementVector.y!=0) && player.Grounded()) this.angle+=0.5;
+        if(!player.Grounded()) this.angle=0;
         // if(this.GetKey("Space")) 
 
         // console.log(movementVector);

@@ -11,24 +11,26 @@ function Main() {
     const buffers = rendering.buffers;
 
     let then=0;
-    let deltaTime=0;
 
-    camera.LockMouse(gl.canvas);
+
     input.AddListeners();
     camera.AddListeners(gl.canvas);
+    camera.LockMouse(gl.canvas);
 
     function GameLoop(now) {
         //#region Timing
         now *= 0.001; // convert to seconds
-        deltaTime = now - then;
+        player.deltaTime = now - then;
         then = now;
         //#endregion
 
         Render(gl, programInfo, buffers);
         player.position.Add(input.GetPlayerMovementInput(camera.rotation.x));
         player.Gravity();
+        player.UpdateUI();
+        camera.UpdateUI();
+        
         if(input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
-
 
         requestAnimationFrame(GameLoop);
     }

@@ -1,6 +1,7 @@
 export class MathUtil {
     constructor() { 
         this.Deg2Rad=0.01745329252;
+        this.Rad2Deg=57.2958;
     }
 
     clamp(v, lower, upper) {
