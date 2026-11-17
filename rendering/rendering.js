@@ -1,8 +1,8 @@
-import { initBuffers } from "./init-buffers.js";
+import { initBuffers, initBuffersPrimative } from "./init-buffers.js";
 import * as draw from "./draw-scene.js";
 import { input } from "../input/input.js";
 import { initShaderProgram } from "./shaders.js";
-import { cube } from "./Primative.js";
+import { cube, floor } from "./Primative.js";
 
 
 let cubeRotation = 0.0;
@@ -40,6 +40,8 @@ export function InitRendering() {
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
+            position: gl.getUniformLocation(shaderProgram, "position"),
+            scale: gl.getUniformLocation(shaderProgram, "scale"),
         },
     };
 
@@ -47,7 +49,8 @@ export function InitRendering() {
     // objects we'll be drawing.
     
 
-    const buffers = initBuffers(gl, cube.positions, cube.colors, cube.indicies);
+    const cb = initBuffersPrimative(gl, cube);
+    const fb = initBuffersPrimative(gl, floor);
 
     // // Draw the scene
     // let then = 0;
@@ -76,7 +79,7 @@ export function InitRendering() {
     return {
         gl: gl,
         programInfo: programInfo,
-        buffers: buffers
+        buffers: [cb, fb]
     }
 }
 

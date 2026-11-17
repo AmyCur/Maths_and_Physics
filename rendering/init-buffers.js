@@ -1,13 +1,27 @@
-export function initBuffersPrimative(gl, prim){
-    initBuffers(gl, prim.positions, prim.colors, prim.indicies);
+
+function createShapeBuffer(gl, data) {
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+  return buffer;
 }
 
-function initBuffers(gl, positions, colors, indicies) {
+
+
+export function initBuffersPrimative(gl, prim) {
+  const ib = initBuffers(gl, prim.positions, prim.colors, prim.indices);
+  return {
+    position: ib.position,
+    color: ib.color,
+    indices: ib.indices,
+    prim: prim
+  }
+}
+
+function initBuffers(gl, positions, colors, indices) {
   const positionBuffer = initPositionBuffer(gl, positions);
-
   const colorBuffer = initColorBuffer(gl, colors);
-
-  const indexBuffer = initIndexBuffer(gl, indicies);
+  const indexBuffer = initIndexBuffer(gl, indices);
 
   return {
     position: positionBuffer,
@@ -24,7 +38,7 @@ function initPositionBuffer(gl, positions) {
   // operations to from here out.
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-  
+
 
   // Now pass the list of positions into WebGL to build the
   // shape. We do this by creating a Float32Array from the
@@ -35,7 +49,7 @@ function initPositionBuffer(gl, positions) {
 }
 
 function initColorBuffer(gl, faceColors) {
-  
+
 
   // Convert the array of colors into a table for all the vertices.
 
@@ -62,7 +76,7 @@ function initIndexBuffer(gl, indices) {
   // indices into the vertex array to specify each triangle's
   // position.
 
- 
+
   // Now send the element array to GL
 
   gl.bufferData(

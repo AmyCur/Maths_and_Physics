@@ -1,26 +1,30 @@
 import { Vector2 } from "../vectors/Vector2.js";
 import { input } from "../input/input.js";
+import { MathUtil, MUtil } from "../util/MathUtil.js";
 
 class Camera {
-
-    
-
     rotation;
 
     constructor(rotation) {
         this.rotation = rotation;
         this.mousePos = { x: 0, y: 0 };
         this.sensitivityModifier = 300;
-        this.Deg2Rad=0.01745329252;
     }
 
     Add(x, y) {
         this.rotation.x += x;
         this.rotation.y += y;
         
-        if(this.rotation.y>90*this.Deg2Rad) this.rotation.y=90*this.Deg2Rad;
-        if(this.rotation.y<-90*this.Deg2Rad) this.rotation.y=-90*this.Deg2Rad;
-        console.log(this.rotation.y);
+        this.rotation.y = MUtil.clamp(this.rotation.y, -90*MUtil.Deg2Rad, 90*MUtil.Deg2Rad);
+
+    }
+
+    LockMouse(canvas) {
+        canvas.addEventListener("click", async () => {
+            await canvas.requestPointerLock({
+                unadjustedMovement: true,
+            });
+        });
     }
 
     AddListeners(canvas) {

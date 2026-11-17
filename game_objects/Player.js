@@ -10,4 +10,4 @@ class Player{
     }    
 }
 
-export const player = new Player(new Vector3(8, 0, -7));
+export const player = new Player(new Vector3(15, 0, -10));

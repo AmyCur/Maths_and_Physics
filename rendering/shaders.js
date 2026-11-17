@@ -6,10 +6,13 @@ const vsSource = `
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
 
+    uniform vec4 position;
+    uniform vec4 scale;
+
     varying lowp vec4 vColor;
 
     void main(void) {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+      gl_Position = uProjectionMatrix *  uModelViewMatrix  * (scale * aVertexPosition + position);
       vColor = aVertexColor;
     }
   `;
@@ -36,7 +39,7 @@ export function initShaderProgram(gl) {
     // If creating the shader program failed, alert
 
     if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        alert(
+        console.warn(
             `Unable to initialize the shader program: ${gl.getProgramInfoLog(
                 shaderProgram,
             )}`,
@@ -68,7 +71,7 @@ function loadShader(gl, type, source) {
     // See if it compiled successfully
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert(
+        console.warn(
             `An error occurred compiling the shaders: ${gl.getShaderInfoLog(shader)}`,
         );
         gl.deleteShader(shader);

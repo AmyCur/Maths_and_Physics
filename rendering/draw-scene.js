@@ -1,10 +1,11 @@
 import { camera } from "../game_objects/camera.js";
 import { player } from "../game_objects/Player.js";
+import { cube } from "./Primative.js";
 
-export const cameraRot = {x: 0, y: 0};
+export const cameraRot = { x: 0, y: 0 };
 
 
-function GetSceneSettings(gl){
+function GetSceneSettings(gl) {
     const fieldOfView = (45 * Math.PI) / 180; // in radians
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
@@ -19,7 +20,7 @@ function GetSceneSettings(gl){
 }
 
 
-function ReadyScene(gl){
+function ReadyScene(gl) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
     gl.clearDepth(1.0); // Clear everything
     gl.enable(gl.DEPTH_TEST); // Enable depth testing
@@ -31,7 +32,7 @@ function ReadyScene(gl){
 }
 
 function drawScene(gl, programInfo, buffers) {
-    
+
     ReadyScene(gl);
 
     // Create a perspective matrix, a special matrix that is
@@ -54,12 +55,12 @@ function drawScene(gl, programInfo, buffers) {
     // the center of the scene.
     const modelViewMatrix = mat4.create();
 
-    
+
 
     mat4.translate(
         modelViewMatrix,
         modelViewMatrix,
-        [player.position.x,player.position.y,player.position.z]
+        [player.position.x, player.position.y, player.position.z]
     );
 
     mat4.rotateX(
@@ -74,21 +75,52 @@ function drawScene(gl, programInfo, buffers) {
         -camera.rotation.x
     )
 
+    console.log(cube.position.y);
+
+
+
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
-    setPositionAttribute(gl, buffers, programInfo);
-    setColorAttribute(gl, buffers, programInfo);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
-    // Tell WebGL to use our program when drawing
-    gl.useProgram(programInfo.program);
-    const f = 36;
+    for (const b of buffers) {
+        gl.uniform4fv(
+            programInfo.uniformLocations.position,
+            [
+                b.prim.position.x,
+                b.prim.position.y,
+                b.prim.position.z,
+                1
+            ],
+        );
 
-    {
-        const vertexCount = f;
-        const type = gl.UNSIGNED_SHORT;
-        const offset = 0;
-        gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+        gl.uniform4fv(
+            programInfo.uniformLocations.scale,
+            [
+                b.prim.scale.x,
+                b.prim.scale.y,
+                b.prim.scale.z,
+                1
+            ]
+        );
+
+        setPositionAttribute(gl, b, programInfo);
+        setColorAttribute(gl, b, programInfo);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.indices);
+        gl.useProgram(programInfo.program);
+
+        const f = 36;
+
+        {
+            const vertexCount = f;
+            const type = gl.UNSIGNED_SHORT;
+            const offset = 0;
+            gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+        }
+
     }
+
+    // Tell WebGL to use our program when drawing
+
+
     // Set the shader uniforms
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.projectionMatrix,

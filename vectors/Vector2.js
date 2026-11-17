@@ -1,3 +1,4 @@
+import { MUtil } from "../util/MathUtil.js";
 import { Vector } from "./Vector.js";
 import { Vector3 } from "./Vector3.js";
 
@@ -39,7 +40,7 @@ export class Vector2 extends Vector{
     }
 
     Rotate(angle) {
-        angle*=this.Deg2Rad;
+        angle*=MUtil.Deg2Rad;
         const nx = (this.x * Math.cos(angle)) - (this.y * Math.sin(angle));
         const ny = (this.x * Math.sin(angle)) + (this.y * Math.cos(angle));
 
