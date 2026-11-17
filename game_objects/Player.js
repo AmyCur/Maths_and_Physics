@@ -1,4 +1,3 @@
-import { Vector2 } from "../vectors/Vector2.js";
 import { Vector3 } from "../vectors/Vector3.js";
 
 class Player{

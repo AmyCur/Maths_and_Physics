@@ -1,11 +1,9 @@
 import { Vector2 } from "../vectors/Vector2.js";
-import { input } from "./input.js";
+import { input } from "../input/input.js";
 
 class Camera {
 
     rotation;
-
-
 
     constructor(rotation) {
         this.rotation = rotation;
@@ -30,7 +28,7 @@ class Camera {
             }
 
             this.mousePos.x = e.clientX;
-                this.mousePos.y = e.clientY;
+            this.mousePos.y = e.clientY;
 
         });
     }

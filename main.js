@@ -1,9 +1,9 @@
 import { InitRendering, Render } from "./rendering/rendering.js";
 import * as draw from "./rendering/draw-scene.js";
 import { input } from "./input/input.js";
-import { camera } from "./input/camera.js";
+import { camera } from "./game_objects/camera.js";
 import { Vector2 } from "./vectors/Vector2.js";
-import { player } from "./input/Player.js";
+import { player } from "./game_objects/Player.js";
 
 function Main() {
     const rendering = InitRendering();

@@ -1,5 +1,5 @@
-import { camera } from "../input/camera.js";
-import { player } from "../input/Player.js";
+import { camera } from "../game_objects/camera.js";
+import { player } from "../game_objects/Player.js";
 
 export const cameraRot = {x: 0, y: 0};
 
