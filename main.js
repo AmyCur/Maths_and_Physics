@@ -26,6 +26,8 @@ function Main() {
 
         Render(gl, programInfo, buffers);
         player.position.Add(input.GetPlayerMovementInput(camera.rotation.x));
+        player.Gravity();
+        if(input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
 
 
         requestAnimationFrame(GameLoop);
