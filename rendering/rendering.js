@@ -5,6 +5,7 @@ import { cube, defaultCubeData, floor, Primative } from "./Primative.js";
 import { player } from "../game_objects/Player.js";
 import { camera } from "../game_objects/camera.js";
 import { Vector3 } from "../vectors/Vector3.js";
+import { EController, EnemyController } from "../enemies/EnemyController.js";
 
 //#region Initialisation
 function GetSceneSettings(gl) {
@@ -72,7 +73,13 @@ export function InitRendering() {
     //* Create the buffers
     const cb = initBuffersPrimative(gl, cube);
     const fb = initBuffersPrimative(gl, floor);
-    
+
+
+
+
+
+
+
     const crossHair = initBuffersPrimative(gl, new Primative().MakeCube());
 
     // crossHair.prim.position=new Vector3(1,5,0);
@@ -81,8 +88,8 @@ export function InitRendering() {
         gl: gl,
         programInfo: programInfo,
         buffers: {
-            UI: [crossHair],
-            D3: [fb]
+            UI: [],
+            World: [fb],
         }
     }
 }
@@ -112,8 +119,6 @@ export function Render(gl, programInfo, buffers) {
     // the center of the scene.
     const modelViewMatrix = mat4.create();
 
-
-
     mat4.translate(
         modelViewMatrix,
         modelViewMatrix,
@@ -121,8 +126,8 @@ export function Render(gl, programInfo, buffers) {
     );
 
     mat4.translate(
-        projectionMatrix,
-        projectionMatrix,
+        modelViewMatrix,
+        modelViewMatrix,
         [0, Math.sin(input.angle) / 7, 0]
     );
 
@@ -138,14 +143,25 @@ export function Render(gl, programInfo, buffers) {
         -camera.rotation.x
     )
 
-    console.log(cube.position.y);
+    const enemyBuffers = [];
+
+    for(let i = 0; i < EController.enemies.length; i++){
+        const prim = new Primative().MakeCube();
+        prim.SetPosition(EController.enemies[i].position);
+        prim.SetScale(EController.enemies[i].scale);
+
+        const eb = initBuffersPrimative(gl, prim);
+
+        enemyBuffers.push(eb);
+    }
 
 
+    
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
 
-    for (const b of buffers.D3) {
+    for (const b of buffers.World) {
         RenderBuffer(gl, b, programInfo);
     }
 
@@ -153,7 +169,16 @@ export function Render(gl, programInfo, buffers) {
     for (const b of buffers.UI) {
         RenderBuffer(gl, b, programInfo);
     }
-    
+
+
+    for (let i = 0; i < enemyBuffers.length; i++) {
+        console.log("Render")
+        RenderBuffer(gl, enemyBuffers[i], programInfo);
+    }
+
+
+
+
 
 
     // Tell WebGL to use our program when drawing

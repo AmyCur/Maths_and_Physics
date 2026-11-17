@@ -32,8 +32,6 @@ class Player{
         else{
             this.gravityScale*=1.041
             const distancePerTick = MUtil.clamp(this.gravityScale*0.1, 0, (this.position+(this.gravityScale*0.1)));
-            if(player.position.y<=0)console.log(player.position.y);
-            else console.warn(player.position.y);
             this.position.y+=distancePerTick;
         }
     }

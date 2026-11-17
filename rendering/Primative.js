@@ -11,6 +11,14 @@ export class Primative {
         return prim;
     }
 
+    SetPosition(position){
+        this.position=position;
+    }
+
+    SetScale(scale){
+        this.scale=scale;
+    }
+
     constructor(positions, colors, indices, position, scale) {
         this.positions = positions;
         this.colors = colors;

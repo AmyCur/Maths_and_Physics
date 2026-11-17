@@ -41,10 +41,14 @@ export class Mat4 {
 
     perspective(fov, aspect, zNear, zFar) {
         const m = this.m;
-        m[0] = aspect*(1/(Math.tan(fov/2)));
-        m[5] = 1/Math.tan(fov/2);
-
-
+        m[0] = aspect * (1 / (Math.tan(fov / 2)));
+        m[5] = 1 / (Math.tan(fov / 2));
+        m[10] = -((zFar + zNear) / (zFar - zNear))
+        m[11] = -((2 * zFar * zNear) / (zFar - zNear));
+        m[14] = -1;
+        m[15] = 0;
+        this.set(m);
+        return this;
     }
 
     transpose() {
@@ -188,5 +192,3 @@ function normalizeVector(v) {
     if (len === 0) return [0, 0, 0];
     return scaleVetor(v, 1 / len);
 }
-
-export { Mat4 };
