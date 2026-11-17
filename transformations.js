@@ -1,3 +1,6 @@
+import { Mat4 } from "./maths.js";
+import * as util  from "./webGLUtils.js";
+
 // Define vertex shader
 const vertexShaderSource =
   `#version 300 es
@@ -8,9 +11,10 @@ in vec3 aColour;
 in vec2 aTexCoord;
 out vec3 vColour;
 out vec2 vTexCoord;
+uniform mat4 uModel;
 
 void main() {
-  gl_Position = vec4(aPosition, 1.0);
+  gl_Position = uModel * vec4(aPosition, 1.0);
   vColour = aColour;
   vTexCoord=aTexCoord;
 }`;
@@ -31,16 +35,16 @@ const fragmentShaderSource =
 
 
 /** @type {WebGL2RenderingContext} */
-const gl = initWebGL("canvas");
+const gl = util.initWebGL("canvas");
 
 
 // Create WebGL program 
-const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
+const program = util.createProgram(gl, vertexShaderSource, fragmentShaderSource);
 
 // Set the shader program
 gl.useProgram(program);
 
-const texture = loadTexture(gl, "assets/mario.png");
+const texture = util.loadTexture(gl, "assets/mario.png");
 
 let num=Math.random();
 
@@ -48,9 +52,9 @@ let num=Math.random();
 let vertices = new Float32Array([
   // x      y     z              
   -0.5, -0.5, 0.0, 1, 0, 0, 0, 0,// vertex 0     3 -- 2
-  0.5, -0.5, 0.0, 0, 1, 0, num * Math.random(), 0, // vertex 1     |  / |    
-  0.5, 0.5, 0.0, 0, 0, 1, num * Math.random(), num * Math.random(),// vertex 2     | /  | 
-  -0.5, 0.5, 0.0, 1, 1, 1, 0, num * Math.random() // vertex 3     0 -- 1 
+  0.5, -0.5, 0.0, 0, 1, 0, 1, 0, // vertex 1     |  / |    
+  0.5, 0.5, 0.0, 0, 0, 1, 1, 1,// vertex 2     | /  | 
+  -0.5, 0.5, 0.0, 1, 1, 1, 0, 1 // vertex 3     0 -- 1 
 ]);
 
 // Define the indices
@@ -60,7 +64,7 @@ const indices = new Uint16Array([
 ]);
 
 // Create mesh
-const mesh = createMesh(gl, program, vertices, indices);
+const mesh = util.createMesh(gl, program, vertices, indices);
 
 // Draw Square
 function drawSquare() {
@@ -74,9 +78,18 @@ function drawSquare() {
 
 
 // Render frame
-function render() {
+function render(time) {
+
+  const rps = 1/2;
+  const angle = rps*time*0.001*2*Math.PI;
   
   gl.clear(gl.COLOR_BUFFER_BIT);
+
+  const model = new Mat4()
+    .rotate([0,0,1], angle)
+    .translate([0.4,0.3,0])
+    .scale([0.5,0.4,1]);
+  gl.uniformMatrix4fv(gl.getUniformLocation(program, "uModel"), false, model.m);
 
   // draw
   drawSquare();

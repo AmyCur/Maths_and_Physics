@@ -1,5 +1,5 @@
 // Initialize WebGL context
-function initWebGL(canvasId) {
+export function initWebGL(canvasId) {
   const canvas = document.getElementById(canvasId);
   const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
   if (!gl) throw new Error('WebGL not supported');
@@ -11,7 +11,7 @@ function initWebGL(canvasId) {
   return gl;
 }
 
-function loadTexture(gl, url) {
+export function loadTexture(gl, url) {
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -44,12 +44,12 @@ function loadTexture(gl, url) {
   return texture;
 }
 
-function isPowerOf2(x) {
+export function isPowerOf2(x) {
   return (x & (x - 1)) === 0;
 }
 
 // Compile a shader
-function compileShader(gl, source, type) {
+export function compileShader(gl, source, type) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
@@ -63,7 +63,7 @@ function compileShader(gl, source, type) {
 }
 
 // Create shader program
-function createProgram(gl, vertexSrc, fragmentSrc) {
+export function createProgram(gl, vertexSrc, fragmentSrc) {
   const vertexShader = compileShader(gl, vertexSrc, gl.VERTEX_SHADER);
   const fragmentShader = compileShader(gl, fragmentSrc, gl.FRAGMENT_SHADER);
 
@@ -81,7 +81,7 @@ function createProgram(gl, vertexSrc, fragmentSrc) {
 }
 
 // Create Mesh
-function createMesh(gl, program, vertices, indices) {
+export function createMesh(gl, program, vertices, indices) {
 
   // Create VAO
   const vao = gl.createVertexArray();
