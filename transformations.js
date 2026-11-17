@@ -44,7 +44,7 @@ const program = util.createProgram(gl, vertexShaderSource, fragmentShaderSource)
 // Set the shader program
 gl.useProgram(program);
 
-const texture = util.loadTexture(gl, "assets/mario.png");
+const texture = util.loadTexture(gl, "assets/e3a86664fd2d4dd8358ce5c60b4f1670.jpg");
 
 let num=Math.random();
 
@@ -76,19 +76,22 @@ function drawSquare() {
   gl.bindVertexArray(null);
 }
 
+let i;
 
 // Render frame
 function render(time) {
+  i++;
 
   const rps = 1/2;
   const angle = rps*time*0.001*2*Math.PI;
   
   gl.clear(gl.COLOR_BUFFER_BIT);
-
+  
   const model = new Mat4()
-    .rotate([0,0,1], angle)
-    .translate([0.4,0.3,0])
-    .scale([0.5,0.4,1]);
+    .rotate([Math.random()**2,Math.random(),Math.random()], angle)
+    .translate([Math.random(),Math.random(),Math.random()])
+    .rotate([Math.random()**2**2**2**2**2**2**2**2**2**2**2**2,Math.random()**2**2**2**2**2**2**2**2**2**2**2**2,Math.random()**2**2**2**2**2**2**2**2**2**2**2**2], angle**2)
+    .scale([Math.random()*2,Math.random(),Math.random()**2**2**2**2**2**2**2**2**2**2**2**2]);
   gl.uniformMatrix4fv(gl.getUniformLocation(program, "uModel"), false, model.m);
 
   // draw
