@@ -4,6 +4,7 @@ import { input } from "./input/input.js";
 import { camera } from "./game_objects/camera.js";
 import { Vector2 } from "./vectors/Vector2.js";
 import { player } from "./game_objects/Player.js";
+import { mouse } from "./input/Mouse.js";
 
 function Main() {
     const rendering = InitRendering();
@@ -14,6 +15,7 @@ function Main() {
     let then=0;
     let deltaTime=0;
 
+    mouse.LockMouse(gl.canvas);
     input.AddListeners();
     camera.AddListeners(gl.canvas);
 

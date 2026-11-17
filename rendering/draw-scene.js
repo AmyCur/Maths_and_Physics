@@ -82,7 +82,6 @@ function drawScene(gl, programInfo, buffers) {
     // Tell WebGL to use our program when drawing
     gl.useProgram(programInfo.program);
     const f = 36;
-    console.log(f);
 
     {
         const vertexCount = f;
