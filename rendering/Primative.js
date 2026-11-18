@@ -1,11 +1,9 @@
+import { Entity } from "../game_objects/Entity.js";
+import { GameObject } from "../game_objects/GameObject.js";
+import { Raycast } from "../input/Raycast.js";
 import { Vector3 } from "../vectors/Vector3.js";
 
-export class Primative {
-    Translate() {
-        const mat = mat4.create(new Float32Array(this.positions));
-        // mat4.translate(vec3.create(0,0,0));
-        // this.positions=mat4.getTranslation(mat);
-    }
+export class Primative extends Entity{
 
     copy(prim) {
         return prim;
@@ -15,18 +13,26 @@ export class Primative {
         this.position=position;
     }
 
+    GetPositon() {
+        return this.position;
+    }
+
     SetScale(scale){
         this.scale=scale;
     }
 
-    constructor(positions, colors, indices, position, scale) {
+    SetRotation(rotation){
+        this.rotation=rotation;
+    }
+
+    
+
+    constructor(positions, colors, indices, position, scale, rotation = new Vector3(0,0,0), health = 100) {
+        super(position, scale, rotation, health);
         this.positions = positions;
+        this.primPos=position;
         this.colors = colors;
         this.indices = indices;
-        this.position = position;
-        this.scale = scale;
-
-        this.Translate();
     }
 
     MakeCube() {
@@ -201,9 +207,9 @@ export const floor = new Primative(
         -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0,
     ],
     [
+        [0.0, 1.0, 0.0, 1.0], // Top face: green
         [1.0, 1.0, 1.0, 1.0], // Front face: white
         [1.0, 0.0, 0.0, 1.0], // Back face: red
-        [0.0, 1.0, 0.0, 1.0], // Top face: green
         [0.0, 0.0, 1.0, 1.0], // Bottom face: blue
         [1.0, 1.0, 0.0, 1.0], // Right face: yellow
         [1.0, 0.0, 1.0, 1.0], // Left face: purple

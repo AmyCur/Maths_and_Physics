@@ -39,16 +39,37 @@ export class Mat4 {
         return this;
     }
 
-    perspective(fov, aspect, zNear, zFar) {
-        const m = this.m;
-        m[0] = aspect * (1 / (Math.tan(fov / 2)));
-        m[5] = 1 / (Math.tan(fov / 2));
-        m[10] = -((zFar + zNear) / (zFar - zNear))
-        m[11] = -((2 * zFar * zNear) / (zFar - zNear));
-        m[14] = -1;
-        m[15] = 0;
-        this.set(m);
-        return this;
+    perspective(fov, near, far) {
+
+        const upFov=45;
+        const downFov=45;
+        const leftFov=50;
+        const rightFov=50;
+
+        const out = this.m;
+        let upTan = Math.tan((upFov * Math.PI) / 180.0);
+        let downTan = Math.tan((downFov * Math.PI) / 180.0);
+        let leftTan = Math.tan((leftFov * Math.PI) / 180.0);
+        let rightTan = Math.tan((rightFov * Math.PI) / 180.0);
+        let xScale = 2.0 / (leftTan + rightTan);
+        let yScale = 2.0 / (upTan + downTan);
+        out[0] = xScale;
+        out[1] = 0.0;
+        out[2] = 0.0;
+        out[3] = 0.0;
+        out[4] = 0.0;
+        out[5] = yScale;
+        out[6] = 0.0;
+        out[7] = 0.0;
+        out[8] = -((leftTan - rightTan) * xScale * 0.5);
+        out[9] = (upTan - downTan) * yScale * 0.5;
+        out[10] = far / (near - far);
+        out[11] = -1.0;
+        out[12] = 0.0;
+        out[13] = 0.0;
+        out[14] = (far * near) / (near - far);
+        out[15] = 0.0;
+        this.set(out);
     }
 
     transpose() {

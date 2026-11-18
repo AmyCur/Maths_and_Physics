@@ -10,7 +10,8 @@ class Input{
         KeyS: false,
         KeyA: false,
         KeyD: false,
-        ShiftLeft: false
+        ShiftLeft: false,
+        Mouse: false
     }
 
     forwards(cameraRotationX){
@@ -39,6 +40,14 @@ class Input{
         document.addEventListener("keyup", (e) => {
             this.SetKey(e.code, false);
         });
+
+        document.addEventListener("mousedown", (e) => {
+            this.SetKey("Mouse", true);
+        })
+
+        document.addEventListener("mouseup", (e) => {
+            this.SetKey("Mouse", false);
+        })
     }
 
     GetPlayerMovementInput(){

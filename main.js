@@ -36,10 +36,11 @@ function Main() {
         if(Math.floor(tick)%enemySpawnInterval==0){
             tick=1;
             console.log("spawning");
-            EController.SpawnEnemy();
+            EController.SpawnEnemy(false, EController.GetRandomVectorAroundThePlayer());
         }
 
         EController.HandleAI();
+        if(input.GetKey("Mouse")) player.Attack();
         player.position.Add(input.GetPlayerMovementInput());
         player.Gravity();
         player.UpdateUI();
@@ -47,7 +48,6 @@ function Main() {
 
         Render(gl, programInfo, buffers);
        
-        
         if(input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
 
         requestAnimationFrame(GameLoop);

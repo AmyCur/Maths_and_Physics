@@ -3,12 +3,12 @@ import { input } from "../input/input.js";
 import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { SUtil } from "../util/StringUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
+import { GameObject } from "./GameObject.js";
 
-class Camera {
-    rotation;
+class Camera extends GameObject{
 
     constructor(rotation) {
-        this.rotation = rotation;
+        super(new Vector3(0,0,0), new Vector3(0,0,0), rotation)
         this.sensitivityModifier = 300;
         this.text = document.getElementById("player-rot");
     }

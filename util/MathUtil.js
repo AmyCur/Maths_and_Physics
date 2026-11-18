@@ -10,6 +10,13 @@ export class MathUtil {
         if (nv > upper) nv = upper;
         return nv;
     }
+
+    lerp(a,b,t){
+        if(t>1) t = 1;
+        if(t<0) t = 0;
+        
+        return ((1-t)*a)+(t*b);
+    }
 }
 
 export const MUtil = new MathUtil();

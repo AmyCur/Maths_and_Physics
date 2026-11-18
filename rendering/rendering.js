@@ -6,6 +6,8 @@ import { player } from "../game_objects/Player.js";
 import { camera } from "../game_objects/camera.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { EController, EnemyController } from "../enemies/EnemyController.js";
+import { Mat4 } from "../vectors/Mat4.js";
+import { Raycast } from "../input/Raycast.js";
 
 //#region Initialisation
 function GetSceneSettings(gl) {
@@ -35,6 +37,8 @@ function ReadyScene(gl) {
 
 
 export function InitRendering() {
+    Raycast.allObjects = [];
+
     const canvas = document.getElementById("gl-canvas");
 
     const gl = canvas.getContext("webgl");
@@ -56,6 +60,10 @@ export function InitRendering() {
     // for the vertices and so forth is established.
     const shaderProgram = initShaderProgram(gl);
 
+
+    const modelMatrix = new Mat4();
+
+
     const programInfo = {
         program: shaderProgram,
         attribLocations: {
@@ -65,8 +73,7 @@ export function InitRendering() {
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
-            position: gl.getUniformLocation(shaderProgram, "position"),
-            scale: gl.getUniformLocation(shaderProgram, "scale"),
+            modelMatrix: gl.getUniformLocation(shaderProgram, "modelMatrix"),
         },
     };
 
@@ -76,6 +83,7 @@ export function InitRendering() {
 
 
 
+    Raycast.allObjects.push(fb);
 
 
 
@@ -96,6 +104,25 @@ export function InitRendering() {
 //#endregion
 
 //#region Rendering Each Frame
+
+function CreateEnemyBuffer(gl){
+    const enemyBuffers = [];
+
+    for(let i = 0; i < EController.enemies.length; i++){
+        const prim = new Primative().MakeCube();
+        prim.SetPosition(EController.enemies[i].position);
+        prim.SetScale(EController.enemies[i].scale);
+        prim.SetRotation(EController.enemies[i].rotation);
+        
+        const eb = initBuffersPrimative(gl, prim);
+        Raycast.allObjects.push(eb);
+
+        enemyBuffers.push(eb);
+    }
+
+    return enemyBuffers;
+}
+
 export function Render(gl, programInfo, buffers) {
     ReadyScene(gl);
 
@@ -109,54 +136,58 @@ export function Render(gl, programInfo, buffers) {
 
     const s = GetSceneSettings(gl);
 
-    const projectionMatrix = mat4.create();
-
     // note: glMatrix always has the first argument
     // as the destination to receive the result.
-    mat4.perspective(projectionMatrix, s.fieldOfView, s.aspect, s.zNear, s.zFar);
+
 
     // Set the drawing position to the "identity" point, which is
     // the center of the scene.
-    const modelViewMatrix = mat4.create();
 
-    mat4.translate(
-        modelViewMatrix,
-        modelViewMatrix,
-        [player.position.x, player.position.y, player.position.z]
-    );
 
-    mat4.translate(
-        modelViewMatrix,
-        modelViewMatrix,
-        [0, Math.sin(input.angle) / 7, 0]
-    );
+    const projectionMatrix = new Mat4();
+    projectionMatrix.perspective(s.fieldOfView, s.zNear, s.zFar);
+    const modelViewMatrix = new Mat4();
 
-    mat4.rotateX(
-        projectionMatrix,
-        projectionMatrix,
-        -camera.rotation.y
-    )
+    modelViewMatrix.translate([player.position.x,player.position.y,player.position.z])
 
-    mat4.rotateY(
-        projectionMatrix,
-        projectionMatrix,
-        -camera.rotation.x
-    )
+    // projectionMatrix.translate([0, Math.sin(input.angle) / 7, 0]);
+    
 
-    const enemyBuffers = [];
+    projectionMatrix.rotate([1,0,0], -camera.rotation.y);
+    projectionMatrix.rotate([0,1,0], -camera.rotation.x);
 
-    for(let i = 0; i < EController.enemies.length; i++){
-        const prim = new Primative().MakeCube();
-        prim.SetPosition(EController.enemies[i].position);
-        prim.SetScale(EController.enemies[i].scale);
+    // note: glMatrix always has the first argument
+    // as the destination to receive the result.
+  
 
-        const eb = initBuffersPrimative(gl, prim);
+    // Set the drawing position to the "identity" point, which is
+    // the center of the scene.
+ 
 
-        enemyBuffers.push(eb);
-    }
+   
 
+    // mat4.translate(
+    //     modelViewMatrix,
+    //     modelViewMatrix,
+    //     [0, Math.sin(input.angle) / 7, 0]
+    // );
+
+    // mat4.rotateX(
+    //     projectionMatrix,
+    //     projectionMatrix,
+    //     -camera.rotation.y
+    // )
+
+    // mat4.rotateY(
+    //     projectionMatrix,
+    //     projectionMatrix,
+    //     -camera.rotation.x
+    // )
 
     
+
+
+    const enemyBuffers = CreateEnemyBuffer(gl);
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
@@ -172,7 +203,6 @@ export function Render(gl, programInfo, buffers) {
 
 
     for (let i = 0; i < enemyBuffers.length; i++) {
-        console.log("Render")
         RenderBuffer(gl, enemyBuffers[i], programInfo);
     }
 
@@ -188,36 +218,51 @@ export function Render(gl, programInfo, buffers) {
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.projectionMatrix,
         false,
-        projectionMatrix,
+        projectionMatrix.m,
     );
 
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.modelViewMatrix,
         false,
-        modelViewMatrix,
+        modelViewMatrix.m,
     );
 }
 
 function RenderBuffer(gl, b, programInfo) {
-    gl.uniform4fv(
-        programInfo.uniformLocations.position,
-        [
-            b.prim.position.x,
-            b.prim.position.y,
-            b.prim.position.z,
-            1
-        ],
-    );
 
-    gl.uniform4fv(
-        programInfo.uniformLocations.scale,
-        [
-            b.prim.scale.x,
-            b.prim.scale.y,
-            b.prim.scale.z,
-            1
-        ]
-    );
+    const modelMatrix = new Mat4();
+    modelMatrix.translate([b.prim.position.x, b.prim.position.y, b.prim.position.z]);
+    modelMatrix.scale([b.prim.scale.x, b.prim.scale.y, b.prim.scale.z]);
+    
+    modelMatrix.rotate([1,0,0],b.prim.rotation.x);
+    modelMatrix.rotate([0,1,0],b.prim.rotation.y);
+    modelMatrix.rotate([0,0,1],b.prim.rotation.z);
+
+    gl.uniformMatrix4fv(
+        programInfo.uniformLocations.modelMatrix,
+        false,
+        modelMatrix.m
+    )
+
+    // gl.uniform4fv(
+    //     programInfo.uniformLocations.position,
+    //     [
+    //         b.prim.position.x,
+    //         b.prim.position.y,
+    //         b.prim.position.z,
+    //         1
+    //     ],
+    // );
+
+    // gl.uniform4fv(
+    //     programInfo.uniformLocations.scale,
+    //     [
+    //         b.prim.scale.x,
+    //         b.prim.scale.y,
+    //         b.prim.scale.z,
+    //         1
+    //     ]
+    // );
 
     setPositionAttribute(gl, b, programInfo);
     setColorAttribute(gl, b, programInfo);

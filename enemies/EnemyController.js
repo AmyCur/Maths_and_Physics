@@ -25,21 +25,35 @@ export class EnemyController {
 
     HandleAI() {
         for (let i = 0; i < this.enemies.length; i++) {
-            this.enemies[i].MoveToTargetPositon();
+            const enem = this.enemies[i];
+            if(enem.intelligent){
+
+                enem.GetStationary();
+
+                if(enem.stationary){
+                   
+                    enem.Attack();
+                    
+                }
+                else{
+                    enem.MoveToTargetPositon();
+                }
+            }
         }
     }
 
-    SpawnEnemy() {
-        if(this.enemies.length<=0)
+    SpawnEnemy(override = false, v3) {
+        if(this.enemies.length<=0 || override)
         this.enemies.push(
             new Enemy(
-                this.GetRandomVectorAroundThePlayer(),
+                v3,
                 new Vector3(0, 0, 0),
                 new Vector3(1, 1, 1),
-                0.5
+                0.5,
+                false
             )
         )
     }
 }
 
-export const EController = new EnemyController(5);
+export const EController = new EnemyController(20);

@@ -5,6 +5,7 @@ const vsSource = `
 
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
+    uniform mat4 modelMatrix;
 
     uniform vec4 position;
     uniform vec4 scale;
@@ -12,7 +13,7 @@ const vsSource = `
     varying lowp vec4 vColor;
 
     void main(void) {
-      gl_Position = uProjectionMatrix *  uModelViewMatrix  * (scale * aVertexPosition + position);
+      gl_Position = uProjectionMatrix * uModelViewMatrix * modelMatrix  * aVertexPosition;
       vColor = aVertexColor;
     }
   `;

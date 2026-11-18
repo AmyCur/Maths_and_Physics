@@ -17,7 +17,17 @@ export class Vector3 extends Vector {
         return `X: ${x}, Y: ${y}, Z: ${z}`;
     }
 
-    
+    Length() {
+        return (
+            Math.sqrt(
+                (this.x * this.x) +
+                (this.y * this.y) +
+                (this.z * this.z)
+            )
+        )
+    }
+
+
 
 
     MultiplyScalar(f) {
