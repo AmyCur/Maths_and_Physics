@@ -1,3 +1,6 @@
+import { camera } from "../game_objects/camera.js";
+import { player } from "../game_objects/Player.js";
+import { Vector2 } from "../vectors/Vector2.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { SUtil } from "./StringUtil.js";
 
@@ -37,6 +40,24 @@ export const VectorUtil = {
         return Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
     },
 
+    Invert(v){
+        return new Vector3(-v.x,-v.y,-v.z);
+    },
+
+    GetDotProductAngle(v1,v2){
+
+    },
+
+
+    GetCameraForwardVector() {
+        const rot = camera.rotation;
+
+        const alpha = rot.x;
+        const beta = rot.y;
+
+        return this.GetVectorFromAngles(alpha, beta);
+    },
+
     GetVectorFromAngles(alpha, beta) {
 
 
@@ -44,7 +65,7 @@ export const VectorUtil = {
         const z = Math.sin(alpha) * Math.cos(beta);
         const y = Math.sin(beta);
 
-        let attackDir = new Vector3(-z,y,-x);
+        let attackDir = new Vector3(-z, y, -x);
 
         return this.Normalize(attackDir);
     },

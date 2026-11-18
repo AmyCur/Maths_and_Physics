@@ -40,19 +40,15 @@ class Player extends Entity {
         if (this.attack.onCD) this.attack.CheckCD();
         else {
 
-            const rot = camera.rotation;
-
-            const alpha = rot.x;
-            const beta = rot.y;
+            
             
             // console.log(`x: ${alpha}, y: ${beta}`);
 
-            const attackDir = VectorUtil.GetVectorFromAngles(alpha, beta);
+            const attackDir = VectorUtil.GetCameraForwardVector();
 
             console.log(attackDir.Print());
 
             const hitObj = Raycast.ShootRay(new Vector3(-player.position.x,-player.position.y,-player.position.z), attackDir, 10);
-
 
             hitObj?.TakeDamage(this.attack.damage);
 

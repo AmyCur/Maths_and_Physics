@@ -38,7 +38,7 @@ class Camera extends GameObject{
 
     AddListeners(canvas) {
         document.addEventListener("mousemove", (e) => {
-            if (!input.GetKey("ShiftLeft")) {
+            if (!input.GetKey("ControlLeft")) {
                 this.Add(-e.movementX / this.sensitivityModifier, -e.movementY / this.sensitivityModifier);
             }
         });

@@ -1,3 +1,4 @@
+import { EController } from "../enemies/EnemyController.js";
 import { GameObject } from "./GameObject.js";
 
 export class Entity extends GameObject{
@@ -6,11 +7,4 @@ export class Entity extends GameObject{
         this.health=health;
     }
 
-    TakeDamage(damage){
-        this.health-=damage;
-        if(this.health<=0) this.Die();
-    
-    }
-
-    Die(){}
 }

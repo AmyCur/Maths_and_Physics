@@ -114,7 +114,7 @@ function CreateEnemyBuffer(gl){
         prim.SetScale(EController.enemies[i].scale);
         prim.SetRotation(EController.enemies[i].rotation);
         
-        const eb = initBuffersPrimative(gl, prim);
+        const eb = initBuffersPrimative(gl, prim, EController.enemies[i]);
         Raycast.allObjects.push(eb);
 
         enemyBuffers.push(eb);
@@ -150,7 +150,7 @@ export function Render(gl, programInfo, buffers) {
 
     modelViewMatrix.translate([player.position.x,player.position.y,player.position.z])
 
-    // projectionMatrix.translate([0, Math.sin(input.angle) / 7, 0]);
+    projectionMatrix.translate([0, Math.sin(input.angle) / 7, 0]);
     
 
     projectionMatrix.rotate([1,0,0], -camera.rotation.y);

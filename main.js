@@ -6,6 +6,7 @@ import { Time } from "./util/Time.js";
 import { EController, EnemyController } from "./enemies/EnemyController.js";
 
 
+
 function Main() {
     const rendering = InitRendering();
     const gl = rendering.gl;
@@ -41,6 +42,11 @@ function Main() {
 
         EController.HandleAI();
         if(input.GetKey("Mouse")) player.Attack();
+        if(input.GetKey("KeyK")) {
+            for(let enem of EController.enemies){
+                enem.Die();
+            }
+        }
         player.position.Add(input.GetPlayerMovementInput());
         player.Gravity();
         player.UpdateUI();

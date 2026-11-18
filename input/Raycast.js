@@ -23,7 +23,7 @@ export const Raycast = {
             //     hit: ${VectorUtil.WithinRange(rayVec, minPos, maxPos)} 
             // `)
                 console.log(`HIT!!!! ${col}`);
-                return col.prim;
+                return col.enemy;
             }
         }
 
@@ -58,7 +58,7 @@ export const Raycast = {
 
                 // If you have return it, else keep going
                 if (hitCollider != null) {
-                    EController.SpawnEnemy(true, rayVec)
+                    // EController.SpawnEnemy(true, rayVec)
                     return hitCollider;
                 }
             }

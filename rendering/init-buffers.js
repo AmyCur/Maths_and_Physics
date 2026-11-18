@@ -8,13 +8,14 @@ function createShapeBuffer(gl, data) {
 
 
 
-export function initBuffersPrimative(gl, prim) {
+export function initBuffersPrimative(gl, prim, enemy) {
   const ib = initBuffers(gl, prim.positions, prim.colors, prim.indices);
   return {
     position: ib.position,
     color: ib.color,
     indices: ib.indices,
-    prim: prim
+    prim: prim,
+    enemy: enemy
   }
 }
 
