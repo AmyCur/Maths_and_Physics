@@ -44,7 +44,7 @@ export const VectorUtil = {
         const z = Math.sin(alpha) * Math.cos(beta);
         const y = Math.sin(beta);
 
-        let attackDir = new Vector3(x,y,z);
+        let attackDir = new Vector3(-z,y,-x);
 
         return this.Normalize(attackDir);
     },
