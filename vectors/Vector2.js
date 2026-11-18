@@ -1,15 +1,13 @@
 import { MUtil } from "../util/MathUtil.js";
-import { Vector } from "./Vector.js";
 import { Vector3 } from "./Vector3.js";
 
-export class Vector2 extends Vector{
+export class Vector2{
     x;
     y;
 
     
 
     constructor(x, y) {
-        super();
         this.x = x;
         this.y = y;
     }

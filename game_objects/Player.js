@@ -1,14 +1,19 @@
+import { Enemy } from "../enemies/Enemy.js";
 import { Attack } from "../input/Attack.js";
+import { input } from "../input/input.js";
 import { Raycast } from "../input/Raycast.js";
 import { MUtil } from "../util/MathUtil.js";
 import { Time } from "../util/Time.js";
 import { VectorUtil } from "../util/VectorUtil.js";
+import { Vector2 } from "../vectors/Vector2.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { camera } from "./camera.js";
 import { Entity } from "./Entity.js";
 import { GameObject } from "./GameObject.js";
 
 class Player extends Entity {
+
+    idle=false;
 
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
     constructor(position, jumpForce) {
@@ -32,17 +37,9 @@ class Player extends Entity {
         if (this.health <= 0) this.Die();
     }
 
-    SetPos(position) {
-        this.position = position;
-    }
-
     Attack() {
         if (this.attack.onCD) this.attack.CheckCD();
         else {
-
-            
-            
-            // console.log(`x: ${alpha}, y: ${beta}`);
 
             const attackDir = VectorUtil.GetCameraForwardVector();
 
@@ -56,6 +53,49 @@ class Player extends Entity {
 
             this.attack.Cooldown();
         }
+    }
+
+    GetMovementInput() {
+        const forwards = input.forwards(camera.rotation.x);
+
+        const backwards = forwards.Invert();
+        const right = forwards.Rotate(270);
+        const left = right.Invert();
+
+        const movementVector = new Vector2(0, 0);
+        input.movementDirectionVector = new Vector2(0, 0);
+
+        if (input.GetKey("KeyW")) {
+            input.movementDirectionVector.y += 1;
+            movementVector.Add(forwards);
+        }
+        if (input.GetKey("KeyS")) {
+            input.movementDirectionVector.y -= 1;
+
+            movementVector.Add(backwards);
+        }
+        if (input.GetKey("KeyD")) {
+            input.movementDirectionVector.x += 1;
+            movementVector.Add(left);
+        }
+        if (input.GetKey("KeyA")) {
+            input.movementDirectionVector.x -= 1;
+            movementVector.Add(right);
+        }
+
+        if(input.movementDirectionVector.x!==0 || input.movementDirectionVector.y!==0) input.restingDirectionVector=input.movementDirectionVector;
+         
+
+        this.idle = input.movementDirectionVector.x!==0 && input.movementDirectionVector.y!==0;
+
+        if ((movementVector.x != 0 || movementVector.y != 0) && player.Grounded()) input.angle += 0.5;
+        if (!player.Grounded()) input.angle = 0;
+        // if(this.GetKey("Space")) 
+
+        // console.log(movementVector);
+
+
+        return movementVector.ToVector3();
     }
 
     Grounded() {

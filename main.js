@@ -47,12 +47,12 @@ function Main() {
                 enem.Die();
             }
         }
-        player.position.Add(input.GetPlayerMovementInput());
+        player.position.Add(player.GetMovementInput());
         player.Gravity();
         player.UpdateUI();
         camera.UpdateUI();
 
-        Render(gl, programInfo, buffers);
+        Render(gl, programInfo);
        
         if(input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
 

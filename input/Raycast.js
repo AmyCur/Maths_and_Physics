@@ -1,4 +1,5 @@
 import { EController } from "../enemies/EnemyController.js";
+import { objects } from "../game_objects/Objects.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 
 export const Raycast = {
@@ -6,8 +7,8 @@ export const Raycast = {
 
     // Colliders do NOT rotate
     GetHitCollider(rayVec) {
-        for (let i = 0; i < this.allObjects.length; i++) {
-            const col = this.allObjects[i];
+        for (let i = 0; i < objects.enemies.length; i++) {
+            const col = objects.enemies[i];
             const cp = col.prim.position;
             const cs = col.prim.scale;
 
@@ -32,7 +33,7 @@ export const Raycast = {
     },
 
     ShootRay(startPos, dir, maxRange) {
-        if (this.allObjects.length === 0) {
+        if (objects.enemies.length === 0) {
             console.error("No primatives");
 
         }

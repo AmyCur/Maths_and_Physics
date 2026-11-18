@@ -1,10 +1,8 @@
 import { SUtil } from "../util/StringUtil.js";
-import { Vector } from "./Vector.js";
 
-export class Vector3 extends Vector {
+export class Vector3 {
 
     constructor(x, y, z) {
-        super();
         this.x = x;
         this.y = y;
         this.z = z;

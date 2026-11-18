@@ -8,6 +8,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 import { EController, EnemyController } from "../enemies/EnemyController.js";
 import { Mat4 } from "../vectors/Mat4.js";
 import { Raycast } from "../input/Raycast.js";
+import { objects } from "../game_objects/Objects.js";
 
 //#region Initialisation
 function GetSceneSettings(gl) {
@@ -37,7 +38,7 @@ function ReadyScene(gl) {
 
 
 export function InitRendering() {
-    Raycast.allObjects = [];
+    objects.enemies = []
 
     const canvas = document.getElementById("gl-canvas");
 
@@ -46,7 +47,7 @@ export function InitRendering() {
     // Only continue if WebGL is available and working
     if (gl === null) {
         console.warn(
-            "Unable to initialize WebGL. Your browser or machine may not support it.",
+            "Unable to initialize WebGL",
         );
         return;
     }
@@ -59,10 +60,6 @@ export function InitRendering() {
     // Initialize a shader program; this is where all the lighting
     // for the vertices and so forth is established.
     const shaderProgram = initShaderProgram(gl);
-
-
-    const modelMatrix = new Mat4();
-
 
     const programInfo = {
         program: shaderProgram,
@@ -78,12 +75,9 @@ export function InitRendering() {
     };
 
     //* Create the buffers
-    const cb = initBuffersPrimative(gl, cube);
+
     const fb = initBuffersPrimative(gl, floor);
-
-
-
-    Raycast.allObjects.push(fb);
+    objects.static.push(fb);
 
 
 
@@ -94,28 +88,25 @@ export function InitRendering() {
 
     return {
         gl: gl,
-        programInfo: programInfo,
-        buffers: {
-            UI: [],
-            World: [fb],
-        }
+        programInfo: programInfo
+
     }
 }
 //#endregion
 
 //#region Rendering Each Frame
 
-function CreateEnemyBuffer(gl){
+function CreateEnemyBuffer(gl) {
     const enemyBuffers = [];
 
-    for(let i = 0; i < EController.enemies.length; i++){
+    for (let i = 0; i < EController.enemies.length; i++) {
         const prim = new Primative().MakeCube();
         prim.SetPosition(EController.enemies[i].position);
         prim.SetScale(EController.enemies[i].scale);
         prim.SetRotation(EController.enemies[i].rotation);
-        
+
         const eb = initBuffersPrimative(gl, prim, EController.enemies[i]);
-        Raycast.allObjects.push(eb);
+        objects.enemies.push(eb);
 
         enemyBuffers.push(eb);
     }
@@ -123,98 +114,64 @@ function CreateEnemyBuffer(gl){
     return enemyBuffers;
 }
 
-export function Render(gl, programInfo, buffers) {
-    ReadyScene(gl);
-
-    // Create a perspective matrix, a special matrix that is
-    // used to simulate the distortion of perspective in a camera.
-    // Our field of view is 45 degrees, with a width/height
-    // ratio that matches the display size of the canvas
-    // and we only want to see objects between 0.1 units
-    // and 100 units away from the camera.
-
-
+function InitMatricies(gl) {
+    // Get scene settings
     const s = GetSceneSettings(gl);
-
-    // note: glMatrix always has the first argument
-    // as the destination to receive the result.
-
-
-    // Set the drawing position to the "identity" point, which is
-    // the center of the scene.
-
-
+    
+    // Init projection matrix
     const projectionMatrix = new Mat4();
+
+    // Set the projection matrix to an actual projection matrix
     projectionMatrix.perspective(s.fieldOfView, s.zNear, s.zFar);
+
+    // Initialise the model view matrix (Not to be confused with the model matrix)
     const modelViewMatrix = new Mat4();
 
-    modelViewMatrix.translate([player.position.x,player.position.y,player.position.z])
+    // Move the world based on player position
+    modelViewMatrix.translate([player.position.x, player.position.y, player.position.z])
 
+    // Apply viewbobbing
     projectionMatrix.translate([0, Math.sin(input.angle) / 7, 0]);
+
+    // Rotate the camera
+    projectionMatrix.rotate([1, 0, 0], -camera.rotation.y);
+    projectionMatrix.rotate([0, 1, 0], -camera.rotation.x);
+
+    // Return then to be used (obvs)
+    return [projectionMatrix, modelViewMatrix];
+
+}
+
+export function Render(gl, programInfo) {
     
+    // Clear everything
+    ReadyScene(gl);
 
-    projectionMatrix.rotate([1,0,0], -camera.rotation.y);
-    projectionMatrix.rotate([0,1,0], -camera.rotation.x);
+    // Get matricies
+    const [projectionMatrix, modelViewMatrix] = InitMatricies(gl);
 
-    // note: glMatrix always has the first argument
-    // as the destination to receive the result.
-  
-
-    // Set the drawing position to the "identity" point, which is
-    // the center of the scene.
- 
-
-   
-
-    // mat4.translate(
-    //     modelViewMatrix,
-    //     modelViewMatrix,
-    //     [0, Math.sin(input.angle) / 7, 0]
-    // );
-
-    // mat4.rotateX(
-    //     projectionMatrix,
-    //     projectionMatrix,
-    //     -camera.rotation.y
-    // )
-
-    // mat4.rotateY(
-    //     projectionMatrix,
-    //     projectionMatrix,
-    //     -camera.rotation.x
-    // )
-
-    
-
-
+    // Get all of the enemies and create buffers for them
     const enemyBuffers = CreateEnemyBuffer(gl);
 
-    // Tell WebGL how to pull out the positions from the position
-    // buffer into the vertexPosition attribute.
+    /*
+        The static buffers and enemy buffers are seperated into individual arrays and worked on differently 
+        for simplicity and so that the code can be cleaner
+    */
 
-    for (const b of buffers.World) {
+    // Render all static objects (like the floor)
+    for (const b of objects.static) {
         RenderBuffer(gl, b, programInfo);
     }
 
-
-    for (const b of buffers.UI) {
-        RenderBuffer(gl, b, programInfo);
-    }
-
-
+    // Render all the enemies 
     for (let i = 0; i < enemyBuffers.length; i++) {
         RenderBuffer(gl, enemyBuffers[i], programInfo);
     }
 
+    // Assign the projection matrix and model view matrix
+    //? Note that the mode matrix (not the mode view matrix) is set on a per buffer basis
+    //? hence it is set in the RenderBuffer() function
 
-
-
-
-
-    // Tell WebGL to use our program when drawing
-
-
-    // Set the shader uniforms
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.projectionMatrix,
         false,
@@ -231,12 +188,16 @@ export function Render(gl, programInfo, buffers) {
 function RenderBuffer(gl, b, programInfo) {
 
     const modelMatrix = new Mat4();
+
+    // Each of these transformations accesses the prim data because everything is a primative
     modelMatrix.translate([b.prim.position.x, b.prim.position.y, b.prim.position.z]);
     modelMatrix.scale([b.prim.scale.x, b.prim.scale.y, b.prim.scale.z]);
-    
-    modelMatrix.rotate([1,0,0],b.prim.rotation.x);
-    modelMatrix.rotate([0,1,0],b.prim.rotation.y);
-    modelMatrix.rotate([0,0,1],b.prim.rotation.z);
+
+    modelMatrix.rotate([1, 0, 0], b.prim.rotation.x);
+    modelMatrix.rotate([0, 1, 0], b.prim.rotation.y);
+    modelMatrix.rotate([0, 0, 1], b.prim.rotation.z);
+
+    //* Set the modelMatrix
 
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.modelMatrix,
@@ -244,35 +205,17 @@ function RenderBuffer(gl, b, programInfo) {
         modelMatrix.m
     )
 
-    // gl.uniform4fv(
-    //     programInfo.uniformLocations.position,
-    //     [
-    //         b.prim.position.x,
-    //         b.prim.position.y,
-    //         b.prim.position.z,
-    //         1
-    //     ],
-    // );
-
-    // gl.uniform4fv(
-    //     programInfo.uniformLocations.scale,
-    //     [
-    //         b.prim.scale.x,
-    //         b.prim.scale.y,
-    //         b.prim.scale.z,
-    //         1
-    //     ]
-    // );
-
     setPositionAttribute(gl, b, programInfo);
     setColorAttribute(gl, b, programInfo);
+
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.indices);
     gl.useProgram(programInfo.program);
 
-    const f = 36;
+
+    //! RENDERING
 
     {
-        const vertexCount = f;
+        const vertexCount = 36;
         const type = gl.UNSIGNED_SHORT;
         const offset = 0;
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
