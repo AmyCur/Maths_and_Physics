@@ -68,7 +68,7 @@ export const defaultCubeData = {
     ],
     colors: [
         [1.0, 1.0, 1.0, 1.0], // Front face: white
-        [1.0, 0.0, 0.0, 1.0], // Back face: red
+        [0, 1, 1, 1.0], // Back face: red
         [0.0, 1.0, 0.0, 1.0], // Top face: green
         [0.0, 0.0, 1.0, 1.0], // Bottom face: blue
         [1.0, 1.0, 0.0, 1.0], // Right face: yellow
@@ -207,9 +207,9 @@ export const floor = new Primative(
         -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0,
     ],
     [
-        [0.0, 1.0, 0.0, 1.0], // Top face: green
+        [0.0, 1.0, 0.0, 1.0], // Back face: green
         [1.0, 1.0, 1.0, 1.0], // Front face: white
-        [1.0, 0.0, 0.0, 1.0], // Back face: red
+        [1, 0.1, 0.3, 1.0], // Top face: red
         [0.0, 0.0, 1.0, 1.0], // Bottom face: blue
         [1.0, 1.0, 0.0, 1.0], // Right face: yellow
         [1.0, 0.0, 1.0, 1.0], // Left face: purple

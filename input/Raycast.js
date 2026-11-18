@@ -3,7 +3,6 @@ import { VectorUtil } from "../util/VectorUtil.js";
 
 export const Raycast = {
     allObjects: [],
-    pr: 1,
 
     // Colliders do NOT rotate
     GetHitCollider(rayVec) {
@@ -14,21 +13,15 @@ export const Raycast = {
 
             const minPos = VectorUtil.Subtract(cp, cs);
             const maxPos = VectorUtil.Add(cp, cs);
-            if (this.pr % 100 === 0) {
-                
-                this.pr = 1;
-            }
-
-            this.pr++;
-
+         
 
             if (VectorUtil.WithinRange(rayVec, minPos, maxPos)) {
-                console.log(`
-                min: ${minPos.Print()},    
-                max: ${maxPos.Print()},    
-                vector pos: ${rayVec.Print()},   
-                hit: ${VectorUtil.WithinRange(rayVec, minPos, maxPos)} 
-            `)
+            //     console.log(`
+            //     min: ${minPos.Print()},    
+            //     max: ${maxPos.Print()},    
+            //     vector pos: ${rayVec.Print()},   
+            //     hit: ${VectorUtil.WithinRange(rayVec, minPos, maxPos)} 
+            // `)
                 console.log(`HIT!!!! ${col}`);
                 return col.prim;
             }
