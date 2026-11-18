@@ -19,9 +19,11 @@ export class Vector3 extends Vector{
 
     Normalize(){
         const v3 = new Vector3(this.x,this.y,this.z);
+        
         const l = Math.sqrt(
             ((v3.x*v3.x)+(v3.y*v3.y)+(v3.z*v3.z))
         );
+
         return new Vector3(v3.x/l,v3.y/l,v3.z/l);
     }
 

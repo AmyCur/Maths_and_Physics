@@ -10,8 +10,8 @@ export class Enemy {
     }
 
     MoveToTargetPositon() {
-        console.log(`going to ${this.TargetVector()}`)
-        this.position.Add(this.TargetVector().MultiplyScalar(0.01))
+        const tv = this.TargetVector();
+        this.position.Add(tv);
     }
 
     TargetVector(){
