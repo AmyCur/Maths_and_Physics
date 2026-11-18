@@ -24,26 +24,19 @@ export class EnemyController {
     }
 
     HandleAI() {
-
-        
-        for(let i = 0; i < this.enemies.length; i++){
+        for (let i = 0; i < this.enemies.length; i++) {
             this.enemies[i].MoveToTargetPositon();
         }
-            // for (const e of enemies) {
-            //     console.log(e.position);
-            //     e.MoveToTargetPosition();
-            // }
-        
-
     }
 
     SpawnEnemy() {
+        if(this.enemies.length<=0)
         this.enemies.push(
             new Enemy(
                 this.GetRandomVectorAroundThePlayer(),
                 new Vector3(0, 0, 0),
                 new Vector3(1, 1, 1),
-                5
+                0.5
             )
         )
     }

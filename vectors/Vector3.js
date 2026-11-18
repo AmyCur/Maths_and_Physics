@@ -1,7 +1,7 @@
 import { SUtil } from "../util/StringUtil.js";
 import { Vector } from "./Vector.js";
 
-export class Vector3 extends Vector{ 
+export class Vector3 extends Vector {
 
     constructor(x, y, z) {
         super();
@@ -10,22 +10,15 @@ export class Vector3 extends Vector{
         this.z = z;
     }
 
-    Print(mult=1){
-        const x = SUtil.TruncateComponent(this.x*mult);
-        const y = SUtil.TruncateComponent(this.y*mult);
-        const z = SUtil.TruncateComponent(this.z*mult);
+    Print(v, mult = 1) {
+        const x = SUtil.TruncateComponent(this.x * mult);
+        const y = SUtil.TruncateComponent(this.y * mult);
+        const z = SUtil.TruncateComponent(this.z * mult);
         return `X: ${x}, Y: ${y}, Z: ${z}`;
     }
 
-    Normalize(){
-        const v3 = new Vector3(this.x,this.y,this.z);
-        
-        const l = Math.sqrt(
-            ((v3.x*v3.x)+(v3.y*v3.y)+(v3.z*v3.z))
-        );
+    
 
-        return new Vector3(v3.x/l,v3.y/l,v3.z/l);
-    }
 
     MultiplyScalar(f) {
         const nx = this.x * f;
@@ -45,12 +38,16 @@ export class Vector3 extends Vector{
         this.z = z;
     }
 
+    AddAndReturn(v1, v2) {
+        return new Vector3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+    }
+
 
     Add(v) {
         this.Set(this.x + v.x, this.y + v.y, this.z + v.z);
     }
 
-    Subtract(v){
-        this.Set(this.x - v.x, this.y - v.y, this.z - v.z);  
+    Subtract(v) {
+        this.Set(this.x - v.x, this.y - v.y, this.z - v.z);
     }
 }
