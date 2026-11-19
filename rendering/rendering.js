@@ -9,6 +9,7 @@ import { EController, EnemyController } from "../enemies/EnemyController.js";
 import { Mat4 } from "../vectors/Mat4.js";
 import { Raycast } from "../input/Raycast.js";
 import { objects } from "../game_objects/Objects.js";
+import { Random } from "../util/Random.js";
 
 //#region Initialisation
 function GetSceneSettings(gl) {
@@ -37,8 +38,92 @@ function ReadyScene(gl) {
 }
 
 
+function CreateWalls(fb, gl){
+    
+    const walls = [];
+
+
+    const w1 = initBuffersPrimative(gl, new Primative().MakeCube("green"))
+    
+
+    w1.prim.position = new Vector3(
+        fb.prim.position.x-fb.prim.scale.x+w1.prim.scale.x-(w1.prim.scale.x*2),
+        0,
+        w1.prim.position.z
+    )
+
+    w1.prim.scale = new Vector3(
+    w1.prim.scale.x,
+        20,
+        fb.prim.scale.z
+    )
+
+
+    walls.push(w1); 
+    
+    const w2 = initBuffersPrimative(gl, new Primative().MakeCube("green"))
+
+
+
+    w2.prim.position = new Vector3(
+        -(fb.prim.position.x-fb.prim.scale.x+w2.prim.scale.x-(w2.prim.scale.x*2)),
+        0,
+        w2.prim.position.z
+    )
+
+    w2.prim.scale = new Vector3(
+        w2.prim.scale.x,
+        20,
+        fb.prim.scale.z
+    )
+
+    walls.push(w2); 
+
+    const w3 = initBuffersPrimative(gl, new Primative().MakeCube("green"))
+
+    w3.prim.position = new Vector3(
+        w3.prim.position.x,
+        0,
+        -(fb.prim.position.x-fb.prim.scale.x+w3.prim.scale.x-(w3.prim.scale.x*2)),
+    )
+
+    w3.prim.scale = new Vector3(
+        fb.prim.scale.x,
+        20,
+        w3.prim.scale.z,
+    )
+
+    walls.push(w3); 
+
+
+    const w4 = initBuffersPrimative(gl, new Primative().MakeCube("green"))
+
+    w4.prim.position = new Vector3(
+        w4.prim.position.x,
+        0,
+        (fb.prim.position.x-fb.prim.scale.x+w4.prim.scale.x-(w4.prim.scale.x*2)),
+    )
+
+    w4.prim.scale = new Vector3(
+        fb.prim.scale.x,
+        20,
+        w4.prim.scale.z,
+    )
+
+    walls.push(w4); 
+    
+
+    for(let wall of walls){
+        wall.prim.SetColor("red");
+    }
+
+    return walls;
+}
+
 export function InitRendering() {
-    objects.enemies = []
+
+    
+
 
     const canvas = document.getElementById("gl-canvas");
 
@@ -71,13 +156,19 @@ export function InitRendering() {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
             modelMatrix: gl.getUniformLocation(shaderProgram, "modelMatrix"),
+            depth: gl.getUniformLocation(shaderProgram, "depth")
         },
     };
 
     //* Create the buffers
 
     const fb = initBuffersPrimative(gl, floor);
+        
     objects.static.push(fb);
+
+    const walls = CreateWalls(fb, gl);
+
+    objects.static.push(...walls);
 
 
 
@@ -151,7 +242,7 @@ export function Render(gl, programInfo) {
     const [projectionMatrix, modelViewMatrix] = InitMatricies(gl);
 
     // Get all of the enemies and create buffers for them
-    const enemyBuffers = CreateEnemyBuffer(gl);
+    objects.enemies = CreateEnemyBuffer(gl);
 
     /*
         The static buffers and enemy buffers are seperated into individual arrays and worked on differently 
@@ -164,8 +255,8 @@ export function Render(gl, programInfo) {
     }
 
     // Render all the enemies 
-    for (let i = 0; i < enemyBuffers.length; i++) {
-        RenderBuffer(gl, enemyBuffers[i], programInfo);
+    for (let i = 0; i < objects.enemies.length; i++) {
+        RenderBuffer(gl, objects.enemies[i], programInfo);
     }
 
     // Assign the projection matrix and model view matrix
@@ -177,6 +268,11 @@ export function Render(gl, programInfo) {
         false,
         projectionMatrix.m,
     );
+
+    gl.uniform4fv(
+        programInfo.uniformLocations.depth,
+        [0,0,0,1]
+    )
 
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.modelViewMatrix,

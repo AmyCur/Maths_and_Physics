@@ -10,6 +10,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 import { camera } from "./camera.js";
 import { Entity } from "./Entity.js";
 import { GameObject } from "./GameObject.js";
+import { objects } from "./Objects.js";
 
 class Player extends Entity {
 
@@ -23,7 +24,7 @@ class Player extends Entity {
         this.text = document.getElementById("player-pos");
         this.healthText = document.getElementById("player-health");
         this.jumpForce = jumpForce / 100;
-        this.godMode = false;
+        this.godMode = true;
         // I kinda love this
         this.attack = new Attack(0.2, 10, () => {
             const attackDir = VectorUtil.GetCameraForwardVector();
@@ -129,6 +130,10 @@ class Player extends Entity {
 
 
         this.jumping = false;
+    }
+
+    UpdatePosition() {
+        player.position = VectorUtil.ClampPositionInWorld(VectorUtil.Add(player.position, player.GetMovementInput()));
     }
 }
 

@@ -20,9 +20,10 @@ const vsSource = `
 
 const fsSource = `
     varying lowp vec4 vColor;
+    uniform lowp vec4 depth;
 
     void main(void) {
-      gl_FragColor = vColor;
+      gl_FragColor = vec4(vColor.x-depth.x, vColor.y-depth.y, vColor.z-depth.z, 1);
     }
   `;
 

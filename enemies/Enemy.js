@@ -65,8 +65,7 @@ export class Enemy {
         tv.normalized.y *= this.speed;
         tv.normalized.z *= this.speed;
 
-
-        this.position = VectorUtil.Add(this.position, tv.normalized);
+        this.position = VectorUtil.ClampPositionInWorld(VectorUtil.Add(this.position, tv.normalized));
 
         this.position.y=this.type==="fly" ? 5 : -1;
     }

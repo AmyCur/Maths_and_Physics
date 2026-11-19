@@ -1,4 +1,5 @@
 import { camera } from "../game_objects/camera.js";
+import { objects } from "../game_objects/Objects.js";
 import { player } from "../game_objects/Player.js";
 import { Vector2 } from "../vectors/Vector2.js";
 import { Vector3 } from "../vectors/Vector3.js";
@@ -24,6 +25,36 @@ export const VectorUtil = {
         return new Vector3(nx, ny, nz);
     },
 
+    Clamp(vec, min, max) {
+        const v = vec;
+        if (v.x < min.x) v.x = min.x;
+        if (v.x > max.x) v.x = max.x;
+
+        if (v.y < min.y) v.y = min.y;
+        if (v.y > max.y) v.y = max.y;
+
+        if (v.z < min.z) v.z = min.z;
+        if (v.z > max.z) v.z = max.z;
+
+        return v;
+    },
+
+    ClampPlayerPositon(pp, min, max) {
+        min.y = -10000;
+        max.y = 10000;
+        const clampedPos = this.Clamp(pp, min, max);
+        clampedPos.y = pp.y;
+        return clampedPos;
+    },
+
+    ClampPositionInWorld(position) {
+        const floor = objects.static[0].prim;
+        const minPos = VectorUtil.Subtract(floor.position, VectorUtil.Subtract(floor.scale, new Vector3(1, 0, 1)));
+        const maxPos = VectorUtil.Add(floor.position, VectorUtil.Subtract(floor.scale, new Vector3(1, 0, 1)));
+        const newPos = VectorUtil.ClampPlayerPositon(position, minPos, maxPos);
+        return newPos;
+    },
+
     WithinRange(v, min, max) {
         const xInRange = v.x >= min.x && v.x <= max.x;
         const yInRange = v.y >= min.y && v.y <= max.y;
@@ -40,11 +71,11 @@ export const VectorUtil = {
         return Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
     },
 
-    Invert(v){
-        return new Vector3(-v.x,-v.y,-v.z);
+    Invert(v) {
+        return new Vector3(-v.x, -v.y, -v.z);
     },
 
-    GetDotProductAngle(v1,v2){
+    GetDotProductAngle(v1, v2) {
 
     },
 
