@@ -56,6 +56,8 @@ function Main() {
         player.UpdateUI();
         camera.UpdateUI();
 
+        EController.theta++;
+
         Render(gl, programInfo);
        
         if(input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();

@@ -5,4 +5,5 @@ export const objects = {
     enemies: [],
     static: [],
     other: [],
+    colliders: []
 }

@@ -9,9 +9,11 @@ import { Fly } from "./Fly.js";
 
 export class EnemyController {
     types = [
-        new EnemyType("fly", 75, 10, 0.3),
+        new EnemyType("fly", 60, 10, 0.3),
         new EnemyType("ground", 200, 5, 0.4)
     ];
+
+    theta=0;
 
     GetRandomType() {
         let sumOfWeights = 0;

@@ -47,12 +47,56 @@ export const VectorUtil = {
         return clampedPos;
     },
 
-    ClampPositionInWorld(position) {
+    GetMinAndMaxBounds(buffer) {
+        const pos = buffer.position;
+        const scale = buffer.scale;
+
+        const minPos = this.Subtract(pos, this.Multiply(scale, 3.2));
+        const maxPos = this.Add(pos, this.Multiply(scale, 3.2));
+
+        // console.log("Min", minPos, "\n Max: ", maxPos);
+      
+
+        return {
+            min: minPos,
+            max: maxPos
+        };
+    },
+
+    IsInRange(v, min, max) {
+        return v >= min && v <= max;
+    },
+
+    ClampPositionInWorld(position, addition, collideWithEnemies = true) {
+        const p = this.Add(position, addition);
         const floor = objects.static[0].prim;
         const minPos = VectorUtil.Subtract(floor.position, VectorUtil.Subtract(floor.scale, new Vector3(1, 0, 1)));
         const maxPos = VectorUtil.Add(floor.position, VectorUtil.Subtract(floor.scale, new Vector3(1, 0, 1)));
-        const newPos = VectorUtil.ClampPlayerPositon(position, minPos, maxPos);
-        return newPos;
+        let newPos = VectorUtil.ClampPlayerPositon(p, minPos, maxPos);
+
+        
+
+        if (objects.enemies.length === 0 || !collideWithEnemies) return newPos;
+
+        for (let i = 0; i < objects.enemies.length; i++) {
+            const enemy = objects.enemies[i];
+            if(enemy.prim.position===position) return newPos;
+            const objectBounds = this.GetMinAndMaxBounds(enemy.prim);
+
+            if (this.IsInRange(newPos.x, objectBounds.min.x, objectBounds.max.x)){
+                newPos.x=position.x;
+            }
+            if (this.IsInRange(newPos.y, objectBounds.min.y, objectBounds.max.y)){
+                newPos.y = position.y;
+            }
+            if (this.IsInRange(newPos.z, objectBounds.min.z, objectBounds.max.z)) {
+                newPos.z = position.z; 
+            };
+        }
+
+        return position;
+
+
     },
 
     WithinRange(v, min, max) {

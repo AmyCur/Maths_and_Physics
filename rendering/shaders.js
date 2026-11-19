@@ -16,6 +16,7 @@ const vsSource = `
       gl_Position = uProjectionMatrix * uModelViewMatrix * modelMatrix  * aVertexPosition;
       vColor = aVertexColor;
     }
+      
   `;
 
 const fsSource = `

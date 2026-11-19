@@ -133,7 +133,7 @@ class Player extends Entity {
     }
 
     UpdatePosition() {
-        player.position = VectorUtil.ClampPositionInWorld(VectorUtil.Add(player.position, player.GetMovementInput()));
+        player.position = VectorUtil.ClampPositionInWorld(player.position, player.GetMovementInput(),false);
     }
 }
 
