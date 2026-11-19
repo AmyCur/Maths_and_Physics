@@ -8,7 +8,7 @@ import { Enemy } from "./Enemy.js";
 class Fly  {
     TargetVector() {
         const cp = this.position;
-        const tp = new Vector3(-player.position.x, -5, -player.position.z);
+        const tp = new Vector3(-player.transform.position.x, -5, -player.transform.position.z);
 
         const difference = VectorUtil.Subtract(tp, cp);
 

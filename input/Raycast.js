@@ -9,14 +9,14 @@ export const Raycast = {
     GetHitCollider(rayVec) {
         for (let i = 0; i < objects.enemies.length; i++) {
             const col = objects.enemies[i];
-            const cp = col.prim.position;
-            const cs = col.prim.scale;
+            const cp = col.transform.position;
+            const cs = col.transform.scale;
 
             const minPos = VectorUtil.Subtract(cp, cs);
             const maxPos = VectorUtil.Add(cp, cs);
          
 
-            if (VectorUtil.WithinRange(rayVec, minPos, maxPos)) {
+            if (VectorUtil.WithinRange(rayVec, minPos, maxPos) && objects.IsEnemy(col)) {
             //     console.log(`
             //     min: ${minPos.Print()},    
             //     max: ${maxPos.Print()},    
@@ -24,7 +24,7 @@ export const Raycast = {
             //     hit: ${VectorUtil.WithinRange(rayVec, minPos, maxPos)} 
             // `)
                 console.log(`HIT!!!! ${col}`);
-                return col.enemy;
+                return col.components.enemy;
             }
         }
 

@@ -1,15 +1,13 @@
-import { initBuffersPrimative } from "./init-buffers.js";
+import { initBuffersRenderObject } from "./init-buffers.js";
 import { input } from "../input/input.js";
 import { initShaderProgram } from "./shaders.js";
-import { cube, defaultCubeData, floor, Primative } from "./Primative.js";
+import { floor, RenderObject } from "./RenderObject.js";
 import { player } from "../game_objects/Player.js";
 import { camera } from "../game_objects/camera.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { EController, EnemyController } from "../enemies/EnemyController.js";
 import { Mat4 } from "../vectors/Mat4.js";
-import { Raycast } from "../input/Raycast.js";
 import { objects } from "../game_objects/Objects.js";
-import { Random } from "../util/Random.js";
 
 //#region Initialisation
 function GetSceneSettings(gl) {
@@ -38,83 +36,84 @@ function ReadyScene(gl) {
 }
 
 
-function CreateWalls(fb, gl){
-    
+function CreateWalls(fb, gl) {
+
+
+
     const walls = [];
 
+    const w1 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"))
 
-    const w1 = initBuffersPrimative(gl, new Primative().MakeCube("green"))
-    
 
-    w1.prim.position = new Vector3(
-        fb.prim.position.x-fb.prim.scale.x+w1.prim.scale.x-(w1.prim.scale.x*2),
+    w1.transform.position = new Vector3(
+        fb.transform.position.x - fb.transform.scale.x + w1.transform.scale.x - (w1.transform.scale.x * 2),
         0,
-        w1.prim.position.z
+        w1.transform.position.z
     )
 
-    w1.prim.scale = new Vector3(
-    w1.prim.scale.x,
+    w1.transform.scale = new Vector3(
+        w1.transform.scale.x,
         20,
-        fb.prim.scale.z
+        fb.transform.scale.z
     )
 
 
-    walls.push(w1); 
-    
-    const w2 = initBuffersPrimative(gl, new Primative().MakeCube("green"))
+    walls.push(w1);
+
+    const w2 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"))
 
 
 
-    w2.prim.position = new Vector3(
-        -(fb.prim.position.x-fb.prim.scale.x+w2.prim.scale.x-(w2.prim.scale.x*2)),
+    w2.transform.position = new Vector3(
+        -(fb.transform.position.x - fb.transform.scale.x + w2.transform.scale.x - (w2.transform.scale.x * 2)),
         0,
-        w2.prim.position.z
+        w2.transform.position.z
     )
 
-    w2.prim.scale = new Vector3(
-        w2.prim.scale.x,
+    w2.transform.scale = new Vector3(
+        w2.transform.scale.x,
         20,
-        fb.prim.scale.z
+        fb.transform.scale.z
     )
 
-    walls.push(w2); 
+    walls.push(w2);
 
-    const w3 = initBuffersPrimative(gl, new Primative().MakeCube("green"))
+    const w3 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"))
 
-    w3.prim.position = new Vector3(
-        w3.prim.position.x,
+    w3.transform.position = new Vector3(
+        w3.transform.position.x,
         0,
-        -(fb.prim.position.x-fb.prim.scale.x+w3.prim.scale.x-(w3.prim.scale.x*2)),
+        -(fb.transform.position.x - fb.transform.scale.x + w3.transform.scale.x - (w3.transform.scale.x * 2)),
     )
 
-    w3.prim.scale = new Vector3(
-        fb.prim.scale.x,
+    w3.transform.scale = new Vector3(
+        fb.transform.scale.x,
         20,
-        w3.prim.scale.z,
+        w3.transform.scale.z,
     )
 
-    walls.push(w3); 
+    walls.push(w3);
 
 
-    const w4 = initBuffersPrimative(gl, new Primative().MakeCube("green"))
+    const w4 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"))
 
-    w4.prim.position = new Vector3(
-        w4.prim.position.x,
+    w4.transform.position = new Vector3(
+        w4.transform.position.x,
         0,
-        (fb.prim.position.x-fb.prim.scale.x+w4.prim.scale.x-(w4.prim.scale.x*2)),
+        (fb.transform.position.x - fb.transform.scale.x + w4.transform.scale.x - (w4.transform.scale.x * 2)),
     )
 
-    w4.prim.scale = new Vector3(
-        fb.prim.scale.x,
+    w4.transform.scale = new Vector3(
+        fb.transform.scale.x,
         20,
-        w4.prim.scale.z,
+        w4.transform.scale.z,
     )
 
-    walls.push(w4); 
-    
+    walls.push(w4);
 
-    for(let wall of walls){
-        wall.prim.SetColor("red");
+
+    for (let wall of walls) {
+        wall["components"].renderObj.SetColor("red");
     }
 
     return walls;
@@ -122,7 +121,7 @@ function CreateWalls(fb, gl){
 
 export function InitRendering() {
 
-    
+
 
 
     const canvas = document.getElementById("gl-canvas");
@@ -162,8 +161,8 @@ export function InitRendering() {
 
     //* Create the buffers
 
-    const fb = initBuffersPrimative(gl, floor);
-        
+    const fb = initBuffersRenderObject(gl, floor);
+
     objects.static.push(fb);
 
     const walls = CreateWalls(fb, gl);
@@ -173,9 +172,9 @@ export function InitRendering() {
 
 
 
-    const crossHair = initBuffersPrimative(gl, new Primative().MakeCube());
+    const crossHair = initBuffersRenderObject(gl, new RenderObject().MakeCube());
 
-    // crossHair.prim.position=new Vector3(1,5,0);
+    // crossHair.transform.position=new Vector3(1,5,0);
 
     return {
         gl: gl,
@@ -191,13 +190,22 @@ function CreateEnemyBuffer(gl) {
     const enemyBuffers = [];
 
     for (let i = 0; i < EController.enemies.length; i++) {
-        const prim = new Primative().MakeCube();
-        prim.colors = prim.SetColor("blue");
-        prim.SetPosition(EController.enemies[i].position);
-        prim.SetScale(EController.enemies[i].scale);
-        prim.SetRotation(EController.enemies[i].rotation);
+        const enemy = EController.enemies[i];
+        const renderObj = new RenderObject().MakeCube();
+        renderObj.colors = renderObj.SetColor("blue");
 
-        const eb = initBuffersPrimative(gl, prim, EController.enemies[i]);
+        // renderObj.SetPositionRotationAndScale(
+        //     enemy.position,
+        // )
+
+        
+
+        const eb = initBuffersRenderObject(gl, renderObj, EController.enemies[i]);
+
+        eb.transform.position = EController.enemies[i].transform.position;
+        eb.transform.scale = EController.enemies[i].transform.scale;
+        eb.transform.rotation = EController.enemies[i].transform.rotation;
+
         objects.enemies.push(eb);
 
         enemyBuffers.push(eb);
@@ -209,7 +217,7 @@ function CreateEnemyBuffer(gl) {
 function InitMatricies(gl) {
     // Get scene settings
     const s = GetSceneSettings(gl);
-    
+
     // Init projection matrix
     const projectionMatrix = new Mat4();
 
@@ -220,7 +228,7 @@ function InitMatricies(gl) {
     const modelViewMatrix = new Mat4();
 
     // Move the world based on player position
-    modelViewMatrix.translate([player.position.x, player.position.y, player.position.z])
+    modelViewMatrix.translate([player.transform.position.x, player.transform.position.y, player.transform.position.z])
 
     // Apply viewbobbing
     projectionMatrix.translate([0, Math.sin(input.angle) / 7, 0]);
@@ -235,7 +243,7 @@ function InitMatricies(gl) {
 }
 
 export function Render(gl, programInfo) {
-    
+
     // Clear everything
     ReadyScene(gl);
 
@@ -254,6 +262,9 @@ export function Render(gl, programInfo) {
     for (const b of objects.static) {
         RenderBuffer(gl, b, programInfo);
     }
+    
+
+  
 
     // Render all the enemies 
     for (let i = 0; i < objects.enemies.length; i++) {
@@ -272,7 +283,7 @@ export function Render(gl, programInfo) {
 
     gl.uniform4fv(
         programInfo.uniformLocations.depth,
-        [0,0,0,1]
+        [0, 0, 0, 1]
     )
 
     gl.uniformMatrix4fv(
@@ -286,13 +297,15 @@ function RenderBuffer(gl, b, programInfo) {
 
     const modelMatrix = new Mat4();
 
-    // Each of these transformations accesses the prim data because everything is a primative
-    modelMatrix.translate([b.prim.position.x, b.prim.position.y, b.prim.position.z]);
-    modelMatrix.scale([b.prim.scale.x, b.prim.scale.y, b.prim.scale.z]);
+    // Each of these transformations accesses the renderObj data because everything is a primative
 
-    modelMatrix.rotate([1, 0, 0], b.prim.rotation.x);
-    modelMatrix.rotate([0, 1, 0], b.prim.rotation.y);
-    modelMatrix.rotate([0, 0, 1], b.prim.rotation.z);
+
+    modelMatrix.translate([b.transform.position.x, b.transform.position.y, b.transform.position.z]);
+    modelMatrix.scale([b.transform.scale.x, b.transform.scale.y, b.transform.scale.z]);
+
+    modelMatrix.rotate([1, 0, 0], b.transform.rotation.x);
+    modelMatrix.rotate([0, 1, 0], b.transform.rotation.y);
+    modelMatrix.rotate([0, 0, 1], b.transform.rotation.z);
 
     //* Set the modelMatrix
 

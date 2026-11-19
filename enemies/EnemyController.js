@@ -13,7 +13,7 @@ export class EnemyController {
         new EnemyType("ground", 200, 5, 0.4)
     ];
 
-    theta=0;
+    theta = 0;
 
     GetRandomType() {
         let sumOfWeights = 0;
@@ -52,7 +52,7 @@ export class EnemyController {
 
     GetRandomVectorAroundThePlayer() {
         const theta = (Math.random() * 360) * MUtil.Deg2Rad;
-        const pp = new Vector3(-player.position.x, -player.position.y + 3, -player.position.z);
+        const pp = new Vector3(-player.transform.position.x, -player.transform.position.y + 3, -player.transform.position.z);
         return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), pp.y, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
     }
 
@@ -93,7 +93,7 @@ export class EnemyController {
     SpawnEnemy() {
         // const spawnHoard = Random.RandInt(0, 10) === 0;
         let type = this.GetRandomType();
-        const spawnHoard =Random.RandInt(0, 10) === 0;
+        const spawnHoard = Random.RandInt(0, 10) === 0;
         if (spawnHoard) type = this.types[1];
         const iterations = spawnHoard ? 5 : 1;
 
@@ -102,9 +102,11 @@ export class EnemyController {
             if (type.name === "fly") {
                 this.enemies.push(
                     new Enemy(
+
                         enemyStats.pos,
-                        new Vector3(0.8, 1, 0.8),
                         new Vector3(0, 0, 0),
+                        new Vector3(0.8, 1, 0.8),
+
                         enemyStats.speed,
                         true,
                         5,
@@ -115,9 +117,11 @@ export class EnemyController {
             else {
                 this.enemies.push(
                     new Enemy(
+
                         enemyStats.pos,
                         new Vector3(1, 2, 1),
                         new Vector3(0, 0, 0),
+
                         enemyStats.speed,
                         true,
                         10,

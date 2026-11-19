@@ -5,5 +5,9 @@ export const objects = {
     enemies: [],
     static: [],
     other: [],
-    colliders: []
+    colliders: [],
+
+    IsEnemy(object){
+        return object["components"].enemy !== undefined;
+    }
 }

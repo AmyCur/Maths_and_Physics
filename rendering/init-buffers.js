@@ -8,14 +8,22 @@ function createShapeBuffer(gl, data) {
 
 
 
-export function initBuffersPrimative(gl, prim, enemy) {
-  const ib = initBuffers(gl, prim.positions, prim.colors, prim.indices);
+export function initBuffersRenderObject(gl, renderObj, enemy) {
+  const ib = initBuffers(gl, renderObj.positions, renderObj.colors, renderObj.indices);
+
   return {
-    position: ib.position,
-    color: ib.color,
-    indices: ib.indices,
-    prim: prim,
-    enemy: enemy
+    
+    //! NOT THE POSITION!!!! ITS THE POSITION BUFFER
+    position: ib.positionBuffer,
+    color: ib.colorBuffers,
+    indices: ib.indexBuffer,
+    
+    transform: renderObj.transform,
+
+    components: {
+      renderObj: renderObj,
+      enemy: enemy
+    }
   }
 }
 
@@ -25,9 +33,9 @@ function initBuffers(gl, positions, colors, indices) {
   const indexBuffer = initIndexBuffer(gl, indices);
 
   return {
-    position: positionBuffer,
-    color: colorBuffer,
-    indices: indexBuffer,
+    positionBuffer: positionBuffer,
+    colorBuffers: colorBuffer,
+    indexBuffer: indexBuffer,
   };
 }
 

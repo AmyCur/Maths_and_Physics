@@ -12,10 +12,14 @@ export class Enemy {
     speed;
     type;
 
-    constructor(position, scale, rotation, maxSpeed = 0.01, intelligent = true, health = 100, type="ground") {
-        this.position=position;
-        this.scale=scale;
-        this.rotation=rotation;
+    constructor(position, rotation, scale, maxSpeed = 0.01, intelligent = true, health = 100, type="ground") {
+        
+        this.transform = {
+            position: position,
+            rotation: rotation,
+            scale: scale
+        }
+
         this.health=health;
         this.maxSpeed = maxSpeed;
         this.intelligent = intelligent;
@@ -37,7 +41,6 @@ export class Enemy {
         const tv = this.TargetVector(this.overrideY);
         this.stationary = tv.length <= this.forceStopDistance;
     }
-
 
     TakeDamage(damage) {
         console.log("taken damage");
@@ -71,16 +74,16 @@ export class Enemy {
         tv.normalized.y *= this.speed;
         tv.normalized.z *= this.speed;
         
-        this.position.y=this.type==="fly" ? 5 : -1;
+        this.transform.position.y=this.type==="fly" ? 5 : -1;
         
-        this.position = VectorUtil.ClampPositionInWorld(this.position, tv.normalized, true);
+        this.transform.position = VectorUtil.ClampPositionInWorld(this.transform.position, tv.normalized, true);
 
         
     }
 
     TargetVector() {
-        const cp = this.position;
-        const tp = new Vector3(-player.position.x, -player.position.y, -player.position.z);
+        const cp = this.transform.position;
+        const tp = new Vector3(-player.transform.position.x, -player.transform.position.y, -player.transform.position.z);
 
         const difference = VectorUtil.Subtract(tp, cp);
 

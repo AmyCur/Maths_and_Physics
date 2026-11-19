@@ -12,16 +12,23 @@ import { Entity } from "./Entity.js";
 import { GameObject } from "./GameObject.js";
 import { objects } from "./Objects.js";
 
-class Player extends Entity {
+class Player {
 
     idle = false;
 
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
-    constructor(position, jumpForce) {
-        super(position, new Vector3(1, 1, 1), new Vector3(0, 0, 0), 100);
+    constructor(transform, jumpForce) {
+        
+        this.transform = {
+            position: transform.position,
+            rotation: transform.rotation,
+            scale: transform.scale
+        }
+
         this.gravityScale = 1;
         this.jumping = false;
         this.text = document.getElementById("player-pos");
+        this.health=100
         this.healthText = document.getElementById("player-health");
         this.jumpForce = jumpForce / 100;
         this.godMode = true;
@@ -31,7 +38,7 @@ class Player extends Entity {
 
             console.log(attackDir.Print());
 
-            const hitObj = Raycast.ShootRay(new Vector3(-player.position.x, -player.position.y, -player.position.z), attackDir, 10);
+            const hitObj = Raycast.ShootRay(new Vector3(-player.transform.position.x, -player.transform.position.y, -player.transform.position.z), attackDir, 10);
 
             hitObj?.TakeDamage(this.attack.damage);
 
@@ -42,7 +49,7 @@ class Player extends Entity {
     }
 
     UpdateUI() {
-        this.text.innerHTML = this.position.Print();
+        this.text.innerHTML = this.transform.position.Print();
         this.healthText.innerHTML = `Health: ${this.health}`;
     }
 
@@ -103,19 +110,19 @@ class Player extends Entity {
     }
 
     Grounded() {
-        return this.position.y >= 0;
+        return this.transform.position.y >= 0;
     }
 
     Gravity() {
         if (this.Grounded() || this.jumping) {
             this.gravityScale = 1;
-            this.position.y = 0;
+            this.transform.position.y = 0;
         }
 
         else {
             this.gravityScale *= 1.041
             const distancePerTick = MUtil.clamp(this.gravityScale * 0.1, 0, (this.position + (this.gravityScale * 0.1)));
-            this.position.y += distancePerTick;
+            this.transform.position.y += distancePerTick;
         }
     }
 
@@ -123,7 +130,7 @@ class Player extends Entity {
         this.jumping = true;
         let i = 0;
         const interval = setInterval(() => {
-            this.position.y -= this.jumpForce;
+            this.transform.position.y -= this.jumpForce;
             i++;
             if (i >= 150 || this.Grounded()) clearInterval(interval);
         }, 1 * Time.deltaTime)
@@ -133,8 +140,12 @@ class Player extends Entity {
     }
 
     UpdatePosition() {
-        player.position = VectorUtil.ClampPositionInWorld(player.position, player.GetMovementInput(),false);
+        player.transform.position = VectorUtil.ClampPositionInWorld(player.transform.position, player.GetMovementInput(),false);
     }
 }
 
-export const player = new Player(new Vector3(0, 0, 0), 15);
+export const player = new Player({
+    position: new Vector3(0, 0, 0),
+    rotation: new Vector3(0, 0, 0),
+    scale: new Vector3(1, 1, 1)
+}, 15);
