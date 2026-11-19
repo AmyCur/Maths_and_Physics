@@ -8,9 +8,6 @@ import { EnemyType } from "./EnemyType.js";
 import { Fly } from "./Fly.js";
 
 export class EnemyController {
-
-
-
     types = [
         new EnemyType("fly", 75, 10, 0.3),
         new EnemyType("ground", 200, 5, 0.4)
@@ -33,6 +30,7 @@ export class EnemyController {
                 sumOfWeights += v.weight;
             }
             else {
+                console.log(v.name);
                 return v;
             }
         }
@@ -52,7 +50,7 @@ export class EnemyController {
 
     GetRandomVectorAroundThePlayer() {
         const theta = (Math.random() * 360) * MUtil.Deg2Rad;
-        const pp = new Vector3(-player.position.x, -player.position.y, -player.position.z);
+        const pp = new Vector3(-player.position.x, -player.position.y + 3, -player.position.z);
         return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), pp.y, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
     }
 
@@ -91,32 +89,47 @@ export class EnemyController {
     }
 
     SpawnEnemy() {
+        // const spawnHoard = Random.RandInt(0, 10) === 0;
+        let type = this.GetRandomType();
+        const spawnHoard =Random.RandInt(0, 10) === 0;
+        if (spawnHoard) type = this.types[1];
+        const iterations = spawnHoard ? 5 : 1;
 
-        const type = this.GetRandomType();
-        const enemyStats = this.GetEnemyStats(type);
+        for (let i = 0; i < iterations; i++) {
+            const enemyStats = this.GetEnemyStats(type);
+            if (type.name === "fly") {
+                this.enemies.push(
+                    new Enemy(
+                        enemyStats.pos,
+                        new Vector3(0.8, 1, 0.8),
+                        new Vector3(0, 0, 0),
+                        enemyStats.speed,
+                        true,
+                        5,
+                        "fly"
+                    )
+                )
+            }
+            else {
+                this.enemies.push(
+                    new Enemy(
+                        enemyStats.pos,
+                        new Vector3(1, 2, 1),
+                        new Vector3(0, 0, 0),
+                        enemyStats.speed,
+                        true,
+                        10,
+                        "ground"
+                    )
+                )
+            }
+        }
 
-        if (type.name === "fly") {
-            this.enemies.push(
-                new Fly(
-                    enemyStats.pos,
-                    new Vector3(0, 0, 0),
-                    new Vector3(1, 1, 1),
-                    enemyStats.speed,
-                    true
-                )
-            )
-        }
-        else {
-            this.enemies.push(
-                new Enemy(
-                    enemyStats.pos,
-                    new Vector3(0, 0, 0),
-                    new Vector3(1, 1, 1),
-                    enemyStats.speed,
-                    true
-                )
-            )
-        }
+
+
+
+
+
 
     }
 }

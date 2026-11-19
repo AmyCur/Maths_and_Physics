@@ -7,17 +7,25 @@ import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { EController } from "./EnemyController.js";
 
-export class Enemy extends Entity {
+export class Enemy {
     maxSpeed;
     speed;
+    type;
 
-    constructor(position, rotation, scale, maxSpeed = 0.01, intelligent = true, health = 100) {
-        super(position, scale, rotation, health);
+    constructor(position, scale, rotation, maxSpeed = 0.01, intelligent = true, health = 100, type="ground") {
+        this.position=position;
+        this.scale=scale;
+        this.rotation=rotation;
+        this.health=health;
         this.maxSpeed = maxSpeed;
         this.intelligent = intelligent;
         this.stoppingDistance = 6;
         this.forceStopDistance = 3;
-        this.attack = new Attack(1, 10);
+        this.attack = new Attack(1, 10, () => {
+            player.TakeDamage(this.attack.damage);
+            this.attack.Cooldown();
+        });
+        this.type = type;
     }
 
     CalculateSpeed(tv) {
@@ -26,7 +34,7 @@ export class Enemy extends Entity {
     }
 
     GetStationary() {
-        const tv = this.TargetVector();
+        const tv = this.TargetVector(this.overrideY);
         this.stationary = tv.length <= this.forceStopDistance;
     }
 
@@ -44,16 +52,12 @@ export class Enemy extends Entity {
     }
 
     Attack() {
-        if (this.attack.onCD) this.attack.CheckCD();
-        else {
-            player.TakeDamage(this.attack.damage);
-            this.attack.Cooldown();
-        }
+        this.attack.CheckCD();
     }
 
 
     MoveToTargetPositon() {
-        const tv = this.TargetVector();
+        const tv = this.TargetVector(this.overrideY);
 
         this.speed = this.CalculateSpeed(tv);
 
@@ -62,7 +66,9 @@ export class Enemy extends Entity {
         tv.normalized.z *= this.speed;
 
 
-        this.position.Add(tv.normalized);
+        this.position = VectorUtil.Add(this.position, tv.normalized);
+
+        this.position.y=this.type==="fly" ? 5 : -1;
     }
 
     TargetVector() {
@@ -71,7 +77,9 @@ export class Enemy extends Entity {
 
         const difference = VectorUtil.Subtract(tp, cp);
 
-        const differenceLength = difference.Length();
+        if(this.type==="fly") difference.y=0;
+
+        const differenceLength = VectorUtil.GetLength(difference);
 
         const normal = VectorUtil.Normalize(difference);
 

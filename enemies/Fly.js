@@ -1,11 +1,11 @@
+import { Entity } from "../game_objects/Entity.js";
+import { GameObject } from "../game_objects/GameObject.js";
 import { player } from "../game_objects/Player.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { Enemy } from "./Enemy.js";
 
-class Fly extends Enemy {
-    
-
+class Fly  {
     TargetVector() {
         const cp = this.position;
         const tp = new Vector3(-player.position.x, -5, -player.position.z);
@@ -22,9 +22,9 @@ class Fly extends Enemy {
         };
     }
 
-    constructor(position, rotation , scale, maxSpeed = 0.01, intelligent = true, health = 100) {
-        super(position, rotation, scale, maxSpeed, intelligent, health);
-    }
+    // constructor(position, rotation , scale, maxSpeed = 0.01, intelligent = true, health = 100) {
+    //     super(position, rotation, scale, maxSpeed, intelligent, health);
+    // }
 }
 
 export { Fly };

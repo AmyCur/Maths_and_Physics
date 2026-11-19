@@ -13,7 +13,7 @@ import { GameObject } from "./GameObject.js";
 
 class Player extends Entity {
 
-    idle=false;
+    idle = false;
 
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
     constructor(position, jumpForce) {
@@ -23,8 +23,21 @@ class Player extends Entity {
         this.text = document.getElementById("player-pos");
         this.healthText = document.getElementById("player-health");
         this.jumpForce = jumpForce / 100;
-        this.godMode = true;
-        this.attack = new Attack(0.2, 10);
+        this.godMode = false;
+        // I kinda love this
+        this.attack = new Attack(0.2, 10, () => {
+            const attackDir = VectorUtil.GetCameraForwardVector();
+
+            console.log(attackDir.Print());
+
+            const hitObj = Raycast.ShootRay(new Vector3(-player.position.x, -player.position.y, -player.position.z), attackDir, 10);
+
+            hitObj?.TakeDamage(this.attack.damage);
+
+
+
+            this.attack.Cooldown();
+        });
     }
 
     UpdateUI() {
@@ -38,22 +51,12 @@ class Player extends Entity {
     }
 
     Attack() {
-        if (this.attack.onCD) this.attack.CheckCD();
-        else {
-
-            const attackDir = VectorUtil.GetCameraForwardVector();
-
-            console.log(attackDir.Print());
-
-            const hitObj = Raycast.ShootRay(new Vector3(-player.position.x,-player.position.y,-player.position.z), attackDir, 10);
-
-            hitObj?.TakeDamage(this.attack.damage);
+        this.attack.CheckCD();
 
 
 
-            this.attack.Cooldown();
-        }
     }
+
 
     GetMovementInput() {
         const forwards = input.forwards(camera.rotation.x);
@@ -83,10 +86,10 @@ class Player extends Entity {
             movementVector.Add(right);
         }
 
-        if(input.movementDirectionVector.x!==0 || input.movementDirectionVector.y!==0) input.restingDirectionVector=input.movementDirectionVector;
-         
+        if (input.movementDirectionVector.x !== 0 || input.movementDirectionVector.y !== 0) input.restingDirectionVector = input.movementDirectionVector;
 
-        this.idle = input.movementDirectionVector.x!==0 && input.movementDirectionVector.y!==0;
+
+        this.idle = input.movementDirectionVector.x !== 0 && input.movementDirectionVector.y !== 0;
 
         if ((movementVector.x != 0 || movementVector.y != 0) && player.Grounded()) input.angle += 0.5;
         if (!player.Grounded()) input.angle = 0;

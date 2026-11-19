@@ -4,6 +4,7 @@ import { camera } from "./game_objects/camera.js";
 import { player } from "./game_objects/Player.js";
 import { Time } from "./util/Time.js";
 import { EController, EnemyController } from "./enemies/EnemyController.js";
+import { VectorUtil } from "./util/VectorUtil.js";
 
 
 
@@ -47,7 +48,7 @@ function Main() {
                 enem.Die();
             }
         }
-        player.position.Add(player.GetMovementInput());
+        player.position = VectorUtil.Add(player.position, player.GetMovementInput())
         player.Gravity();
         player.UpdateUI();
         camera.UpdateUI();

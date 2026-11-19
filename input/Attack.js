@@ -6,15 +6,17 @@ export class Attack{
     attackDT= 0;
     targetDT= 0;
 
-    constructor(cdTime=1, damage=10){
+    constructor(cdTime=1, damage=10, onAttackFunction){
         this.cdTime=cdTime;
         this.damage=damage;
+        this.onAttackFunction=onAttackFunction;
     }
 
     CheckCD(){
-        this.attackDT+=Time.deltaTime;
-        if(this.attackDT >=this.targetDT){
+        if(this.onCD) this.attackDT+=Time.deltaTime;
+        if(this.attackDT >= this.targetDT){
             this.onCD=false;
+            this.onAttackFunction();
         }
     }
 
