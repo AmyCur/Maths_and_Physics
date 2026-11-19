@@ -51,8 +51,8 @@ export const VectorUtil = {
         const pos = buffer.position;
         const scale = buffer.scale;
 
-        const minPos = this.Subtract(pos, this.Multiply(scale, 3.2));
-        const maxPos = this.Add(pos, this.Multiply(scale, 3.2));
+        const minPos = this.Subtract(pos, this.Multiply(scale, 5));
+        const maxPos = this.Add(pos, this.Multiply(scale, 5));
 
         // console.log("Min", minPos, "\n Max: ", maxPos);
       

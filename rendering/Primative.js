@@ -5,7 +5,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 
 export class Primative extends Entity {
 
-    
+
 
     copy(prim) {
         return prim;
@@ -27,8 +27,8 @@ export class Primative extends Entity {
         this.rotation = rotation;
     }
 
-    SetColor(color){
-        this.colors=color;
+    SetColor(color) {
+        this.colors = color;
     }
 
 
@@ -43,7 +43,7 @@ export class Primative extends Entity {
 
     MakeCube(color) {
         let targetColor;
-        if(color!==undefined) targetColor = this.SetColor(color);
+        if (color !== undefined) targetColor = this.SetColor(color);
         return new Primative(
             defaultCubeData.positions,
             color === undefined ? defaultCubeData.colors : targetColor,
@@ -55,10 +55,20 @@ export class Primative extends Entity {
 
 
     SetColor(c) {
-        
+
         if (c === "red") return red;
         else if (c === "green") return green;
         else if (c === "blue") return blue;
+        else if (c === "random") {
+            return [
+                [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+                [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+                [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+                [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+                [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+                [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+            ]
+        }
         else console.log(`Color not found! ${c}`);
     }
 }

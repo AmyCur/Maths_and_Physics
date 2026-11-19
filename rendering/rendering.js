@@ -192,6 +192,7 @@ function CreateEnemyBuffer(gl) {
 
     for (let i = 0; i < EController.enemies.length; i++) {
         const prim = new Primative().MakeCube();
+        prim.colors = prim.SetColor("blue");
         prim.SetPosition(EController.enemies[i].position);
         prim.SetScale(EController.enemies[i].scale);
         prim.SetRotation(EController.enemies[i].rotation);
