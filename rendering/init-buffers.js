@@ -1,3 +1,4 @@
+import { BufferObject } from "../game_objects/BufferObject.js";
 
 function createShapeBuffer(gl, data) {
   const buffer = gl.createBuffer();
@@ -8,23 +9,28 @@ function createShapeBuffer(gl, data) {
 
 
 
-export function initBuffersRenderObject(gl, renderObj, enemy) {
+export function initBuffersRenderObject(gl, renderObj, components) {
   const ib = initBuffers(gl, renderObj.positions, renderObj.colors, renderObj.indices);
 
-  return {
-    
-    //! NOT THE POSITION!!!! ITS THE POSITION BUFFER
-    position: ib.positionBuffer,
-    color: ib.colorBuffers,
-    indices: ib.indexBuffer,
-    
-    transform: renderObj.transform,
+  const BE = new BufferObject(
+    //* Buffers
+    {
+      position: ib.positionBuffer,
+      color: ib.colorBuffers,
+      index: ib.indexBuffer,
+    },
 
-    components: {
-      renderObj: renderObj,
-      enemy: enemy
-    }
-  }
+    //* Transform
+    renderObj.transform,
+
+    //* Render Object
+    renderObj,
+
+    //* Components
+    components
+  );
+
+  return BE;
 }
 
 function initBuffers(gl, positions, colors, indices) {

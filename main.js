@@ -39,7 +39,6 @@ function Main() {
 
         if(Math.floor(tick)%enemySpawnInterval==0){
             tick=1;
-            console.log("spawning");
             EController.SpawnEnemy(false, EController.GetRandomVectorAroundThePlayer());
         }
 

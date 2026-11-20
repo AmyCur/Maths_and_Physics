@@ -34,6 +34,7 @@ class Player {
         this.godMode = true;
         // I kinda love this
         this.attack = new Attack(0.2, 10, () => {
+
             const attackDir = VectorUtil.GetCameraForwardVector();
 
             console.log(attackDir.Print());
@@ -140,7 +141,7 @@ class Player {
     }
 
     UpdatePosition() {
-        player.transform.position = VectorUtil.ClampPositionInWorld(player.transform.position, player.GetMovementInput(),false);
+        player.transform.position = VectorUtil.DetermineCollision(player.transform.position, player.GetMovementInput());
     }
 }
 

@@ -7,8 +7,14 @@ export const Raycast = {
 
     // Colliders do NOT rotate
     GetHitCollider(rayVec) {
-        for (let i = 0; i < objects.enemies.length; i++) {
-            const col = objects.enemies[i];
+
+        const allObjs = objects.GetAllRaycastableObjects();
+
+
+        for (let i = 0; i < allObjs.length; i++) {
+
+            const col = allObjs[i];
+
             const cp = col.transform.position;
             const cs = col.transform.scale;
 
@@ -16,18 +22,11 @@ export const Raycast = {
             const maxPos = VectorUtil.Add(cp, cs);
          
 
-            if (VectorUtil.WithinRange(rayVec, minPos, maxPos) && objects.IsEnemy(col)) {
-            //     console.log(`
-            //     min: ${minPos.Print()},    
-            //     max: ${maxPos.Print()},    
-            //     vector pos: ${rayVec.Print()},   
-            //     hit: ${VectorUtil.WithinRange(rayVec, minPos, maxPos)} 
-            // `)
-                console.log(`HIT!!!! ${col}`);
-                return col.components.enemy;
+            if (VectorUtil.WithinRange(rayVec, minPos, maxPos)) {
+                console.log(col.properties.name);
+                return col.components;
             }
         }
-
 
         return null;
     },

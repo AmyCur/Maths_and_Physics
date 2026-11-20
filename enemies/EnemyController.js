@@ -32,7 +32,6 @@ export class EnemyController {
                 sumOfWeights += v.weight;
             }
             else {
-                console.log(v.name);
                 return v;
             }
         }
@@ -102,11 +101,9 @@ export class EnemyController {
             if (type.name === "fly") {
                 this.enemies.push(
                     new Enemy(
-
                         enemyStats.pos,
                         new Vector3(0, 0, 0),
                         new Vector3(0.8, 1, 0.8),
-
                         enemyStats.speed,
                         true,
                         5,

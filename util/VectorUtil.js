@@ -55,7 +55,7 @@ export const VectorUtil = {
         const maxPos = this.Add(pos, this.Multiply(scale, 5));
 
         // console.log("Min", minPos, "\n Max: ", maxPos);
-      
+
 
         return {
             min: minPos,
@@ -63,41 +63,102 @@ export const VectorUtil = {
         };
     },
 
-    IsInRange(v, min, max) {
-        return v >= min && v <= max;
+    InRange(f, min, max) {
+        return f >= min && f <= max;
     },
 
-    ClampPositionInWorld(position, addition, collideWithEnemies = true) {
+    MultiplyVector(v1, v2) {
+        const v = new Vector3(0, 0, 0);
+        v.x = v1.x * v2.x;
+        v.y = v1.y * v2.y;
+        v.z = v1.z * v2.z;
+
+        return v;
+    },
+
+    IsColliding(position) {
+        const colliders = objects.GetAllColliderObjects();
+
+        const isCol = {
+            x: false,
+            y: false,
+            z: false,
+            obj: null,
+        }
+
+        if (colliders.length === 0) {
+            console.log("No colliders");
+            return isCol;
+        }
+
+        for (let i = 0; i < colliders.length; i++) {
+
+            const co = colliders[i];
+            // console.log(co);
+            const cc = co.components.collider;
+            // All colliders are box colliders currently
+
+            const objPos = co.transform.position;
+            const colOffset = cc.offset;
+
+            const colliderPos = this.Add(objPos, colOffset);
+
+            const objScale = co.transform.scale;
+            const colScale = cc.scale;
+
+            const colliderSize = this.MultiplyVector(objScale, colScale);
+
+            // console.log(colliderPos, colliderSize);
+
+            const minBound = this.Subtract(colliderPos, colliderSize);
+            const maxBound = this.Add(colliderPos, colliderSize);
+
+            const cx = this.InRange(position.x, minBound.x, maxBound.x);
+            const cy = this.InRange(position.y, minBound.y, maxBound.y);
+            const cz = this.InRange(position.z, minBound.z, maxBound.z);
+            
+            // console.log({ cx, cy, cz })
+            if(cz || cx || cy)
+            return {
+                // EBK reference
+                x: cx,
+                y: cy,
+                z: cz,
+                obj: co
+            }
+
+            
+        }
+
+        // console.log(isCol);
+        return isCol;
+
+
+    },
+
+    DetermineCollision(position, addition) {
+        const targetPos = this.Add(position, addition);
+
+        const collisions = this.IsColliding(targetPos);
+        console.log(collisions);
+
+        // if(collisions.x.value) console.log(collisions.x.object);
+
+        if (collisions.x) targetPos.x = position.x;
+        if (collisions.y) targetPos.y = position.y;
+        if (collisions.z) targetPos.z = position.z;
+
+        return targetPos;
+    },
+
+    ClampPositionInWorld(position, addition) {
         const p = this.Add(position, addition);
         const floor = objects.static[0];
         const minPos = VectorUtil.Subtract(floor.transform.position, VectorUtil.Subtract(floor.transform.scale, new Vector3(1, 0, 1)));
         const maxPos = VectorUtil.Add(floor.transform.position, VectorUtil.Subtract(floor.transform.scale, new Vector3(1, 0, 1)));
         let newPos = VectorUtil.ClampPlayerPositon(p, minPos, maxPos);
 
-        
-
-        if (objects.enemies.length === 0 || !collideWithEnemies) return newPos;
-
-        for (let i = 0; i < objects.enemies.length; i++) {
-            const enemy = objects.enemies[i];
-            if(enemy.transform.position===position) return newPos;
-            
-            const objectBounds = this.GetMinAndMaxBounds(enemy.transform);
-
-            if (this.IsInRange(newPos.x, objectBounds.min.x, objectBounds.max.x)){
-                newPos.x=position.x;
-            }
-            if (this.IsInRange(newPos.y, objectBounds.min.y, objectBounds.max.y)){
-                newPos.y = position.y;
-            }
-            if (this.IsInRange(newPos.z, objectBounds.min.z, objectBounds.max.z)) {
-                newPos.z = position.z; 
-            };
-        }
-
-        return position;
-
-
+        return newPos;
     },
 
     WithinRange(v, min, max) {

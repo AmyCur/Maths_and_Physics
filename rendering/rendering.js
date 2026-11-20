@@ -8,6 +8,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 import { EController, EnemyController } from "../enemies/EnemyController.js";
 import { Mat4 } from "../vectors/Mat4.js";
 import { objects } from "../game_objects/Objects.js";
+import { BoxCollider } from "../game_objects/Colliders.js";
 
 //#region Initialisation
 function GetSceneSettings(gl) {
@@ -113,8 +114,14 @@ function CreateWalls(fb, gl) {
 
 
     for (let wall of walls) {
-        wall["components"].renderObj.SetColor("red");
+        wall.renderObject.SetColor("red");
     }
+
+    w1.properties.name="Wall 1";
+    w2.properties.name="Wall 2";
+    w3.properties.name="Wall 3";
+    w4.properties.name="Wall 4";
+
 
     return walls;
 }
@@ -167,6 +174,14 @@ export function InitRendering() {
 
     const walls = CreateWalls(fb, gl);
 
+    for(let i = 0; i < walls.length; i++){
+        const wall = walls[i];
+        
+        wall.components.collider = new BoxCollider(new Vector3(0,0,0), new Vector3(1,1,1));
+    }
+
+    console.log(walls);
+
     objects.static.push(...walls);
 
 
@@ -191,6 +206,7 @@ function CreateEnemyBuffer(gl) {
 
     for (let i = 0; i < EController.enemies.length; i++) {
         const enemy = EController.enemies[i];
+
         const renderObj = new RenderObject().MakeCube();
         renderObj.colors = renderObj.SetColor("blue");
 
@@ -205,6 +221,7 @@ function CreateEnemyBuffer(gl) {
         eb.transform.position = EController.enemies[i].transform.position;
         eb.transform.scale = EController.enemies[i].transform.scale;
         eb.transform.rotation = EController.enemies[i].transform.rotation;
+        eb["components"].collider = new BoxCollider(new Vector3(0,0,0), new Vector3(1,1,1));
 
         objects.enemies.push(eb);
 
@@ -315,10 +332,10 @@ function RenderBuffer(gl, b, programInfo) {
         modelMatrix.m
     )
 
-    setPositionAttribute(gl, b, programInfo);
-    setColorAttribute(gl, b, programInfo);
+    setPositionAttribute(gl, b.buffers, programInfo);
+    setColorAttribute(gl, b.buffers, programInfo);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.indices);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.buffers.index);
     gl.useProgram(programInfo.program);
 
 
