@@ -11,7 +11,7 @@ export const objects = {
         let colObjs = [];
         const allObj = this.GetAllObjects();
         for(let obj of allObj){
-            if(obj["components"]?.collider !== undefined){
+            if(obj.components.collider !== undefined){
                 colObjs.push(obj);
             }
         }

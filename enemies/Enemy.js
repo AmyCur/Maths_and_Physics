@@ -12,23 +12,21 @@ export class Enemy {
     speed;
     type;
 
-    constructor(position, rotation, scale, maxSpeed = 0.01, intelligent = true, health = 100, type="ground") {
+    constructor(transform, maxSpeed = 0.01, intelligent = true, health = 100, type="ground") {
         
-        this.transform = {
-            position: position,
-            rotation: rotation,
-            scale: scale
-        }
+        this.transform = transform;
 
-        this.health=health;
+        // this.health=health;
         this.maxSpeed = maxSpeed;
         this.intelligent = intelligent;
         this.stoppingDistance = 6;
         this.forceStopDistance = 3;
+
         this.attack = new Attack(1, 10, () => {
             player.TakeDamage(this.attack.damage);
             this.attack.Cooldown();
         });
+
         this.type = type;
     }
 

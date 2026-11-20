@@ -9,7 +9,7 @@ import { Fly } from "./Fly.js";
 
 export class EnemyController {
     types = [
-        new EnemyType("fly", 60, 10, 0.3),
+        new EnemyType("fly", 0, 10, 0.3),
         new EnemyType("ground", 200, 5, 0.4)
     ];
 
@@ -52,7 +52,7 @@ export class EnemyController {
     GetRandomVectorAroundThePlayer() {
         const theta = (Math.random() * 360) * MUtil.Deg2Rad;
         const pp = new Vector3(-player.transform.position.x, -player.transform.position.y + 3, -player.transform.position.z);
-        return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), pp.y, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
+        return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), 0, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
     }
 
     HandleAI() {
@@ -101,10 +101,12 @@ export class EnemyController {
             if (type.name === "fly") {
                 this.enemies.push(
                     new Enemy(
-                        enemyStats.pos,
-                        new Vector3(0, 0, 0),
-                        new Vector3(0.8, 1, 0.8),
-                        enemyStats.speed,
+                        {
+                            position: enemyStats.pos,
+                            rotation: new Vector3(0, 0, 0),
+                            scale: new Vector3(0.8, 1, 0.8),
+                        }
+                        , enemyStats.speed,
                         true,
                         5,
                         "fly"
@@ -114,14 +116,14 @@ export class EnemyController {
             else {
                 this.enemies.push(
                     new Enemy(
-
-                        enemyStats.pos,
-                        new Vector3(1, 2, 1),
-                        new Vector3(0, 0, 0),
-
+                        {
+                            position: enemyStats.pos,
+                            rotation: new Vector3(0, 0, 0),
+                            scale: new Vector3(0.8, 1, 0.8),
+                        },
                         enemyStats.speed,
                         true,
-                        10,
+                        5,
                         "ground"
                     )
                 )

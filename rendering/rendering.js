@@ -8,7 +8,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 import { EController, EnemyController } from "../enemies/EnemyController.js";
 import { Mat4 } from "../vectors/Mat4.js";
 import { objects } from "../game_objects/Objects.js";
-import { BoxCollider } from "../game_objects/Colliders.js";
+import { BoxCollider, ColliderUtils } from "../game_objects/Colliders.js";
 
 //#region Initialisation
 function GetSceneSettings(gl) {
@@ -43,7 +43,7 @@ function CreateWalls(fb, gl) {
 
     const walls = [];
 
-    const w1 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"))
+    const w1 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"), {collider: new BoxCollider(new Vector3(0,0,0), new Vector3(1,1,1))})
 
 
     w1.transform.position = new Vector3(
@@ -122,7 +122,6 @@ function CreateWalls(fb, gl) {
     w3.properties.name="Wall 3";
     w4.properties.name="Wall 4";
 
-
     return walls;
 }
 
@@ -168,7 +167,7 @@ export function InitRendering() {
 
     //* Create the buffers
 
-    const fb = initBuffersRenderObject(gl, floor);
+    const fb = initBuffersRenderObject(gl, floor, {collider: ColliderUtils.defaultCollider});
 
     objects.static.push(fb);
 
@@ -184,17 +183,9 @@ export function InitRendering() {
 
     objects.static.push(...walls);
 
-
-
-
-    const crossHair = initBuffersRenderObject(gl, new RenderObject().MakeCube());
-
-    // crossHair.transform.position=new Vector3(1,5,0);
-
     return {
         gl: gl,
         programInfo: programInfo
-
     }
 }
 //#endregion
@@ -216,12 +207,13 @@ function CreateEnemyBuffer(gl) {
 
         
 
-        const eb = initBuffersRenderObject(gl, renderObj, EController.enemies[i]);
-
+        const eb = initBuffersRenderObject(gl, renderObj, {enemy: EController.enemies[i]});
         eb.transform.position = EController.enemies[i].transform.position;
         eb.transform.scale = EController.enemies[i].transform.scale;
         eb.transform.rotation = EController.enemies[i].transform.rotation;
-        eb["components"].collider = new BoxCollider(new Vector3(0,0,0), new Vector3(1,1,1));
+        
+        eb.components.collider = new BoxCollider(new Vector3(0,0,0), new Vector3(1,1,1));
+        eb.properties.name="enemy ";
 
         objects.enemies.push(eb);
 

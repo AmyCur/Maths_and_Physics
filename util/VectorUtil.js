@@ -1,4 +1,5 @@
 import { camera } from "../game_objects/camera.js";
+import { ColliderUtils } from "../game_objects/Colliders.js";
 import { objects } from "../game_objects/Objects.js";
 import { player } from "../game_objects/Player.js";
 import { Vector2 } from "../vectors/Vector2.js";
@@ -48,11 +49,11 @@ export const VectorUtil = {
     },
 
     GetMinAndMaxBounds(transform) {
-        const pos = transform.position;
+        const position = transform.position;
         const scale = transform.scale;
 
-        const minPos = this.Subtract(pos, this.Multiply(scale, 5));
-        const maxPos = this.Add(pos, this.Multiply(scale, 5));
+        const minPos = this.Subtract(position, this.Multiply(scale, 5));
+        const maxPos = this.Add(position, this.Multiply(scale, 5));
 
         // console.log("Min", minPos, "\n Max: ", maxPos);
 
@@ -67,6 +68,14 @@ export const VectorUtil = {
         return f >= min && f <= max;
     },
 
+    VectorInRange(v, min, max){
+        const xir = this.InRange(v.x,min.x,max.x);
+        const yir = this.InRange(v.y,min.y,max.y);
+        const zir = this.InRange(v.z,min.z,max.z);
+
+        return (xir && yir && zir);
+    },
+
     MultiplyVector(v1, v2) {
         const v = new Vector3(0, 0, 0);
         v.x = v1.x * v2.x;
@@ -76,79 +85,42 @@ export const VectorUtil = {
         return v;
     },
 
-    IsColliding(position) {
+
+
+    
+    IsColliding(position, addition){
+        // Despite the name (its an array of BufferObjects not colliders)
         const colliders = objects.GetAllColliderObjects();
-
-        const isCol = {
-            x: false,
-            y: false,
-            z: false,
-            obj: null,
-        }
-
-        if (colliders.length === 0) {
-            console.log("No colliders");
-            return isCol;
-        }
-
-        for (let i = 0; i < colliders.length; i++) {
-
+        
+        for(let i = 0;i < colliders.length; i++){
             const co = colliders[i];
-            // console.log(co);
             const cc = co.components.collider;
-            // All colliders are box colliders currently
 
-            const objPos = co.transform.position;
-            const colOffset = cc.offset;
+            const colliderPosition = this.Add(co.transform.position, cc.offset);
+            const colliderScale = this.MultiplyVector(co.transform.scale, cc.scale);
 
-            const colliderPos = this.Add(objPos, colOffset);
+            const minBound = this.Subtract(colliderPosition, colliderScale);
+            const maxBound = this.Add(colliderPosition, colliderScale);
 
-            const objScale = co.transform.scale;
-            const colScale = cc.scale;
-
-            const colliderSize = this.MultiplyVector(objScale, colScale);
-
-            // console.log(colliderPos, colliderSize);
-
-            const minBound = this.Subtract(colliderPos, colliderSize);
-            const maxBound = this.Add(colliderPos, colliderSize);
-
-            const cx = this.InRange(position.x, minBound.x, maxBound.x);
-            const cy = this.InRange(position.y, minBound.y, maxBound.y);
-            const cz = this.InRange(position.z, minBound.z, maxBound.z);
-            
-            // console.log({ cx, cy, cz })
-            if(cz || cx || cy)
-            return {
-                // EBK reference
-                x: cx,
-                y: cy,
-                z: cz,
-                obj: co
+            if(this.VectorInRange(this.Add(position, addition), minBound, maxBound)) {
+                console.log(minBound);
+                console.log(maxBound);
+                console.log(colliderPosition);
+                console.log(position);
+                return {position: position, object: co};
             }
-
-            
         }
 
-        // console.log(isCol);
-        return isCol;
-
-
+        return {position: this.Add(position, addition), object:null};
     },
 
     DetermineCollision(position, addition) {
-        const targetPos = this.Add(position, addition);
-
-        const collisions = this.IsColliding(targetPos);
-        console.log(collisions);
+        const collisions = this.IsColliding(position, addition);
+        if(collisions.object!=null) console.log(collisions.object);
 
         // if(collisions.x.value) console.log(collisions.x.object);
 
-        if (collisions.x) targetPos.x = position.x;
-        if (collisions.y) targetPos.y = position.y;
-        if (collisions.z) targetPos.z = position.z;
-
-        return targetPos;
+        return collisions.position;
     },
 
     ClampPositionInWorld(position, addition) {
