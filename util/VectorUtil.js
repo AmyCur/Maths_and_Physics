@@ -85,44 +85,6 @@ export const VectorUtil = {
         return v;
     },
 
-
-
-    
-    IsColliding(position, addition){
-        // Despite the name (its an array of BufferObjects not colliders)
-        const colliders = objects.GetAllColliderObjects();
-        
-        for(let i = 0;i < colliders.length; i++){
-            const co = colliders[i];
-            const cc = co.components.collider;
-
-            const colliderPosition = this.Add(co.transform.position, cc.offset);
-            const colliderScale = this.MultiplyVector(co.transform.scale, cc.scale);
-
-            const minBound = this.Subtract(colliderPosition, colliderScale);
-            const maxBound = this.Add(colliderPosition, colliderScale);
-
-            if(this.VectorInRange(this.Add(position, addition), minBound, maxBound)) {
-                console.log(minBound);
-                console.log(maxBound);
-                console.log(colliderPosition);
-                console.log(position);
-                return {position: position, object: co};
-            }
-        }
-
-        return {position: this.Add(position, addition), object:null};
-    },
-
-    DetermineCollision(position, addition) {
-        const collisions = this.IsColliding(position, addition);
-        if(collisions.object!=null) console.log(collisions.object);
-
-        // if(collisions.x.value) console.log(collisions.x.object);
-
-        return collisions.position;
-    },
-
     ClampPositionInWorld(position, addition) {
         const p = this.Add(position, addition);
         const floor = objects.static[0];

@@ -1,4 +1,5 @@
 import { BufferObject } from "../game_objects/BufferObject.js";
+import { ColliderUtils } from "../game_objects/Colliders.js";
 import { RenderObject } from "./RenderObject.js";
 
 export const BufferCreator = {
@@ -36,18 +37,6 @@ export const BufferCreator = {
       colorBuffers: colorBuffer,
       indexBuffer: indexBuffer,
     };
-  },
-
-  CreateNewEnemyBuffer(gl, enemy) {
-    const renderObj = new RenderObject().MakeCube();
-    renderObj.colors = renderObj.SetColor("blue");
-
-    const eb = BufferCreator.CreateBufferFromRenderObject(gl, renderObj, { enemy: enemy });
-
-    eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-    eb.properties.name = "enemy";
-
-    return eb;
   },
 
   CreatePositionBuffer(gl, positions) {

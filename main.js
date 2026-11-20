@@ -39,7 +39,7 @@ function Main() {
 
         if(Math.floor(tick)%enemySpawnInterval==0){
             tick=1;
-            EController.SpawnEnemy(false, EController.GetRandomVectorAroundThePlayer());
+            EController.SpawnEnemy(gl);
         }
 
         EController.HandleAI();

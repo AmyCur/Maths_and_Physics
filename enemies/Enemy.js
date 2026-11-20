@@ -1,3 +1,4 @@
+import { ColliderUtils } from "../game_objects/Colliders.js";
 import { Entity } from "../game_objects/Entity.js";
 import { player } from "../game_objects/Player.js";
 import { Attack } from "../input/Attack.js";
@@ -12,6 +13,7 @@ export class Enemy {
     speed;
     type;
     transform;
+    dead =false;
 
     constructor(transform, maxSpeed = 0.01, intelligent = true, health = 100, type="ground") {
         
@@ -52,6 +54,7 @@ export class Enemy {
 
     Die() {
         console.log("dead");
+        this.dead=true;
         EController.enemies.pop(this);
     }
 
@@ -76,8 +79,10 @@ export class Enemy {
         tv.normalized.z *= this.speed;
         
         this.transform.position.y=this.type==="fly" ? 5 : -1;
+
+        const cp = this.transform.position;
         
-        this.transform.position = VectorUtil.ClampPositionInWorld(this.transform.position, tv.normalized, true);
+        this.transform.position = ColliderUtils.DetermineCollisionAndMove(cp, tv.normalized);
 
         
     }

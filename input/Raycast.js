@@ -31,6 +31,8 @@ export const Raycast = {
         return null;
     },
 
+    
+
     ShootRay(startPos, dir, maxRange) {
         if (objects.enemies.length === 0) {
             console.error("No primatives");

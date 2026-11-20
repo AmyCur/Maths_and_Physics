@@ -1,6 +1,9 @@
+import { EController } from "../enemies/EnemyController.js";
 import { Entity } from "../game_objects/Entity.js";
 import { GameObject } from "../game_objects/GameObject.js";
+import { input } from "../input/input.js";
 import { Raycast } from "../input/Raycast.js";
+import { MUtil } from "../util/MathUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 
 // Formerly known as Primative
@@ -60,10 +63,9 @@ export class RenderObject {
 
 
     SetColor(c) {
-
         if (c === "red") return red;
         else if (c === "green") return green;
-        else if (c === "blue") return blue;
+        else if (c === "blue") return GetBlue();
         else if (c === "random") {
             return [
                 [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
@@ -96,6 +98,17 @@ const green = [
     [0, 1, 0, 1.0], // Front face: white
     [0, 1, 0, 1.0] // Front face: white
 ]
+
+function GetBlue(){
+    return [
+    [MUtil.lerp(0,1,Math.sin(EController.theta*MUtil.Deg2Rad*3)), 0, 1, 1.0], // Front face: white
+    [MUtil.lerp(0,1,Math.sin(EController.theta*MUtil.Deg2Rad*3)), 0, 1, 1.0], // Front face: white
+    [MUtil.lerp(0,1,Math.sin(EController.theta*MUtil.Deg2Rad*3)), 0, 1, 1.0], // Front face: white
+    [MUtil.lerp(0,1,Math.sin(EController.theta*MUtil.Deg2Rad*3)), 0, 1, 1.0], // Front face: white
+    [MUtil.lerp(0,1,Math.sin(EController.theta*MUtil.Deg2Rad*3)), 0, 1, 1.0], // Front face: white
+    [MUtil.lerp(0,1,Math.sin(EController.theta*MUtil.Deg2Rad*3)), 0, 1, 1.0] // Front face: white
+]
+}
 
 const blue = [
     [0, 0, 1, 1.0], // Front face: white

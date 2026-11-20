@@ -191,36 +191,34 @@ export function InitRendering() {
 
 
 
-// function CreateEnemyBuffer(gl) {
-//     const enemyBuffers = [];
+function CreateEnemyBuffer(gl) {
+    objects.enemies=[];
+    const enemyBuffers = [];
 
-//     for (let i = 0; i < EController.enemies.length; i++) {
-//         const enemy = EController.enemies[i];
+    for (let i = 0; i < EController.enemies.length; i++) {
+        const enemy = EController.enemies[i];
+        
+        const renderObj = new RenderObject().MakeCube();
+        renderObj.colors = renderObj.SetColor("blue");
 
-//         const renderObj = new RenderObject().MakeCube();
-//         renderObj.colors = renderObj.SetColor("blue");
+        const eb = BufferCreator.CreateBufferFromRenderObject(gl, renderObj, { enemy: enemy, collider: ColliderUtils.defaultCollider });
 
-//         // renderObj.SetPositionRotationAndScale(
-//         //     enemy.position,
-//         // )
+        eb.transform.position = enemy.transform.position;
+        eb.transform.scale = enemy.transform.scale;
+        eb.transform.rotation = enemy.transform.rotation;
 
+        // eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+        eb.properties.name = "enemy";
 
+        objects.enemies.push(eb);
 
-//         const eb = BufferCreator.CreateBufferFromRenderObject(gl, renderObj, { enemy: EController.enemies[i] });
-//         eb.transform.position = EController.enemies[i].transform.position;
-//         eb.transform.scale = EController.enemies[i].transform.scale;
-//         eb.transform.rotation = EController.enemies[i].transform.rotation;
+ 
 
-//         eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-//         eb.properties.name = "enemy ";
+        enemyBuffers.push(eb);
+    }
 
-//         objects.enemies.push(eb);
-
-//         enemyBuffers.push(eb);
-//     }
-
-//     return enemyBuffers;
-// }
+    return enemyBuffers;
+}
 
 function InitMatricies(gl) {
     // Get scene settings

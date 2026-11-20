@@ -8,12 +8,14 @@ import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector2 } from "../vectors/Vector2.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { camera } from "./camera.js";
+import { ColliderUtils } from "./Colliders.js";
 import { Entity } from "./Entity.js";
 import { GameObject } from "./GameObject.js";
 import { objects } from "./Objects.js";
 
 class Player {
 
+    velocity=0;
     idle = false;
 
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
@@ -32,8 +34,9 @@ class Player {
         this.healthText = document.getElementById("player-health");
         this.jumpForce = jumpForce / 100;
         this.godMode = true;
+        
         // I kinda love this
-        this.attack = new Attack(0.2, 10, () => {
+        this.attack = new Attack(0.3, 10, () => {
 
             const attackDir = VectorUtil.GetCameraForwardVector();
 
@@ -100,7 +103,8 @@ class Player {
 
         this.idle = input.movementDirectionVector.x !== 0 && input.movementDirectionVector.y !== 0;
 
-        if ((movementVector.x != 0 || movementVector.y != 0) && player.Grounded()) input.angle += 0.5;
+        // 0.1 of leeway to avoid floating point imprecision
+        if (this.velocity>0.1 && player.Grounded()) input.angle += 0.5;
         if (!player.Grounded()) input.angle = 0;
         // if(this.GetKey("Space")) 
 
@@ -141,7 +145,9 @@ class Player {
     }
 
     UpdatePosition() {
-        player.transform.position = VectorUtil.DetermineCollision(player.transform.position, player.GetMovementInput());
+        const cp = player.transform.position;
+        player.transform.position = ColliderUtils.DetermineCollisionAndMove(player.transform.position, player.GetMovementInput());
+        this.velocity=VectorUtil.GetLength(VectorUtil.Subtract(cp, player.transform.position));
     }
 }
 
