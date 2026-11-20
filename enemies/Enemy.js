@@ -11,6 +11,7 @@ export class Enemy {
     maxSpeed;
     speed;
     type;
+    transform;
 
     constructor(transform, maxSpeed = 0.01, intelligent = true, health = 100, type="ground") {
         
@@ -20,6 +21,7 @@ export class Enemy {
         this.maxSpeed = maxSpeed;
         this.intelligent = intelligent;
         this.stoppingDistance = 6;
+        this.health=health;
         this.forceStopDistance = 3;
 
         this.attack = new Attack(1, 10, () => {
@@ -42,6 +44,7 @@ export class Enemy {
 
     TakeDamage(damage) {
         console.log("taken damage");
+        console.log(damage);
         this.health -= damage;
         console.log(this.health);
         if (this.health <= 0) this.Die();

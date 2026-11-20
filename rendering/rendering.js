@@ -1,4 +1,4 @@
-import { initBuffersRenderObject } from "./init-buffers.js";
+import { BufferCreator } from "./init-buffers.js";
 import { input } from "../input/input.js";
 import { initShaderProgram } from "./shaders.js";
 import { floor, RenderObject } from "./RenderObject.js";
@@ -43,7 +43,7 @@ function CreateWalls(fb, gl) {
 
     const walls = [];
 
-    const w1 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"), {collider: new BoxCollider(new Vector3(0,0,0), new Vector3(1,1,1))})
+    const w1 = BufferCreator.CreateBufferFromRenderObject(gl, new RenderObject().MakeCube("green"), { collider: new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1)) })
 
 
     w1.transform.position = new Vector3(
@@ -61,7 +61,7 @@ function CreateWalls(fb, gl) {
 
     walls.push(w1);
 
-    const w2 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"))
+    const w2 = BufferCreator.CreateBufferFromRenderObject(gl, new RenderObject().MakeCube("green"))
 
 
 
@@ -79,7 +79,7 @@ function CreateWalls(fb, gl) {
 
     walls.push(w2);
 
-    const w3 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"))
+    const w3 = BufferCreator.CreateBufferFromRenderObject(gl, new RenderObject().MakeCube("green"))
 
     w3.transform.position = new Vector3(
         w3.transform.position.x,
@@ -96,7 +96,7 @@ function CreateWalls(fb, gl) {
     walls.push(w3);
 
 
-    const w4 = initBuffersRenderObject(gl, new RenderObject().MakeCube("green"))
+    const w4 = BufferCreator.CreateBufferFromRenderObject(gl, new RenderObject().MakeCube("green"))
 
     w4.transform.position = new Vector3(
         w4.transform.position.x,
@@ -117,19 +117,15 @@ function CreateWalls(fb, gl) {
         wall.renderObject.SetColor("red");
     }
 
-    w1.properties.name="Wall 1";
-    w2.properties.name="Wall 2";
-    w3.properties.name="Wall 3";
-    w4.properties.name="Wall 4";
+    w1.properties.name = "Wall 1";
+    w2.properties.name = "Wall 2";
+    w3.properties.name = "Wall 3";
+    w4.properties.name = "Wall 4";
 
     return walls;
 }
 
 export function InitRendering() {
-
-
-
-
     const canvas = document.getElementById("gl-canvas");
 
     const gl = canvas.getContext("webgl");
@@ -167,16 +163,16 @@ export function InitRendering() {
 
     //* Create the buffers
 
-    const fb = initBuffersRenderObject(gl, floor, {collider: ColliderUtils.defaultCollider});
+    const fb = BufferCreator.CreateBufferFromRenderObject(gl, floor, { collider: ColliderUtils.defaultCollider });
 
     objects.static.push(fb);
 
     const walls = CreateWalls(fb, gl);
 
-    for(let i = 0; i < walls.length; i++){
+    for (let i = 0; i < walls.length; i++) {
         const wall = walls[i];
-        
-        wall.components.collider = new BoxCollider(new Vector3(0,0,0), new Vector3(1,1,1));
+
+        wall.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
     }
 
     console.log(walls);
@@ -192,36 +188,39 @@ export function InitRendering() {
 
 //#region Rendering Each Frame
 
-function CreateEnemyBuffer(gl) {
-    const enemyBuffers = [];
 
-    for (let i = 0; i < EController.enemies.length; i++) {
-        const enemy = EController.enemies[i];
 
-        const renderObj = new RenderObject().MakeCube();
-        renderObj.colors = renderObj.SetColor("blue");
 
-        // renderObj.SetPositionRotationAndScale(
-        //     enemy.position,
-        // )
+// function CreateEnemyBuffer(gl) {
+//     const enemyBuffers = [];
 
-        
+//     for (let i = 0; i < EController.enemies.length; i++) {
+//         const enemy = EController.enemies[i];
 
-        const eb = initBuffersRenderObject(gl, renderObj, {enemy: EController.enemies[i]});
-        eb.transform.position = EController.enemies[i].transform.position;
-        eb.transform.scale = EController.enemies[i].transform.scale;
-        eb.transform.rotation = EController.enemies[i].transform.rotation;
-        
-        eb.components.collider = new BoxCollider(new Vector3(0,0,0), new Vector3(1,1,1));
-        eb.properties.name="enemy ";
+//         const renderObj = new RenderObject().MakeCube();
+//         renderObj.colors = renderObj.SetColor("blue");
 
-        objects.enemies.push(eb);
+//         // renderObj.SetPositionRotationAndScale(
+//         //     enemy.position,
+//         // )
 
-        enemyBuffers.push(eb);
-    }
 
-    return enemyBuffers;
-}
+
+//         const eb = BufferCreator.CreateBufferFromRenderObject(gl, renderObj, { enemy: EController.enemies[i] });
+//         eb.transform.position = EController.enemies[i].transform.position;
+//         eb.transform.scale = EController.enemies[i].transform.scale;
+//         eb.transform.rotation = EController.enemies[i].transform.rotation;
+
+//         eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+//         eb.properties.name = "enemy ";
+
+//         objects.enemies.push(eb);
+
+//         enemyBuffers.push(eb);
+//     }
+
+//     return enemyBuffers;
+// }
 
 function InitMatricies(gl) {
     // Get scene settings
@@ -271,9 +270,9 @@ export function Render(gl, programInfo) {
     for (const b of objects.static) {
         RenderBuffer(gl, b, programInfo);
     }
-    
 
-  
+
+
 
     // Render all the enemies 
     for (let i = 0; i < objects.enemies.length; i++) {

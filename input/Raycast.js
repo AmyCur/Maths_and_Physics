@@ -6,7 +6,7 @@ export const Raycast = {
     allObjects: [],
 
     // Colliders do NOT rotate
-    GetHitCollider(rayVec) {
+    GetHitObject(rayVec) {
 
         const allObjs = objects.GetAllRaycastableObjects();
 
@@ -24,7 +24,7 @@ export const Raycast = {
 
             if (VectorUtil.WithinRange(rayVec, minPos, maxPos)) {
                 console.log(col.properties.name);
-                return col.components;
+                return col;
             }
         }
 
@@ -54,12 +54,12 @@ export const Raycast = {
                 // console.log(this.allObjects);
 
                 // See if youve hit a collider
-                const hitCollider = this.GetHitCollider(rayVec);
+                const hitObject = this.GetHitObject(rayVec);
 
                 // If you have return it, else keep going
-                if (hitCollider != null) {
+                if (hitObject != null) {
                     // EController.SpawnEnemy(true, rayVec)
-                    return hitCollider;
+                    return hitObject;
                 }
             }
         }

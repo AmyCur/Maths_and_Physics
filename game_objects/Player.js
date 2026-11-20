@@ -41,7 +41,7 @@ class Player {
 
             const hitObj = Raycast.ShootRay(new Vector3(-player.transform.position.x, -player.transform.position.y, -player.transform.position.z), attackDir, 10);
 
-            hitObj?.TakeDamage(this.attack.damage);
+            if(hitObj?.IsEnemy()) hitObj.components.enemy.TakeDamage(this.attack.damage);
 
 
 

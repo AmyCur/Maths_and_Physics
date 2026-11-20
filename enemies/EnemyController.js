@@ -1,4 +1,5 @@
 import { player } from "../game_objects/Player.js";
+import { BufferCreator } from "../rendering/init-buffers.js";
 import { MUtil } from "../util/MathUtil.js";
 import { Random } from "../util/Random.js";
 import { VectorUtil } from "../util/VectorUtil.js";
@@ -87,6 +88,10 @@ export class EnemyController {
             damage: enemy.damage,
             speed: enemy.speed,
         }
+    }
+
+    AddNewEnemy(){
+        const enemy = BufferCreator.CreateNewEnemyBuffer(gl, )
     }
 
     SpawnEnemy() {
