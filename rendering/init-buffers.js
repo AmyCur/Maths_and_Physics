@@ -1,27 +1,30 @@
-import { Mesh } from "../game_objects/BufferObject.js";
+import { Mesh } from "../game_objects/Mesh.js";
 import { ColliderUtils } from "../game_objects/Colliders.js";
 import { RenderObject } from "./RenderObject.js";
+import { Transform } from "../game_objects/Transform.js";
+import { Buffer } from "./Buffer.js";
 
-export const BufferCreator = {
-  CreateBufferFromRenderObject(gl, renderObj, components) {
-    const ib = this.CreateBuffer(gl, renderObj.positions, renderObj.colors, renderObj.indices);
+export const MeshCreator = {
+  CreateMesh(gl, bufferData, components, properties) {
+    const ib = this.CreateBuffer(gl, bufferData.position, bufferData.color, bufferData.index);
 
     const BE = new Mesh(
       //* Buffers
-      {
-        position: ib.positionBuffer,
-        color: ib.colorBuffers,
-        index: ib.indexBuffer,
-      },
+
+      bufferData,
 
       //* Transform
-      renderObj.transform,
-
-      //* Render Object
-      renderObj,
+      Transform.default,
 
       //* Components
-      components
+      components,
+      properties,
+      
+      new Buffer(
+        ib.positionBuffer,
+        ib.colorBuffers,
+        ib.indexBuffer,
+      ),
     );
 
     return BE;

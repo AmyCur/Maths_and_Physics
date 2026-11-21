@@ -1,7 +1,8 @@
 import { Enemy } from "../enemies/Enemy.js";
 import { EController } from "../enemies/EnemyController.js";
 import { objects } from "../game_objects/Objects.js";
-import { BufferCreator } from "../rendering/init-buffers.js";
+import { Buffer } from "../rendering/Buffer.js";
+import { MeshCreator } from "../rendering/init-buffers.js";
 import { RenderObject } from "../rendering/RenderObject.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
@@ -90,7 +91,7 @@ export const Raycast = {
                 // If you have return it, else keep going
                 if (hitObject?.obj != null) {
                     if (gl !== null) {
-                        const bo = BufferCreator.CreateBufferFromRenderObject(gl, new RenderObject().MakeCube(), {})
+                        const bo = MeshCreator.CreateMesh(gl, Buffer.default, {}, {});
                         bo.transform.position=hitObject.position;
                         bo.transform.scale= new Vector3(0.5,0.5,0.5);
                         objects.other.push(

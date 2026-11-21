@@ -1,4 +1,4 @@
-import { BufferCreator } from "./init-buffers.js";
+import { MeshCreator } from "./init-buffers.js";
 import { input } from "../input/input.js";
 import { initShaderProgram } from "./shaders.js";
 import { floor, RenderObject } from "./RenderObject.js";
@@ -9,21 +9,12 @@ import { EController, EnemyController } from "../enemies/EnemyController.js";
 import { Mat4 } from "../vectors/Mat4.js";
 import { objects } from "../game_objects/Objects.js";
 import { BoxCollider, ColliderUtils } from "../game_objects/Colliders.js";
+import { GetSceneSettings } from "./RenderStart.js";
+import { Buffer } from "./Buffer.js";
+import { Mesh } from "../game_objects/Mesh.js";
 
 //#region Initialisation
-function GetSceneSettings(gl) {
-    const fieldOfView = (45 * Math.PI) / 180; // in radians
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    const zNear = 0.1;
-    const zFar = 1000.0;
 
-    return {
-        fieldOfView: fieldOfView,
-        aspect: aspect,
-        zNear: zNear,
-        zFar: zFar
-    };
-}
 
 function ReadyScene(gl) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
@@ -39,12 +30,9 @@ function ReadyScene(gl) {
 
 function CreateWalls(fb, gl) {
 
-
-
     const walls = [];
 
-    const w1 = BufferCreator.CreateBufferFromRenderObject(gl, new RenderObject().MakeCube("green"), { collider: new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1)) })
-
+    const w1 = MeshCreator.CreateMesh(gl, Buffer.default, {collider: BoxCollider.default}, {name: "w1", raycastable: true});
 
     w1.transform.position = new Vector3(
         fb.transform.position.x - fb.transform.scale.x + w1.transform.scale.x - (w1.transform.scale.x * 2),
@@ -61,7 +49,8 @@ function CreateWalls(fb, gl) {
 
     walls.push(w1);
 
-    const w2 = BufferCreator.CreateBufferFromRenderObject(gl, new RenderObject().MakeCube("green"))
+    const w2 = MeshCreator.CreateMesh(gl, Buffer.default, {collider: BoxCollider.default}, {name: "w2", raycastable: true});
+
 
 
 
@@ -79,7 +68,9 @@ function CreateWalls(fb, gl) {
 
     walls.push(w2);
 
-    const w3 = BufferCreator.CreateBufferFromRenderObject(gl, new RenderObject().MakeCube("green"))
+    const w3 = MeshCreator.CreateMesh(gl, Buffer.default, {collider: BoxCollider.default}, {name: "w3", raycastable: true});
+
+    
 
     w3.transform.position = new Vector3(
         w3.transform.position.x,
@@ -96,7 +87,8 @@ function CreateWalls(fb, gl) {
     walls.push(w3);
 
 
-    const w4 = BufferCreator.CreateBufferFromRenderObject(gl, new RenderObject().MakeCube("green"))
+    const w4 = MeshCreator.CreateMesh(gl, Buffer.default, {collider: BoxCollider.default}, {name: "w4", raycastable: true});
+    
 
     w4.transform.position = new Vector3(
         w4.transform.position.x,
@@ -112,15 +104,15 @@ function CreateWalls(fb, gl) {
 
     walls.push(w4);
 
-
     for (let wall of walls) {
-        wall.renderObject.SetColor("red");
+        wall.SetColor("red");
     }
 
-    w1.properties.name = "Wall 1";
-    w2.properties.name = "Wall 2";
-    w3.properties.name = "Wall 3";
-    w4.properties.name = "Wall 4";
+    // w1.properties.name = "Wall 1";
+    // w2.properties.name = "Wall 2";
+    // w3.properties.name = "Wall 3";
+    // w4.properties.name = "Wall 4";
+
 
     return walls;
 }
@@ -165,7 +157,10 @@ export function InitRendering() {
 
     //* Create the buffers
 
-    const fb = BufferCreator.CreateBufferFromRenderObject(gl, floor, { collider: ColliderUtils.defaultCollider });
+    const fb = MeshCreator.CreateMesh(gl, Buffer.default, { collider: BoxCollider.default }, {name: "floor", raycastable: true});
+    fb.transform.scale = new Vector3(100,1,100)
+    fb.transform.position = Vector3.zero;
+    console.log(fb);
 
     objects.static.push(fb);
 
@@ -174,7 +169,8 @@ export function InitRendering() {
     for (let i = 0; i < walls.length; i++) {
         const wall = walls[i];
 
-        wall.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+        wall.components.collider = BoxCollider.default;
+        wall.transform.position=Vector3.zero;
     }
 
     console.log(walls);
@@ -200,10 +196,9 @@ function CreateEnemyBuffer(gl) {
     for (let i = 0; i < EController.enemies.length; i++) {
         const enemy = EController.enemies[i];
         
-        const renderObj = new RenderObject().MakeCube();
-        renderObj.colors = renderObj.SetColor("blue");
 
-        const eb = BufferCreator.CreateBufferFromRenderObject(gl, renderObj, { enemy: enemy, collider: ColliderUtils.defaultCollider });
+
+        const eb = MeshCreator.CreateMesh(gl, Buffer.default, { enemy: enemy, collider: ColliderUtils.defaultCollider });
 
         eb.transform.position = enemy.transform.position;
         eb.transform.scale = enemy.transform.scale;
@@ -267,12 +262,12 @@ export function Render(gl, programInfo) {
     */
 
     // Render all static objects (like the floor)
-    for (const b of objects.static) {
-        RenderBuffer(gl, b, programInfo);
+    for (const mesh of objects.static) {
+        RenderBuffer(gl, mesh, programInfo);
     }
 
-    for(const b of objects.other){
-        RenderBuffer(gl, b, programInfo);
+    for(const mesh of objects.other){
+        RenderBuffer(gl, mesh, programInfo);
     }
 
 
@@ -305,21 +300,19 @@ export function Render(gl, programInfo) {
     );
 }
 
-function RenderBuffer(gl, b, programInfo) {
+function RenderBuffer(gl, mesh, programInfo) {
 
     const modelMatrix = new Mat4();
 
-    // Each of these transformations accesses the renderObj data because everything is a primative
 
+    modelMatrix.translate([mesh.transform.position.x, mesh.transform.position.y, mesh.transform.position.z]);
+    modelMatrix.scale([mesh.transform.scale.x, mesh.transform.scale.y, mesh.transform.scale.z]);
 
-    modelMatrix.translate([b.transform.position.x, b.transform.position.y, b.transform.position.z]);
-    modelMatrix.scale([b.transform.scale.x, b.transform.scale.y, b.transform.scale.z]);
+    modelMatrix.rotate([1, 0, 0], mesh.transform.rotation.x);
+    modelMatrix.rotate([0, 1, 0], mesh.transform.rotation.y);
+    modelMatrix.rotate([0, 0, 1], mesh.transform.rotation.z);
 
-    modelMatrix.rotate([1, 0, 0], b.transform.rotation.x);
-    modelMatrix.rotate([0, 1, 0], b.transform.rotation.y);
-    modelMatrix.rotate([0, 0, 1], b.transform.rotation.z);
-
-    //* Set the modelMatrix
+    //* Set the modelMatrix (NOT MODEL VIEW MATRIX)
 
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.modelMatrix,
@@ -327,10 +320,11 @@ function RenderBuffer(gl, b, programInfo) {
         modelMatrix.m
     )
 
-    setPositionAttribute(gl, b.buffers, programInfo);
-    setColorAttribute(gl, b.buffers, programInfo);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.buffers.index);
+    setPositionAttribute(gl, mesh.buffers, programInfo);
+    setColorAttribute(gl, mesh.buffers, programInfo);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.buffers.index);
     gl.useProgram(programInfo.program);
 
 

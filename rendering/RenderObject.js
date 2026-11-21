@@ -5,6 +5,7 @@ import { input } from "../input/input.js";
 import { Raycast } from "../input/Raycast.js";
 import { MUtil } from "../util/MathUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
+import { Buffer } from "./Buffer.js";
 
 "use strict";
 
@@ -205,7 +206,7 @@ export const defaultCubeData = {
     }
 }
 
-export const floor = new RenderObject(
+export const floor = new Buffer(
     [
         // Front face
         -1, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
@@ -271,10 +272,4 @@ export const floor = new RenderObject(
         22,
         23, // left
     ],
-    {
-        position: new Vector3(0, -10, 0),
-        rotation: new Vector3(0, 0, 0),
-        scale: new Vector3(100, 0.1, 100)
-    }
-
 );

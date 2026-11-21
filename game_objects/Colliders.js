@@ -4,6 +4,9 @@ import { objects } from "./Objects.js";
 
 export class BoxCollider {
     "use strict";
+
+    static default = new BoxCollider(Vector3.zero, Vector3.one);
+
     constructor(offset, scale) {
         this.offset = offset;
         this.scale = scale;
