@@ -51,7 +51,7 @@ class Player extends TransObject{
 
             console.log(attackDir.Print());
 
-            const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z), attackDir, 10, this.gl);
+            const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y+camera.transform.position.y, player.transform.position.z), attackDir, 10, this.gl);
 
             if (hitObj?.IsEnemy()) hitObj.components.enemy.TakeDamage(this.attack.damage);
 
@@ -93,8 +93,6 @@ class Player extends TransObject{
 
         this.HandleSprinting();
 
-        
-
         const forwards = input.forwards(camera.transform.rotation.x);
 
         const backwards = VectorUtil.Invert(forwards);
@@ -131,20 +129,22 @@ class Player extends TransObject{
     }
 
     Grounded() {
-        return this.transform.position.y <= 0;
+        const obj = Raycast.ShootRay(this.transform.position, Vector3.down(), 1, player.gl);
+        console.log(obj);
+        return obj !== undefined;
     }
 
     Gravity() {
         if (this.Grounded() || this.jumping) {
-            this.gravityScale = 1;
-            this.transform.position.y = 0;
+            this.gravityScale = 3;
+            // this.transform.position.y = 0;
         }
 
         else {
-            this.gravityScale *= 1.041
+            this.gravityScale *= 1.01
             const distancePerTick = MUtil.clamp(this.gravityScale * 0.1, 0, (this.position + (this.gravityScale * 0.1)));
             
-            this.transform.position = ColliderUtils.DetermineCollisionAndMove(this.transform.position, new Vector3(0, -distancePerTick, 0));
+            this.transform.position = ColliderUtils.MoveWithRespect(this.transform.position, new Vector3(0, -distancePerTick, 0));
         }
     }
 
@@ -152,7 +152,8 @@ class Player extends TransObject{
         this.jumping = true;
         let i = 0;
         const interval = setInterval(() => {
-            this.transform.position.y += this.jumpForce;
+            this.transform.position = ColliderUtils.MoveWithRespect(this.transform.position, new Vector3(0, this.jumpForce, 0));
+            // this.transform.position.y += this.jumpForce;
             i++;
             if (i >= 150 || this.Grounded()) clearInterval(interval);
         }, 1 * Time.deltaTime)
@@ -162,14 +163,16 @@ class Player extends TransObject{
     }
 
     UpdatePosition() {
+        
         const cp = player.transform.position;
-        player.transform.position = ColliderUtils.DetermineCollisionAndMove(player.transform.position, player.GetMovementInput());
+        if(cp.y < -1000 || cp.y>1000) console.log(cp);
+        player.transform.position = ColliderUtils.MoveWithRespect(player.transform.position, player.GetMovementInput());
         this.velocity = VectorUtil.GetLength(VectorUtil.Subtract(cp, player.transform.position));
     }
 }
 
 export const player = new Player({
-    position: new Vector3(0, 0, 0),
+    position: new Vector3(0, 2, 0),
     rotation: new Vector3(0, 0, 0),
-    scale: new Vector3(1, 1, 1)
+    scale: new Vector3(1, 10, 1)
 }, 15);

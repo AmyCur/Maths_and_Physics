@@ -73,7 +73,7 @@ export const ColliderUtils = {
         return { position: VectorUtil.Add(position, addition), object: null };
     },
 
-    DetermineCollisionAndMove(position, addition) {
+    MoveWithRespect(position, addition) {
         const collisions = this.IsColliding(position, addition);
 
         // if(collisions.x.value) console.log(collisions.x.object);

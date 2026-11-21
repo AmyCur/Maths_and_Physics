@@ -6,6 +6,9 @@ import { SUtil } from "../util/StringUtil.js";
 export class Vector3 {
     static zero = () => new Vector3(0,0,0);
     static one = () => new Vector3(1,1,1);
+    static down = () => new Vector3(0,-1,0);
+    static up = () => new Vector3(0,1,0);
+    
 
     constructor(x, y, z) {
         this.x = x;

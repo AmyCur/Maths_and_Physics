@@ -103,6 +103,26 @@ function CreateWalls(fb, gl) {
 
     walls.push(w4);
 
+
+   const wb = Buffer.default();
+    wb.color = Mesh.GetColor("red");
+    const w5 = MeshCreator.CreateMesh(gl, wb, { collider: ColliderUtils.defaultCollider });
+
+    w5.transform.position = new Vector3(
+       30,0,30
+    )
+
+    w5.transform.scale = new Vector3(
+        10,5,10
+    )
+
+
+
+
+    walls.push(w5);
+    
+    
+
     // for (let wall of walls) {
     //     wall.SetColor("red");
     // }
@@ -158,10 +178,15 @@ export function InitRendering() {
 
     const fb = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, {name: "floor", raycastable: true});
     fb.transform.scale = new Vector3(100,1,100)
-    fb.transform.position = new Vector3(0,-10,0);
-    console.log(fb);
+    fb.transform.position = new Vector3(0,0,0);
 
     objects.static.push(fb);
+
+    const cb = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, {name: "ceiling", raycastable: true});
+    cb.transform.scale = new Vector3(100,1,100)
+    cb.transform.position = new Vector3(0,30,0);
+
+    objects.static.push(cb);
 
     const walls = CreateWalls(fb, gl);
 
@@ -205,7 +230,6 @@ function CreateEnemyBuffer(gl) {
         // eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
         eb.properties.name = "enemy";
 
-        console.log(eb);
 
         objects.enemies.push(eb);
         enemyBuffers.push(eb);
@@ -228,10 +252,11 @@ function CreateMatricies(gl) {
     const modelViewMatrix = new Mat4();
 
     // Move the world based on player inverted position (so that enemies going towards the player go to the player)
-    modelViewMatrix.translate([-player.transform.position.x, -player.transform.position.y, -player.transform.position.z])
+    modelViewMatrix.translate([-player.transform.position.x, -player.transform.position.y-camera.transform.position.y, -player.transform.position.z])
 
     // Apply viewbobbing
     projectionMatrix.translate([0, Math.sin(input.angle/1.3) / 5, 0]);
+
 
     // Rotate the camera
     projectionMatrix.rotate([1, 0, 0], -camera.transform.rotation.y);

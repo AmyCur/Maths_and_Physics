@@ -4,17 +4,19 @@ import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { SUtil } from "../util/StringUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { GameObject } from "./GameObject.js";
+import { TransObject } from "./TransObject.js";
+import { VectorUtil } from "../util/VectorUtil.js";
+import { player } from "./Player.js";
 "use strict";
 
-class Camera{
+class Camera extends TransObject{
 
-    
-    transform;
+
     sensitivityModifier;
     text;
 
     constructor(transform) {
-        this.transform=transform;
+        super(transform, {}, {})
         this.sensitivityModifier = 300;
     }
 
@@ -33,6 +35,14 @@ class Camera{
         });
     }
 
+    GetInvertedCameraPosition(){
+        return VectorUtil.Invert(this.GetCameraPosition());
+    }
+
+    GetCameraPosition(){
+        return VectorUtil.Add(player.transform.position, camera.transform.position)
+    }
+
     AddListeners(canvas) {
         document.addEventListener("mousemove", (e) => {
             if (!input.GetKey("ControlLeft")) {
@@ -43,7 +53,7 @@ class Camera{
 }
 
 export const camera = new Camera({
-    position: new Vector3(0,0,0),
-    rotation: new Vector3(0,0,0),
+    position: new Vector3(0,10,0),
+    rotation: new Vector3(0,-2,0),
     scale: new Vector3(1,1,1),
 });

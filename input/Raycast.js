@@ -91,21 +91,21 @@ export const Raycast = {
 
                 // If you have return it, else keep going
                 if (hitObject?.obj != null) {
-                    if (gl !== null) {
+                    // if (gl !== null) {
 
-                        const buffer = Buffer.default();
-                        buffer.color=Mesh.GetColor("blue");
+                    //     const buffer = Buffer.default();
+                    //     buffer.color=Mesh.GetColor("blue");
 
-                        const bo = MeshCreator.CreateMesh(gl, buffer, {}, {});
-                        bo.transform.position=hitObject.position;
-                        bo.transform.scale= new Vector3(0.5,0.5,0.5);
-                        objects.other.push(
-                            bo
-                        )
-                        setTimeout(() => {
-                            objects.RemoveItemFromArray(bo, objects.other);
-                        }, 1000);
-                    }
+                    //     const bo = MeshCreator.CreateMesh(gl, buffer, {}, {});
+                    //     bo.transform.position=hitObject.position;
+                    //     bo.transform.scale= new Vector3(0.5,0.5,0.5);
+                    //     objects.other.push(
+                    //         bo
+                    //     )
+                    //     setTimeout(() => {
+                    //         objects.RemoveItemFromArray(bo, objects.other);
+                    //     }, 1000);
+                    // }
 
 
                     // EController.SpawnEnemy(true, rayVec)

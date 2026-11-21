@@ -86,7 +86,7 @@ export class Enemy extends TransObject{
         const cp = this.transform.position;
         
         
-        this.transform.position = ColliderUtils.DetermineCollisionAndMove(cp, tv.normalized);
+        this.transform.position = ColliderUtils.MoveWithRespect(cp, tv.normalized);
 
         
     }
