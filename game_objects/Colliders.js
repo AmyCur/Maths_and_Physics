@@ -53,7 +53,7 @@ export const ColliderUtils = {
             if (co.transform.position !== position) {
                 const cc = co.components.collider;
 
-                const colliderPosition = VectorUtil.Invert(VectorUtil.Add(co.transform.position, cc.offset));
+                const colliderPosition = VectorUtil.Add(co.transform.position, cc.offset);
                 const colliderScale = VectorUtil.MultiplyVector(co.transform.scale, cc.scale);
 
                 const minBound = VectorUtil.Subtract(colliderPosition, colliderScale);

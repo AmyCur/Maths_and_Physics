@@ -42,7 +42,7 @@ class Player {
 
             console.log(attackDir.Print());
 
-            const hitObj = Raycast.ShootRay(new Vector3(-player.transform.position.x, -player.transform.position.y, -player.transform.position.z), attackDir, 10);
+            const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z), attackDir, 10);
 
             if(hitObj?.IsEnemy()) hitObj.components.enemy.TakeDamage(this.attack.damage);
 
@@ -82,20 +82,20 @@ class Player {
 
         if (input.GetKey("KeyW")) {
             input.movementDirectionVector.y += 1;
-            movementVector.Add(forwards);
+            movementVector.Add(backwards);
         }
         if (input.GetKey("KeyS")) {
             input.movementDirectionVector.y -= 1;
 
-            movementVector.Add(backwards);
+            movementVector.Add(forwards);
         }
         if (input.GetKey("KeyD")) {
             input.movementDirectionVector.x += 1;
-            movementVector.Add(left);
+            movementVector.Add(right);
         }
         if (input.GetKey("KeyA")) {
             input.movementDirectionVector.x -= 1;
-            movementVector.Add(right);
+            movementVector.Add(left);
         }
 
         if (input.movementDirectionVector.x !== 0 || input.movementDirectionVector.y !== 0) input.restingDirectionVector = input.movementDirectionVector;
@@ -111,11 +111,11 @@ class Player {
         // console.log(movementVector);
 
 
-        return movementVector.ToVector3();
+        return VectorUtil.Normalize(movementVector.ToVector3());
     }
 
     Grounded() {
-        return this.transform.position.y >= 0;
+        return this.transform.position.y <= 0;
     }
 
     Gravity() {
@@ -127,7 +127,7 @@ class Player {
         else {
             this.gravityScale *= 1.041
             const distancePerTick = MUtil.clamp(this.gravityScale * 0.1, 0, (this.position + (this.gravityScale * 0.1)));
-            this.transform.position.y += distancePerTick;
+            this.transform.position.y -= distancePerTick;
         }
     }
 
@@ -135,7 +135,7 @@ class Player {
         this.jumping = true;
         let i = 0;
         const interval = setInterval(() => {
-            this.transform.position.y -= this.jumpForce;
+            this.transform.position.y += this.jumpForce;
             i++;
             if (i >= 150 || this.Grounded()) clearInterval(interval);
         }, 1 * Time.deltaTime)

@@ -233,8 +233,8 @@ function InitMatricies(gl) {
     // Initialise the model view matrix (Not to be confused with the model matrix)
     const modelViewMatrix = new Mat4();
 
-    // Move the world based on player position
-    modelViewMatrix.translate([player.transform.position.x, player.transform.position.y, player.transform.position.z])
+    // Move the world based on player inverted position (so that enemies going towards the player go to the player)
+    modelViewMatrix.translate([-player.transform.position.x, -player.transform.position.y, -player.transform.position.z])
 
     // Apply viewbobbing
     projectionMatrix.translate([0, Math.sin(input.angle) / 7, 0]);

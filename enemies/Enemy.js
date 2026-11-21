@@ -89,7 +89,7 @@ export class Enemy {
 
     TargetVector() {
         const cp = this.transform.position;
-        const tp = new Vector3(-player.transform.position.x, -player.transform.position.y, -player.transform.position.z);
+        const tp = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
 
         const difference = VectorUtil.Subtract(tp, cp);
 

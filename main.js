@@ -9,7 +9,6 @@ import { objects } from "./game_objects/Objects.js";
 import { Vector3 } from "./vectors/Vector3.js";
 
 
-
 function Main() {
     const rendering = InitRendering();
     const gl = rendering.gl;
