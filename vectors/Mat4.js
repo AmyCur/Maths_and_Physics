@@ -1,5 +1,6 @@
 // 4x4 Matrix class
 export class Mat4 {
+    "use strict";
     constructor() {
         this.m = new Float32Array(16);
         this.identity();

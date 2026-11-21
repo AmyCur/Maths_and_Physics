@@ -14,7 +14,7 @@ import { GameObject } from "./GameObject.js";
 import { objects } from "./Objects.js";
 
 class Player {
-
+    "use strict";
     velocity=0;
     idle = false;
 
@@ -78,7 +78,7 @@ class Player {
         const left = right.Invert();
 
         const movementVector = new Vector2(0, 0);
-        input.movementDirectionVector = new Vector2(0, 0);
+       
 
         if (input.GetKey("KeyW")) {
             input.movementDirectionVector.y += 1;

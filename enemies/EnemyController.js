@@ -8,6 +8,7 @@ import { EnemyType } from "./EnemyType.js";
 import { Fly } from "./Fly.js";
 
 export class EnemyController {
+    "use strict";
     types = [
         new EnemyType("fly", 0, 10, 0.3),
         new EnemyType("ground", 200, 5, 0.4)

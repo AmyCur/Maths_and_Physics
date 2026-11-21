@@ -1,7 +1,7 @@
 import { Time } from "../util/Time.js";
 
 export class Attack{
-    
+        "use strict";
     onCD=false;
     attackDT= 0;
     targetDT= 0;

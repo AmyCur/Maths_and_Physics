@@ -1,4 +1,5 @@
 export class EnemyType{
+    "use strict";
     constructor(name, weight, damage, speed){
         this.weight=weight;
         this.damage=damage;

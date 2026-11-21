@@ -9,6 +9,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 import { EController } from "./EnemyController.js";
 
 export class Enemy {
+    "use strict";
     maxSpeed;
     speed;
     type;

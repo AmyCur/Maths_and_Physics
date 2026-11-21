@@ -8,7 +8,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 
 // Formerly known as Primative
 export class RenderObject {
-
+    "use strict";
     SetPositionRotationAndScale(position, rotation, scale) {
         this.transform.position = position;
         this.transform.rotation = rotation;

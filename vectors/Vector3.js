@@ -1,7 +1,7 @@
 import { SUtil } from "../util/StringUtil.js";
 
 export class Vector3 {
-
+    "use strict";
     constructor(x, y, z) {
         this.x = x;
         this.y = y;

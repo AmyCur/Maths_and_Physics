@@ -3,6 +3,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 import { objects } from "./Objects.js";
 
 export class BoxCollider {
+    "use strict";
     constructor(offset, scale) {
         this.offset = offset;
         this.scale = scale;
@@ -10,6 +11,7 @@ export class BoxCollider {
 }
 
 export class SphereCollider {
+    "use strict";
     constructor(offset, radius) {
         this.offset = offset;
         this.radius = radius;

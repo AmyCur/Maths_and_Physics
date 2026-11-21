@@ -1,7 +1,9 @@
 import { MUtil } from "../util/MathUtil.js";
 import { Vector3 } from "./Vector3.js";
 
+//TODO What is the point in this? Should remove at some point
 export class Vector2{
+    "use strict";
     x;
     y;
 

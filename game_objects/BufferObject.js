@@ -1,4 +1,5 @@
 export class BufferObject{
+    "use strict";
     constructor(buffers, transform, renderObject, components = {}, properties = {name: "Kevin", raycastable: true}){
         this.buffers=buffers;
         this.transform=transform;

@@ -5,8 +5,9 @@ import { SUtil } from "../util/StringUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { GameObject } from "./GameObject.js";
 
+//TODO Eww fix this camera (this 93 year old camera still inherits GameObject the old fashioned way)
 class Camera extends GameObject{
-
+    "use strict";
     constructor(rotation) {
         super(new Vector3(0,0,0), new Vector3(0,0,0), rotation)
         this.sensitivityModifier = 300;

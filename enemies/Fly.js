@@ -6,6 +6,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 import { Enemy } from "./Enemy.js";
 
 class Fly  {
+    "use strict";
     TargetVector() {
         const cp = this.position;
         const tp = new Vector3(player.transform.position.x, -5, player.transform.position.z);
