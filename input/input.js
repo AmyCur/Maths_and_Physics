@@ -1,6 +1,7 @@
 import { camera } from "../game_objects/camera.js";
 import { player } from "../game_objects/Player.js";
 import { Vector2 } from "../vectors/Vector2.js";
+import { Vector3 } from "../vectors/Vector3.js";
 
 export const input = {
 
@@ -15,13 +16,12 @@ export const input = {
         Mouse: false
     },
 
-    movementDirectionVector: new Vector2(0, 0),
-    restingDirectionVector: new Vector2(0, 0),
 
     forwards(cameraRotationX) {
-        return new Vector2(
+        return new Vector3(
             Math.sin(cameraRotationX),
-            Math.cos(cameraRotationX)
+            Math.cos(cameraRotationX),
+            0
         );
     },
 

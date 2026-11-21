@@ -22,7 +22,7 @@ export class Enemy {
 
         // this.health=health;
         this.maxSpeed = maxSpeed;
-        this.intelligent = intelligent;
+        this.intelligent = false;
         this.stoppingDistance = 6;
         this.health=health;
         this.forceStopDistance = 3;
@@ -82,6 +82,7 @@ export class Enemy {
         this.transform.position.y=this.type==="fly" ? 5 : -1;
 
         const cp = this.transform.position;
+        
         
         this.transform.position = ColliderUtils.DetermineCollisionAndMove(cp, tv.normalized);
 

@@ -121,7 +121,7 @@ export const VectorUtil = {
 
 
     GetCameraForwardVector() {
-        const rot = camera.rotation;
+        const rot = camera.transform.rotation;
 
         const alpha = rot.x;
         const beta = rot.y;

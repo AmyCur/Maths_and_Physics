@@ -237,11 +237,11 @@ function InitMatricies(gl) {
     modelViewMatrix.translate([-player.transform.position.x, -player.transform.position.y, -player.transform.position.z])
 
     // Apply viewbobbing
-    projectionMatrix.translate([0, Math.sin(input.angle) / 7, 0]);
+    projectionMatrix.translate([0, Math.sin(input.angle/1.3) / 5, 0]);
 
     // Rotate the camera
-    projectionMatrix.rotate([1, 0, 0], -camera.rotation.y);
-    projectionMatrix.rotate([0, 1, 0], -camera.rotation.x);
+    projectionMatrix.rotate([1, 0, 0], -camera.transform.rotation.y);
+    projectionMatrix.rotate([0, 1, 0], -camera.transform.rotation.x);
 
     // Return then to be used (obvs)
     return [projectionMatrix, modelViewMatrix];
@@ -266,6 +266,10 @@ export function Render(gl, programInfo) {
 
     // Render all static objects (like the floor)
     for (const b of objects.static) {
+        RenderBuffer(gl, b, programInfo);
+    }
+
+    for(const b of objects.other){
         RenderBuffer(gl, b, programInfo);
     }
 

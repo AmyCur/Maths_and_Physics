@@ -5,27 +5,24 @@ import { SUtil } from "../util/StringUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { GameObject } from "./GameObject.js";
 
-//TODO Eww fix this camera (this 93 year old camera still inherits GameObject the old fashioned way)
-class Camera extends GameObject{
+class Camera{
     "use strict";
-    constructor(rotation) {
-        super(new Vector3(0,0,0), new Vector3(0,0,0), rotation)
+    constructor(transform) {
+        this.transform=transform;
         this.sensitivityModifier = 300;
         this.text = document.getElementById("player-rot");
     }
 
-
-
     UpdateUI() {
-        this.text.innerHTML = this.rotation.Print(MUtil.Rad2Deg);
+        this.text.innerHTML = this.transform.rotation.Print(MUtil.Rad2Deg);
     }
 
 
     Add(x, y) {
-        this.rotation.x += x;
-        this.rotation.y += y;
+        this.transform.rotation.x += x;
+        this.transform.rotation.y += y;
 
-        this.rotation.y = MUtil.clamp(this.rotation.y, -90 * MUtil.Deg2Rad, 90 * MUtil.Deg2Rad);
+        this.transform.rotation.y = MUtil.clamp(this.transform.rotation.y, -90 * MUtil.Deg2Rad, 90 * MUtil.Deg2Rad);
 
     }
 
@@ -46,4 +43,8 @@ class Camera extends GameObject{
     }
 }
 
-export const camera = new Camera(new Vector3(-0.9, 0, 0));
+export const camera = new Camera({
+    position: new Vector3(0,0,0),
+    rotation: new Vector3(0,0,0),
+    scale: new Vector3(1,1,1),
+});

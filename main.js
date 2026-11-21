@@ -12,6 +12,7 @@ import { Vector3 } from "./vectors/Vector3.js";
 function Main() {
     const rendering = InitRendering();
     const gl = rendering.gl;
+    player.gl=gl;
     const programInfo = rendering.programInfo;
     const buffers = rendering.buffers;
 
@@ -38,10 +39,11 @@ function Main() {
 
         if(Math.floor(tick)%enemySpawnInterval==0){
             tick=1;
-            EController.SpawnEnemy(gl);
+            // EController.SpawnEnemy(gl);
         }
 
         EController.HandleAI();
+
         if(input.GetKey("Mouse")) player.Attack();
         if(input.GetKey("KeyK")) {
             for(let enem of EController.enemies){

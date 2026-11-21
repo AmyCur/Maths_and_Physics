@@ -1,14 +1,15 @@
 export class MathUtil {
+    "use strict";
     constructor() { 
         this.Deg2Rad=0.01745329252;
         this.Rad2Deg=57.2958;
     }
 
-    clamp(v, lower, upper) {
-        let nv=v;
-        if (nv < lower) nv = lower;
-        if (nv > upper) nv = upper;
-        return nv;
+    clamp(f, lower, upper) {
+        let nf=f;
+        if (nf < lower) nf = lower;
+        if (nf > upper) nf = upper;
+        return nf;
     }
 
     lerp(a,b,t){

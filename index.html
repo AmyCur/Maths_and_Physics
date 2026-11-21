@@ -11,19 +11,43 @@
 </head>
 
 <body>
-  <canvas id="gl-canvas" width="1280" height="960"></canvas>
+  <div class="Game">
+    <canvas id="gl-canvas" width="1280" height="960"></canvas>
+    <div id="UI">
+      <div>Health: <span id="Health"></span></div>
+      <div>Stamina: <span id="Stamina"></span></div>
+      <div id="dev">
+        <div id="player-pos"></div>
+        <div id="player-rot"></div>
+        <div id="player-health"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Make  these display -->
-  <div id="player-pos"></div>
-  <div id="player-rot"></div>
-  <div id="player-health"></div>
+
 </body>
 
 </html>
 <style>
   * {
     cursor: crosshair;
-    font-size: 1.4em;
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
+  }
+
+  .Game {
+    position: relative;
+  }
+
+  #UI {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    color: white;
+    background-color: #00000044;
+    font-size: 2em;
+    padding: 1em;
+    border-radius: 01em;
   }
 </style>
