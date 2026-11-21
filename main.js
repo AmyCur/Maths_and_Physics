@@ -1,4 +1,4 @@
-import { InitRendering, Render } from "./rendering/rendering.js";
+import { InitRendering, Render } from "./rendering/RenderContinous.js";
 import { input } from "./input/input.js";
 import { camera } from "./game_objects/camera.js";
 import { player } from "./game_objects/Player.js";
@@ -36,7 +36,7 @@ function Main() {
 
         if(Math.floor(tick)%enemySpawnInterval==0){
             tick=1;
-            // EController.SpawnEnemy(gl);
+            EController.SpawnEnemy(gl);
         }
 
         EController.HandleAI();

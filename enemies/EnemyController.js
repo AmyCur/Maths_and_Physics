@@ -1,5 +1,5 @@
 import { player } from "../game_objects/Player.js";
-import { MUtil } from "../util/MathUtil.js";
+import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { Random } from "../util/Random.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";

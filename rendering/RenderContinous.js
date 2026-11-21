@@ -12,6 +12,7 @@ import { BoxCollider, ColliderUtils } from "../game_objects/Colliders.js";
 import { GetSceneSettings } from "./RenderStart.js";
 import { Buffer } from "./Buffer.js";
 import { Mesh } from "../game_objects/Mesh.js";
+import { Transform } from "../game_objects/Transform.js";
 
 //#region Initialisation
 
@@ -32,10 +33,9 @@ function CreateWalls(fb, gl) {
 
     const walls = [];
 
-    const w1 = MeshCreator.CreateMesh(gl, Buffer.default, {collider: BoxCollider.default}, {name: "w1", raycastable: true});
-
+    const w1 = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, {name: "floor", raycastable: true});
     w1.transform.position = new Vector3(
-        fb.transform.position.x - fb.transform.scale.x + w1.transform.scale.x - (w1.transform.scale.x * 2),
+        (fb.transform.position.x - fb.transform.scale.x + w1.transform.scale.x - (w1.transform.scale.x * 2)),
         0,
         w1.transform.position.z
     )
@@ -43,14 +43,13 @@ function CreateWalls(fb, gl) {
     w1.transform.scale = new Vector3(
         w1.transform.scale.x,
         20,
-        fb.transform.scale.z
+        fb.transform.scale.z+1
     )
 
 
     walls.push(w1);
 
-    const w2 = MeshCreator.CreateMesh(gl, Buffer.default, {collider: BoxCollider.default}, {name: "w2", raycastable: true});
-
+    const w2 = MeshCreator.CreateMesh(gl, Buffer.default(), {collider: BoxCollider.default()}, {name: "w2", raycastable: true});
 
 
 
@@ -63,12 +62,12 @@ function CreateWalls(fb, gl) {
     w2.transform.scale = new Vector3(
         w2.transform.scale.x,
         20,
-        fb.transform.scale.z
+        fb.transform.scale.z+1
     )
 
     walls.push(w2);
 
-    const w3 = MeshCreator.CreateMesh(gl, Buffer.default, {collider: BoxCollider.default}, {name: "w3", raycastable: true});
+    const w3 = MeshCreator.CreateMesh(gl, Buffer.default(), {collider: BoxCollider.default()}, {name: "w3", raycastable: true});
 
     
 
@@ -79,7 +78,7 @@ function CreateWalls(fb, gl) {
     )
 
     w3.transform.scale = new Vector3(
-        fb.transform.scale.x,
+        fb.transform.scale.x+1,
         20,
         w3.transform.scale.z,
     )
@@ -87,7 +86,7 @@ function CreateWalls(fb, gl) {
     walls.push(w3);
 
 
-    const w4 = MeshCreator.CreateMesh(gl, Buffer.default, {collider: BoxCollider.default}, {name: "w4", raycastable: true});
+    const w4 = MeshCreator.CreateMesh(gl, Buffer.default(), {collider: BoxCollider.default()}, {name: "w4", raycastable: true});
     
 
     w4.transform.position = new Vector3(
@@ -97,7 +96,7 @@ function CreateWalls(fb, gl) {
     )
 
     w4.transform.scale = new Vector3(
-        fb.transform.scale.x,
+        fb.transform.scale.x+1,
         20,
         w4.transform.scale.z,
     )
@@ -157,9 +156,9 @@ export function InitRendering() {
 
     //* Create the buffers
 
-    const fb = MeshCreator.CreateMesh(gl, Buffer.default, { collider: BoxCollider.default }, {name: "floor", raycastable: true});
+    const fb = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, {name: "floor", raycastable: true});
     fb.transform.scale = new Vector3(100,1,100)
-    fb.transform.position = Vector3.zero;
+    fb.transform.position = new Vector3(0,-10,0);
     console.log(fb);
 
     objects.static.push(fb);
@@ -169,8 +168,8 @@ export function InitRendering() {
     for (let i = 0; i < walls.length; i++) {
         const wall = walls[i];
 
-        wall.components.collider = BoxCollider.default;
-        wall.transform.position=Vector3.zero;
+        walls[i].components.collider = new BoxCollider(Vector3.zero(), new Vector3(1.1,1.1,1.1))
+
     }
 
     console.log(walls);
@@ -198,7 +197,7 @@ function CreateEnemyBuffer(gl) {
         
 
 
-        const eb = MeshCreator.CreateMesh(gl, Buffer.default, { enemy: enemy, collider: ColliderUtils.defaultCollider });
+        const eb = MeshCreator.CreateMesh(gl, Buffer.default(), { enemy: enemy, collider: ColliderUtils.defaultCollider });
 
         eb.transform.position = enemy.transform.position;
         eb.transform.scale = enemy.transform.scale;
@@ -217,7 +216,7 @@ function CreateEnemyBuffer(gl) {
     return enemyBuffers;
 }
 
-function InitMatricies(gl) {
+function CreateMatricies(gl) {
     // Get scene settings
     const s = GetSceneSettings(gl);
 
@@ -247,11 +246,14 @@ function InitMatricies(gl) {
 
 export function Render(gl, programInfo) {
 
+
+    // console.log(objects.GetAllObjects());
+
     // Clear everything
     ReadyScene(gl);
 
     // Get matricies
-    const [projectionMatrix, modelViewMatrix] = InitMatricies(gl);
+    const [projectionMatrix, modelViewMatrix] = CreateMatricies(gl);
 
     // Get all of the enemies and create buffers for them
     objects.enemies = CreateEnemyBuffer(gl);
@@ -262,21 +264,19 @@ export function Render(gl, programInfo) {
     */
 
     // Render all static objects (like the floor)
-    for (const mesh of objects.static) {
-        RenderBuffer(gl, mesh, programInfo);
+    for (let i = 0; i < objects.static.length; i++) {
+        RenderBuffer(gl, objects.static[i], programInfo);
     }
 
-    for(const mesh of objects.other){
-        RenderBuffer(gl, mesh, programInfo);
+    for (let i = 0; i < objects.other.length; i++) { 
+        RenderBuffer(gl, objects.other[i], programInfo);
     }
-
-
-
 
     // Render all the enemies 
     for (let i = 0; i < objects.enemies.length; i++) {
         RenderBuffer(gl, objects.enemies[i], programInfo);
     }
+
 
     // Assign the projection matrix and model view matrix
     //? Note that the mode matrix (not the mode view matrix) is set on a per buffer basis

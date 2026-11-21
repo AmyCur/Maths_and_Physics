@@ -1,6 +1,6 @@
 export class Buffer {
 
-    static default = new Buffer(
+    static default = () => new Buffer(
         [
             // Front face
             -1, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0,

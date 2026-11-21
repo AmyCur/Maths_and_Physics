@@ -91,7 +91,7 @@ export const Raycast = {
                 // If you have return it, else keep going
                 if (hitObject?.obj != null) {
                     if (gl !== null) {
-                        const bo = MeshCreator.CreateMesh(gl, Buffer.default, {}, {});
+                        const bo = MeshCreator.CreateMesh(gl, Buffer.default(), {}, {});
                         bo.transform.position=hitObject.position;
                         bo.transform.scale= new Vector3(0.5,0.5,0.5);
                         objects.other.push(

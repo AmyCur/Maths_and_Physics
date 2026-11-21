@@ -6,9 +6,9 @@ export class TransObject {
 
     static GlobalObjectID = 0;
 
-    static default = new TransObject
+    static default = () => new TransObject
     (
-        Transform.default,
+        Transform.default(),
         {
             collider: null,
 
@@ -23,7 +23,7 @@ export class TransObject {
     components;
     properties;
 
-    constructor(transform = Transform.default, components, properties) {
+    constructor(transform = Transform.default(), components, properties) {
         this.transform = transform;
         this.components = components;
         this.properties = properties;

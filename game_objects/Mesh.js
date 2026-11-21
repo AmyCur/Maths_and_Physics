@@ -8,9 +8,9 @@ export class Mesh extends TransObject{
 
    
 
-    static default = new Mesh(
-        Buffer.default,
-        Transform.default,
+    static default = () => new Mesh(
+        Buffer.default(),
+        Transform.default(),
     )
 
     constructor(bufferData, transform,  components = {}, properties = {name: "Kevin", raycastable: true}, buffers){

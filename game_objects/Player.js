@@ -12,8 +12,9 @@ import { ColliderUtils } from "./Colliders.js";
 import { Entity } from "./Entity.js";
 import { GameObject } from "./GameObject.js";
 import { objects } from "./Objects.js";
+import { TransObject } from "./TransObject.js";
 
-class Player {
+class Player extends TransObject{
     "use strict";
     velocity = 0;
     idle = false;
@@ -21,11 +22,7 @@ class Player {
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
     constructor(transform, jumpForce) {
 
-        this.transform = {
-            position: transform.position,
-            rotation: transform.rotation,
-            scale: transform.scale
-        }
+        super(transform, {}, {})
 
         this.text = {
             position: document.getElementById("player-pos"),
@@ -150,7 +147,8 @@ class Player {
         else {
             this.gravityScale *= 1.041
             const distancePerTick = MUtil.clamp(this.gravityScale * 0.1, 0, (this.position + (this.gravityScale * 0.1)));
-            this.transform.position.y -= distancePerTick;
+            
+            this.transform.position = ColliderUtils.DetermineCollisionAndMove(this.transform.position, new Vector3(0, -distancePerTick, 0));
         }
     }
 

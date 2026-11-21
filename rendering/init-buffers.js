@@ -8,13 +8,14 @@ export const MeshCreator = {
   CreateMesh(gl, bufferData, components, properties) {
     const ib = this.CreateBuffer(gl, bufferData.position, bufferData.color, bufferData.index);
 
+
     const BE = new Mesh(
       //* Buffers
 
       bufferData,
 
       //* Transform
-      Transform.default,
+      Transform.default(),
 
       //* Components
       components,
