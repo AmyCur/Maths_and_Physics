@@ -1,5 +1,6 @@
 import { Enemy } from "../enemies/Enemy.js";
 import { EController } from "../enemies/EnemyController.js";
+import { Mesh } from "../game_objects/Mesh.js";
 import { objects } from "../game_objects/Objects.js";
 import { Buffer } from "../rendering/Buffer.js";
 import { MeshCreator } from "../rendering/init-buffers.js";
@@ -91,13 +92,19 @@ export const Raycast = {
                 // If you have return it, else keep going
                 if (hitObject?.obj != null) {
                     if (gl !== null) {
-                        const bo = MeshCreator.CreateMesh(gl, Buffer.default(), {}, {});
+
+                        const buffer = Buffer.default();
+                        buffer.color=Mesh.GetColor("blue");
+
+                        const bo = MeshCreator.CreateMesh(gl, buffer, {}, {});
                         bo.transform.position=hitObject.position;
                         bo.transform.scale= new Vector3(0.5,0.5,0.5);
                         objects.other.push(
                             bo
                         )
-                        setTimeout(() => {objects.other.pop(bo)}, 1000);
+                        setTimeout(() => {
+                            objects.RemoveItemFromArray(bo, objects.other);
+                        }, 1000);
                     }
 
 

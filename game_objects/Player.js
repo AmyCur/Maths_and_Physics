@@ -1,4 +1,3 @@
-import { Enemy } from "../enemies/Enemy.js";
 import { Attack } from "../input/Attack.js";
 import { input } from "../input/input.js";
 import { Raycast } from "../input/Raycast.js";
@@ -9,9 +8,6 @@ import { Vector2 } from "../vectors/Vector2.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { camera } from "./camera.js";
 import { ColliderUtils } from "./Colliders.js";
-import { Entity } from "./Entity.js";
-import { GameObject } from "./GameObject.js";
-import { objects } from "./Objects.js";
 import { TransObject } from "./TransObject.js";
 
 class Player extends TransObject{

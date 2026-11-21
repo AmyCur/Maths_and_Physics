@@ -19,6 +19,12 @@ export const objects = {
         return colObjs;
     },
 
+    RemoveItemFromArray(item, array){
+        const index = array.indexOf(item);
+        if(index > -1)return array.splice(index, 1);
+        return array;
+    },
+
     GetAllRaycastableObjects(){
         const raycastables = [];
         const allObjs = this.GetAllObjects();

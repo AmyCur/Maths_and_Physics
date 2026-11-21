@@ -103,9 +103,9 @@ function CreateWalls(fb, gl) {
 
     walls.push(w4);
 
-    for (let wall of walls) {
-        wall.SetColor("red");
-    }
+    // for (let wall of walls) {
+    //     wall.SetColor("red");
+    // }
 
     // w1.properties.name = "Wall 1";
     // w2.properties.name = "Wall 2";
@@ -194,10 +194,9 @@ function CreateEnemyBuffer(gl) {
 
     for (let i = 0; i < EController.enemies.length; i++) {
         const enemy = EController.enemies[i];
-        
-
-
-        const eb = MeshCreator.CreateMesh(gl, Buffer.default(), { enemy: enemy, collider: ColliderUtils.defaultCollider });
+        const buffer = Buffer.default();
+        buffer.color = Mesh.GetColor("red");
+        const eb = MeshCreator.CreateMesh(gl, buffer, { enemy: enemy, collider: ColliderUtils.defaultCollider });
 
         eb.transform.position = enemy.transform.position;
         eb.transform.scale = enemy.transform.scale;
@@ -206,10 +205,9 @@ function CreateEnemyBuffer(gl) {
         // eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
         eb.properties.name = "enemy";
 
+        console.log(eb);
+
         objects.enemies.push(eb);
-
- 
-
         enemyBuffers.push(eb);
     }
 

@@ -5,7 +5,7 @@ import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "./Buffer.js";
 
 export const MeshCreator = {
-  CreateMesh(gl, bufferData, components, properties) {
+  CreateMesh(gl, bufferData, components, properties, transform=Transform.default()) {
     const ib = this.CreateBuffer(gl, bufferData.position, bufferData.color, bufferData.index);
 
 
@@ -15,7 +15,7 @@ export const MeshCreator = {
       bufferData,
 
       //* Transform
-      Transform.default(),
+      transform,
 
       //* Components
       components,

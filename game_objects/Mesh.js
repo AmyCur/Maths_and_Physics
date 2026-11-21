@@ -1,13 +1,12 @@
 import { Buffer } from "../rendering/Buffer.js";
 import { Transform } from "./Transform.js";
 import { TransObject } from "./TransObject.js";
+import {ColorUtil} from "../util/ColorUtil.js";
+
 
 "use strict";
 
 export class Mesh extends TransObject{
-
-   
-
     static default = () => new Mesh(
         Buffer.default(),
         Transform.default(),
@@ -27,8 +26,15 @@ export class Mesh extends TransObject{
         // console.log(this.IsEnemy());
     }
 
-    SetColor(){
+    static GetColor(tc){
+        let targetColor;
 
+        if(tc==="red") targetColor=ColorUtil.red();
+        if(tc==="green") targetColor=ColorUtil.green();
+        if(tc==="blue") targetColor=ColorUtil.blue();
+
+
+        return targetColor;
     }
 
     IsEnemy(){

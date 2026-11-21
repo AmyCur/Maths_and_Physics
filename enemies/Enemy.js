@@ -1,5 +1,6 @@
 import { BoxCollider, ColliderUtils } from "../game_objects/Colliders.js";
 import { Entity } from "../game_objects/Entity.js";
+import { objects } from "../game_objects/Objects.js";
 import { player } from "../game_objects/Player.js";
 import { TransObject } from "../game_objects/TransObject.js";
 import { Attack } from "../input/Attack.js";
@@ -34,6 +35,7 @@ export class Enemy extends TransObject{
 
         this.type = type;
         this.components.collider = new BoxCollider(Vector3.zero(), new Vector3(2,2,2));
+
     }
 
     CalculateSpeed(tv) {
@@ -57,7 +59,7 @@ export class Enemy extends TransObject{
     Die() {
         console.log("dead");
         this.dead=true;
-        EController.enemies.pop(this);
+        objects.RemoveItemFromArray(this, EController.enemies);
     }
 
     Attack() {

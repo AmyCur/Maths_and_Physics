@@ -91,24 +91,9 @@ export class RenderObject {
     }
 }
 
-// Whole lot of red
-const red = [
-    [1, 0, 0, 1.0], // Front face: white
-    [1, 0, 0, 1.0], // Front face: white
-    [1, 0, 0, 1.0], // Front face: white
-    [1, 0, 0, 1.0], // Front face: white
-    [1, 0, 0, 1.0], // Front face: white
-    [1, 0, 0, 1.0] // Front face: white
-]
 
-const green = [
-    [0, 1, 0, 1.0], // Front face: white
-    [0, 1, 0, 1.0], // Front face: white
-    [0, 1, 0, 1.0], // Front face: white
-    [0, 1, 0, 1.0], // Front face: white
-    [0, 1, 0, 1.0], // Front face: white
-    [0, 1, 0, 1.0] // Front face: white
-]
+
+
 
 function GetBlue() {
     return [
