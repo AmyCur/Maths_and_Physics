@@ -1,4 +1,4 @@
-import { BufferObject } from "../game_objects/BufferObject.js";
+import { Mesh } from "../game_objects/BufferObject.js";
 import { ColliderUtils } from "../game_objects/Colliders.js";
 import { RenderObject } from "./RenderObject.js";
 
@@ -6,7 +6,7 @@ export const BufferCreator = {
   CreateBufferFromRenderObject(gl, renderObj, components) {
     const ib = this.CreateBuffer(gl, renderObj.positions, renderObj.colors, renderObj.indices);
 
-    const BE = new BufferObject(
+    const BE = new Mesh(
       //* Buffers
       {
         position: ib.positionBuffer,

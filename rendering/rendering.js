@@ -138,6 +138,8 @@ export function InitRendering() {
         return;
     }
 
+    player.gl=gl;
+
     // Set clear color to black, fully opaque
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     // Clear the color buffer with specified clear color

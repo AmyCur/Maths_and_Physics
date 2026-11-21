@@ -1,9 +1,8 @@
 export class MathUtil {
     "use strict";
-    constructor() { 
-        this.Deg2Rad=0.01745329252;
-        this.Rad2Deg=57.2958;
-    }
+
+    static Deg2Rad=0.01745329252;
+    static Rad2Deg=57.2958;
 
     clamp(f, lower, upper) {
         let nf=f;

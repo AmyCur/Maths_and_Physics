@@ -7,21 +7,18 @@ import { EController, EnemyController } from "./enemies/EnemyController.js";
 import { VectorUtil } from "./util/VectorUtil.js";
 import { objects } from "./game_objects/Objects.js";
 import { Vector3 } from "./vectors/Vector3.js";
+import { UIManager } from "./UI/UIManager.js";
 
 
 function Main() {
     const rendering = InitRendering();
     const gl = rendering.gl;
-    player.gl=gl;
     const programInfo = rendering.programInfo;
-    const buffers = rendering.buffers;
+
 
     const enemySpawnInterval = 5;
-
-    const enemies = []
-
+    
     let then=0;
-
     let tick=0;
     
     input.AddListeners();
@@ -53,8 +50,8 @@ function Main() {
 
         player.UpdatePosition();
         player.Gravity();
-        player.UpdateUI();
-        camera.UpdateUI();
+
+        UIManager.UpdateUI();
 
         EController.theta++;
 

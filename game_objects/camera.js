@@ -4,26 +4,25 @@ import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { SUtil } from "../util/StringUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { GameObject } from "./GameObject.js";
+"use strict";
 
 class Camera{
-    "use strict";
+
+    
+    transform;
+    sensitivityModifier;
+    text;
+
     constructor(transform) {
         this.transform=transform;
         this.sensitivityModifier = 300;
-        this.text = document.getElementById("player-rot");
     }
-
-    UpdateUI() {
-        this.text.innerHTML = this.transform.rotation.Print(MUtil.Rad2Deg);
-    }
-
 
     Add(x, y) {
         this.transform.rotation.x += x;
         this.transform.rotation.y += y;
 
-        this.transform.rotation.y = MUtil.clamp(this.transform.rotation.y, -90 * MUtil.Deg2Rad, 90 * MUtil.Deg2Rad);
-
+        this.transform.rotation.y = MUtil.clamp(this.transform.rotation.y, -90 * MathUtil.Deg2Rad, 90 * MathUtil.Deg2Rad);
     }
 
     LockMouse(canvas) {

@@ -51,7 +51,7 @@ export class EnemyController {
     }
 
     GetRandomVectorAroundThePlayer() {
-        const theta = (Math.random() * 360) * MUtil.Deg2Rad;
+        const theta = (Math.random() * 360) * MathUtil.Deg2Rad;
         const pp = new Vector3(player.transform.position.x, player.transform.position.y + 3, player.transform.position.z);
         return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), 0, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
     }

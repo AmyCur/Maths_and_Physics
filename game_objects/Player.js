@@ -69,12 +69,6 @@ class Player {
     }
 
 
-    UpdateUI() {
-        this.text.position.innerHTML = this.transform.position.Print();
-        this.text.health.innerHTML = this.health;
-        this.text.stamina.innerHTML = Math.trunc(this.stamina);
-        if (!this.devMode) this.text.dev.innerHTML = "";
-    }
 
     TakeDamage(damage) {
         if (!this.godMode) this.health -= damage;
@@ -115,7 +109,6 @@ class Player {
         const left = VectorUtil.Invert(right);
 
         const movementVector = new Vector2(0, 0);
-
 
         if (input.GetKey("KeyW")) {
 
