@@ -15,6 +15,7 @@ import { Mesh } from "../game_objects/Mesh.js";
 import { Transform } from "../game_objects/Transform.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { MUtil } from "../util/MathUtil.js";
+import { CreateWalls, GenerateStaticMeshs } from "./RenderingHack.js";
 
 //#region Initialisation
 
@@ -30,112 +31,7 @@ function ReadyScene(gl) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
-function CreateWalls(fb, gl) {
 
-    const walls = [];
-
-    const w1 = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "floor", raycastable: true });
-    w1.transform.position = new Vector3(
-        (fb.transform.position.x - fb.transform.scale.x + w1.transform.scale.x - (w1.transform.scale.x * 2)),
-        0,
-        w1.transform.position.z
-    )
-
-    w1.transform.scale = new Vector3(
-        w1.transform.scale.x,
-        20,
-        fb.transform.scale.z + 1
-    )
-
-
-    walls.push(w1);
-
-    const w2 = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "w2", raycastable: true });
-
-
-
-    w2.transform.position = new Vector3(
-        -(fb.transform.position.x - fb.transform.scale.x + w2.transform.scale.x - (w2.transform.scale.x * 2)),
-        0,
-        w2.transform.position.z
-    )
-
-    w2.transform.scale = new Vector3(
-        w2.transform.scale.x,
-        20,
-        fb.transform.scale.z + 1
-    )
-
-    walls.push(w2);
-
-    const w3 = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "w3", raycastable: true });
-
-
-
-    w3.transform.position = new Vector3(
-        w3.transform.position.x,
-        0,
-        -(fb.transform.position.x - fb.transform.scale.x + w3.transform.scale.x - (w3.transform.scale.x * 2)),
-    )
-
-    w3.transform.scale = new Vector3(
-        fb.transform.scale.x + 1,
-        20,
-        w3.transform.scale.z,
-    )
-
-    walls.push(w3);
-
-
-    const w4 = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "w4", raycastable: true });
-
-
-    w4.transform.position = new Vector3(
-        w4.transform.position.x,
-        0,
-        (fb.transform.position.x - fb.transform.scale.x + w4.transform.scale.x - (w4.transform.scale.x * 2)),
-    )
-
-    w4.transform.scale = new Vector3(
-        fb.transform.scale.x + 1,
-        20,
-        w4.transform.scale.z,
-    )
-
-    walls.push(w4);
-
-
-    const wb = Buffer.default();
-    wb.color = Mesh.GetColor("red");
-    const w5 = MeshCreator.CreateMesh(gl, wb, { collider: ColliderUtils.defaultCollider });
-
-    w5.transform.position = new Vector3(
-        30, 0, 30
-    )
-
-    w5.transform.scale = new Vector3(
-        10, 5, 10
-    )
-
-
-
-
-    walls.push(w5);
-
-
-
-    // for (let wall of walls) {
-    //     wall.SetColor("red");
-    // }
-
-    // w1.properties.name = "Wall 1";
-    // w2.properties.name = "Wall 2";
-    // w3.properties.name = "Wall 3";
-    // w4.properties.name = "Wall 4";
-
-
-    return walls;
-}
 
 export function InitRendering() {
     const canvas = document.getElementById("gl-canvas");
@@ -177,19 +73,10 @@ export function InitRendering() {
 
     //* Create the buffers
 
-    const fb = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "floor", raycastable: true });
-    fb.transform.scale = new Vector3(100, 1, 100)
-    fb.transform.position = new Vector3(0, 0, 0);
+    const fb = GenerateStaticMeshs(gl);
 
-    objects.static.push(fb);
-
-    const cb = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "ceiling", raycastable: true });
-    cb.transform.scale = new Vector3(100, 1, 100)
-    cb.transform.position = new Vector3(0, 30, 0);
-
-    objects.static.push(cb);
-
-    const walls = CreateWalls(fb, gl);
+    // const walls = CreateWalls(fb, gl);
+    // objects.static.push(...walls);
 
     // for (let i = 0; i < walls.length; i++) {
     //     const wall = walls[i];
@@ -200,7 +87,6 @@ export function InitRendering() {
 
     // console.log(walls);
 
-    objects.static.push(...walls);
 
     return {
         gl: gl,
@@ -214,30 +100,6 @@ export function InitRendering() {
 
 
 
-function CreateEnemyBuffer(gl) {
-    objects.enemies = [];
-    const enemyBuffers = [];
-
-    for (let i = 0; i < EController.enemies.length; i++) {
-        const enemy = EController.enemies[i];
-        const buffer = Buffer.default();
-        buffer.color = Mesh.GetColor("red");
-        const eMesh = MeshCreator.CreateMesh(gl, buffer, { enemy: enemy, collider: ColliderUtils.defaultCollider });
-
-        eMesh.transform.position = enemy.transform.position;
-        eMesh.transform.scale = enemy.transform.scale;
-        eMesh.transform.rotation = enemy.transform.rotation;
-
-        // eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-        eMesh.properties.name = "enemy";
-
-
-        objects.enemies.push(eMesh);
-        enemyBuffers.push(eMesh);
-    }
-
-    return enemyBuffers;
-}
 
 function CreateMatricies(gl) {
     // Get scene settings
@@ -290,9 +152,14 @@ function CreateMeshWithTargets(gl, sp, ep){
 }
 
 
+function ResetBuffers(){
+    objects.other =      [];
+    // objects.enemies =    [];
+    objects.colliders =  [];
+}
+
 export function Render(gl, programInfo) {
-    objects.other = [];
-   
+    ResetBuffers();
 
     // console.log(objects.GetAllObjects());
 
@@ -303,7 +170,7 @@ export function Render(gl, programInfo) {
     const [projectionMatrix, modelViewMatrix] = CreateMatricies(gl);
 
     // Get all of the enemies and create buffers for them
-    objects.enemies = CreateEnemyBuffer(gl);
+    // objects.enemies = EnemyController.CreateEnemyMeshs(gl);
 
     // const wall = CreateMeshWithTargets(gl, new Vector3(-100,0,-99), new Vector3(0,20,-100));
     // const wall2 = CreateMeshWithTargets(gl, new Vector3(100,0,99), new Vector3(0,20,100));
@@ -334,6 +201,8 @@ export function Render(gl, programInfo) {
     for (let i = 0; i < objects.other.length; i++) {
         RenderBuffer(gl, objects.other[i], programInfo);
     }
+
+    console.log(objects.enemies);
 
     // Render all the enemies 
     for (let i = 0; i < objects.enemies.length; i++) {

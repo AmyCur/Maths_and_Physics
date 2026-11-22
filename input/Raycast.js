@@ -107,7 +107,7 @@ export const Raycast = {
                     // }
 
 
-                    // EController.SpawnEnemy(true, rayVec)
+                    //! This is a Mesh
                     return hitObject.obj;
                 }
             }

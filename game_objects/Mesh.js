@@ -47,7 +47,6 @@ export class Mesh extends TransObject{
     }
 
     IsEnemy(){
-        console.log("Called");
         if(this.components===undefined) return false;
         return Object.hasOwn(this.components, "enemy");
     }

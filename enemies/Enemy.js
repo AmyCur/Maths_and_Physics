@@ -10,16 +10,17 @@ import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { EController } from "./EnemyController.js";
 
-export class Enemy extends TransObject{
+export class Enemy {
     "use strict";
     maxSpeed;
-    speed;
+    speed=0.01;
     type;
     dead =false;
+    parent=null;
 
-    constructor(transform, maxSpeed = 0.01, intelligent = true, health = 100, type="ground") {
+    constructor(maxSpeed = 1, intelligent = true, health = 1, type="ground") {
         
-        super(transform, {}, {});
+        
 
         // this.health=health;
         this.maxSpeed = maxSpeed;
@@ -34,7 +35,6 @@ export class Enemy extends TransObject{
         });
 
         this.type = type;
-        this.components.collider = new BoxCollider(Vector3.zero(), new Vector3(2,2,2));
 
     }
 
@@ -59,7 +59,7 @@ export class Enemy extends TransObject{
     Die() {
         console.log("dead");
         this.dead=true;
-        objects.RemoveItemFromArray(this, EController.enemies);
+        objects.RemoveItemFromArray(this.parent, objects.enemies);
     }
 
     Attack() {
@@ -81,18 +81,18 @@ export class Enemy extends TransObject{
         tv.normalized.y *= this.speed;
         tv.normalized.z *= this.speed;
         
-        this.transform.position.y=this.type==="fly" ? 10 : 5;
+        this.parent.transform.position.y=this.type==="fly" ? 10 : 5;
 
-        const cp = this.transform.position;
+        const cp = this.parent.transform.position;
         
         
-        this.transform.position = ColliderUtils.MoveWithRespect(cp, tv.normalized);
+        this.parent.transform.position = ColliderUtils.MoveWithRespect(cp, tv.normalized);
 
         
     }
 
     TargetVector() {
-        const cp = this.transform.position;
+        const cp = this.parent.transform.position;
         const tp = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
 
         const difference = VectorUtil.Subtract(tp, cp);

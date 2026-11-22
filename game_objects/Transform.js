@@ -19,11 +19,23 @@ export class Transform {
         return new Transform(position, this.rotation, this.scale);
     }
 
+    SetPositionf(x,y,z){
+        return new Transform(new Vector3(x,y,z), this.rotation, this.scale);
+    }
+
     SetRotation(rotation){
         return new Transform(this.position, rotation, this.scale);
     }
 
+    SetRotationf(x,y,z){
+        return new Transform(this.position, new Vector3(x,y,z), this.scale);
+    }
+
     SetScale(scale){
         return new Transform(this.position, this.rotation, scale);
+    }
+
+    SetScalef(x,y,z){
+        return new Transform(this.position, this.rotation, new Vector3(x,y,z));
     }
 }

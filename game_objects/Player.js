@@ -53,7 +53,10 @@ class Player extends TransObject{
 
             const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y+camera.transform.position.y, player.transform.position.z), attackDir, 10, this.gl);
 
-            if (hitObj?.IsEnemy()) hitObj.components.enemy.TakeDamage(this.attack.damage);
+            if (hitObj?.IsEnemy()) {
+                console.log("Hit");
+                hitObj.components.enemy.TakeDamage(this.attack.damage);
+            }
 
 
 

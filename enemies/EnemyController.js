@@ -1,4 +1,11 @@
+import { BoxCollider } from "../game_objects/Colliders.js";
+import { Mesh } from "../game_objects/Mesh.js";
+import { objects } from "../game_objects/Objects.js";
 import { player } from "../game_objects/Player.js";
+import { Transform } from "../game_objects/Transform.js";
+import { Buffer } from "../rendering/Buffer.js";
+import { MeshCreator } from "../rendering/init-buffers.js";
+import { ColorUtil } from "../util/ColorUtil.js";
 import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { Random } from "../util/Random.js";
 import { VectorUtil } from "../util/VectorUtil.js";
@@ -39,8 +46,9 @@ export class EnemyController {
 
     }
 
-    constructor(enemySpawnRadius = 5) {
-        this.enemySpawnRadius = enemySpawnRadius;
+    static enemySpawnRadius=0.5;
+
+    constructor() {
         this.enemies = [];
 
         // if(enemies.length>0){
@@ -50,15 +58,16 @@ export class EnemyController {
         // }
     }
 
-    GetRandomVectorAroundThePlayer() {
+    static GetRandomVectorAroundThePlayer() {
         const theta = (Math.random() * 360) * MathUtil.Deg2Rad;
         const pp = player.transform.position;
         return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), pp.y, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
     }
 
     HandleAI() {
-        for (let i = 0; i < this.enemies.length; i++) {
-            const enem = this.enemies[i];
+        for (let i = 0; i < objects.enemies.length; i++) {
+            const enem = objects.enemies[i].components.enemy;
+            console.log(enem);
             if (enem.intelligent) {
 
                 enem.GetStationary();
@@ -75,7 +84,7 @@ export class EnemyController {
         }
     }
 
-    GetEnemyStats(enemy) {
+    static GetEnemyStats(enemy) {
         const posAroundPlayer = this.GetRandomVectorAroundThePlayer();
 
         if (enemy.name === "fly") {
@@ -90,53 +99,69 @@ export class EnemyController {
         }
     }
 
-    SpawnEnemy() {
+    static SpawnEnemy() {
         // const spawnHoard = Random.RandInt(0, 10) === 0;
-        let type = this.GetRandomType();
-        const spawnHoard = Random.RandInt(0, 10) === 0;
-        if (spawnHoard) type = this.types[1];
-        const iterations = spawnHoard ? 5 : 1;
+        // let type = this.GetRandomType();
+        // const spawnHoard = Random.RandInt(0, 10) === 0;
+        // if (spawnHoard) type = this.types[1];
+        // const iterations = spawnHoard ? 5 : 1;
 
-        for (let i = 0; i < iterations; i++) {
-            const enemyStats = this.GetEnemyStats(type);
-            if (type.name === "fly") {
-                this.enemies.push(
-                    new Enemy(
-                        {
-                            position: enemyStats.pos,
-                            rotation: new Vector3(0, 0, 0),
-                            scale: new Vector3(0.8, 1, 0.8),
-                        }
-                        , enemyStats.speed,
-                        true,
-                        5,
-                        "fly"
-                    )
-                )
-            }
-            else {
-                this.enemies.push(
-                    new Enemy(
-                        {
-                            position: enemyStats.pos,
-                            rotation: new Vector3(0, 0, 0),
-                            scale: new Vector3(2, 6, 2),
-                        },
-                        enemyStats.speed,
-                        true,
-                        5,
-                        "ground"
-                    )
-                )
-            }
+        const mesh = EnemyController.CreateEnemyMesh(player.gl, new Enemy());
+        objects.enemies.push(mesh);
+    }
+
+    static CreateEnemyMesh(gl, enemy){
+        
+        const sp = this.GetRandomVectorAroundThePlayer();
+        console.log(sp)
+        sp.y=15;
+        
+        const mesh = MeshCreator.CreateMesh(
+            gl, Buffer.default(), 
+            {collider: BoxCollider.default()}, 
+            {name: "Jacob", raycastable: true}, 
+            Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(30,0,0))).SetScalef(3,6,3)
+        );
+
+        enemy.parent=mesh;
+        mesh.components.enemy=enemy;
+
+        return mesh;
+    }
+
+    static CreateEnemyMeshs(gl) {
+
+        // Get the currently alive enemies
+        return objects.enemies;
+        const enemyMeshs = [];
+
+        // Go through them
+        for(let i = 0; i < ae.length; i++){
+            enemyMeshs.push(ae[i]);
         }
 
-
-
-
-
-
-
+        // objects.enemies = [];
+    
+        // for (let i = 0; i < EController.enemies.length; i++) {
+        //     const enemy = EController.enemies[i];
+        //     const buffer = Buffer.default();
+        //     buffer.color = Mesh.GetColor("red");
+            
+        //     const eMesh = MeshCreator.CreateMesh(gl, buffer, { enemy: enemy, collider: BoxCollider.default() });
+    
+        //     eMesh.transform.position = enemy.transform.position;
+        //     eMesh.transform.scale = enemy.transform.scale;
+        //     eMesh.transform.rotation = enemy.transform.rotation;
+    
+        //     // eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+        //     eMesh.properties.name = "enemy";
+    
+    
+        //     objects.enemies.push(eMesh);
+        //     enemyMeshs.push(eMesh);
+        // }
+    
+        return enemyMeshs;
     }
 }
 
