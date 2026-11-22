@@ -32,5 +32,29 @@ export const ColorUtil = {
         ]
     },
 
-   
+    random() {
+        return [
+            [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+            [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+            [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+            [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+            [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+            [Math.random(), Math.random(), Math.random(), 1.0], // Front face: white
+        ]
+    },
+
+    randomOne(){
+        const random= [Math.random(), Math.random(), Math.random(), 1.0];
+        
+        return [
+            random,
+            random,
+            random,
+            random,
+            random,
+            random,
+        ]
+    }
+
+
 }

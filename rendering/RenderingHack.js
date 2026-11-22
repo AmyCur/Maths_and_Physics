@@ -1,6 +1,7 @@
 import { BoxCollider, ColliderUtils } from "../game_objects/Colliders.js";
 import { Mesh } from "../game_objects/Mesh.js";
 import { objects } from "../game_objects/Objects.js";
+import { ColorUtil } from "../util/ColorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { Buffer } from "./Buffer.js";
 import { MeshCreator } from "./init-buffers.js";
@@ -113,13 +114,19 @@ export function CreateWalls(fb, gl) {
 }
 
 export function GenerateStaticMeshs(gl) {
-    const fb = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "floor", raycastable: true });
+
+    const buffer = Buffer.default().SetColor(ColorUtil.randomOne());
+
+    const fb = MeshCreator.CreateMesh(gl, buffer, { collider: BoxCollider.default() }, { name: "floor", raycastable: true });
     fb.transform.scale = new Vector3(100, 1, 100)
     fb.transform.position = new Vector3(0, 0, 0);
 
     objects.static.push(fb);
 
-    const cb = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "ceiling", raycastable: true });
+    const cbuffer = Buffer.default().SetColor(ColorUtil.randomOne());
+
+
+    const cb = MeshCreator.CreateMesh(gl, cbuffer, { collider: BoxCollider.default() }, { name: "ceiling", raycastable: true });
     cb.transform.scale = new Vector3(100, 1, 100)
     cb.transform.position = new Vector3(0, 30, 0);
 

@@ -73,4 +73,8 @@ export class Buffer {
         this.color = color,
         this.index = index;
     }
+
+    SetColor(color){
+        return new Buffer(this.position, color, this.index);
+    }
 }

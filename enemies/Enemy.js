@@ -20,8 +20,6 @@ export class Enemy {
 
     constructor(maxSpeed = 1, intelligent = true, health = 1, type="ground") {
         
-        
-
         // this.health=health;
         this.maxSpeed = maxSpeed;
         this.intelligent = true;

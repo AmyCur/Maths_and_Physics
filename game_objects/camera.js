@@ -54,6 +54,6 @@ class Camera extends TransObject{
 
 export const camera = new Camera({
     position: new Vector3(0,10,0),
-    rotation: new Vector3(0,-2,0),
+    rotation: new Vector3(0,0,0),
     scale: new Vector3(1,1,1),
 });

@@ -1,4 +1,4 @@
-import { InitRendering, Render } from "./rendering/RenderContinous.js";
+import { InitRendering, Render } from "./rendering/Render.js";
 import { input } from "./input/input.js";
 import { camera } from "./game_objects/camera.js";
 import { player } from "./game_objects/Player.js";

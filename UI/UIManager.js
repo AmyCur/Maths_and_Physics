@@ -19,8 +19,8 @@ export const UIManager = {
     UpdateUI(){
         this.text.camera.rotation.innerHTML = camera.transform.rotation.Print(MathUtil.Rad2Deg);
         this.text.player.position.innerHTML = player.transform.position.Print();
-        this.text.player.health.innerHTML = player.health;
-        this.text.player.stamina.innerHTML = player.stamina;
+        this.text.player.health.innerHTML = Math.trunc(player.health);
+        this.text.player.stamina.innerHTML = Math.trunc(player.stamina);
 
         if(!this.devMode) this.text.dev.innerHTML="";
     }

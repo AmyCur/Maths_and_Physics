@@ -115,9 +115,13 @@ export class EnemyController {
         const sp = this.GetRandomVectorAroundThePlayer();
         console.log(sp)
         sp.y=15;
+
+        const buffer = Buffer.default();
+        buffer.color = ColorUtil.randomOne();
         
         const mesh = MeshCreator.CreateMesh(
-            gl, Buffer.default(), 
+            gl, 
+            buffer, 
             {collider: BoxCollider.default()}, 
             {name: "Jacob", raycastable: true}, 
             Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(30,0,0))).SetScalef(3,6,3)
