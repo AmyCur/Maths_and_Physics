@@ -1,9 +1,9 @@
-import { InitRendering, Render } from "./rendering/Render.js";
+import { InitRendering, Render } from "./rendering/Rendering.js";
 import { input } from "./input/input.js";
 import { camera } from "./game_objects/camera.js";
 import { player } from "./game_objects/Player.js";
 import { Time } from "./util/Time.js";
-import { EController, EnemyController } from "./enemies/EnemyController.js";
+import { EnemyController } from "./enemies/EnemyController.js";
 import { VectorUtil } from "./util/VectorUtil.js";
 import { objects } from "./game_objects/Objects.js";
 import { Vector3 } from "./vectors/Vector3.js";
@@ -14,9 +14,6 @@ function Main() {
     const rendering = InitRendering();
     const gl = rendering.gl;
     const programInfo = rendering.programInfo;
-
-
-    const enemySpawnInterval = 5;
     
     let then=0;
     let tick=0;
@@ -34,30 +31,17 @@ function Main() {
 
         //#endregion
 
-        if(Math.floor(tick)%enemySpawnInterval==0){
-            tick=1;
-            EnemyController.SpawnEnemy(gl);
-        }
+        tick = EnemyController.Update(tick);
 
-        EController.HandleAI();
+        // EController.HandleAI();
 
-        if(input.GetKey("Mouse")) player.Attack();
-        if(input.GetKey("KeyK")) {
-            for(let enem of EController.enemies){
-                enem.Die();
-            }
-        }
-
-        player.UpdatePosition();
-        player.Gravity();
-
+        input.Update();
+        player.Update();
         UIManager.UpdateUI();
 
-        EController.theta++;
+        EnemyController.theta++;
 
         Render(gl, programInfo);
-       
-        if(input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
 
         requestAnimationFrame(GameLoop);
     }

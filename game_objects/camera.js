@@ -9,51 +9,68 @@ import { VectorUtil } from "../util/VectorUtil.js";
 import { player } from "./Player.js";
 "use strict";
 
-class Camera extends TransObject{
+class Camera extends TransObject {
 
+    constructor(cameraData) {
+        super(cameraData.transform, {}, {})
 
-    sensitivityModifier;
-    text;
+        this.fov = (cameraData.fov * Math.PI) / 180;
 
-    constructor(transform) {
-        super(transform, {}, {})
-        this.sensitivityModifier = 300;
+        this.canvas=cameraData.canvas;
+
+        this.screenWidth = this.canvas.clientWidth;
+        this.screenHeight = this.canvas.clientHeight;
+        this.aspectRatio = this.screenHeight / this.screenHeight;
+        this.zNear = cameraData.zNear;
+        this.zFar = cameraData.zFar;
+
     }
 
-    Add(x, y) {
+    ClampRotation() {
+        this.transform.rotation.y = MUtil.clamp(this.transform.rotation.y, -90 * MathUtil.Deg2Rad, 90 * MathUtil.Deg2Rad);
+    }
+    
+
+    Rotate(x, y) {
         this.transform.rotation.x += x;
         this.transform.rotation.y += y;
 
-        this.transform.rotation.y = MUtil.clamp(this.transform.rotation.y, -90 * MathUtil.Deg2Rad, 90 * MathUtil.Deg2Rad);
+        this.ClampRotation();
     }
 
     LockMouse(canvas) {
-        canvas.addEventListener("click", async () => {
+        canvas.addEventListener("mousedown", async () => {
             await canvas.requestPointerLock({
                 unadjustedMovement: true,
             });
         });
     }
 
-    GetInvertedCameraPosition(){
+    GetInvertedCameraPosition() {
         return VectorUtil.Invert(this.GetCameraPosition());
     }
 
-    GetCameraPosition(){
+    GetCameraPosition() {
         return VectorUtil.Add(player.transform.position, camera.transform.position)
     }
 
     AddListeners(canvas) {
         document.addEventListener("mousemove", (e) => {
             if (!input.GetKey("ControlLeft")) {
-                this.Add(-e.movementX / this.sensitivityModifier, -e.movementY / this.sensitivityModifier);
+                this.Rotate(-e.movementX / 300, -e.movementY / 300);
             }
         });
     }
 }
 
 export const camera = new Camera({
-    position: new Vector3(0,10,0),
-    rotation: new Vector3(0,0,0),
-    scale: new Vector3(1,1,1),
+    transform: {
+        position: new Vector3(0, 10, 0),
+        rotation: new Vector3(0, -2, 0),
+        scale: new Vector3(1, 1, 1),
+    },
+    fov: 90,
+    canvas: document.getElementById("gl-canvas"),
+    zNear: 0.1,
+    zFar: 1000
 });

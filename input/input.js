@@ -1,3 +1,4 @@
+import { EnemyController } from "../enemies/EnemyController.js";
 import { camera } from "../game_objects/camera.js";
 import { player } from "../game_objects/Player.js";
 import { Vector2 } from "../vectors/Vector2.js";
@@ -23,6 +24,11 @@ export const input = {
             Math.cos(cameraRotationX),
             0
         );
+    },
+
+    Update(){
+        if(this.GetKey("Mouse")) player.Attack();
+        if(this.GetKey("KeyK"))  EnemyController.KillAllEnemies();
     },
 
     angle: 0,

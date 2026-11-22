@@ -1,29 +1,26 @@
 import { BoxCollider } from "../game_objects/Colliders.js";
-import { Mesh } from "../game_objects/Mesh.js";
 import { objects } from "../game_objects/Objects.js";
 import { player } from "../game_objects/Player.js";
 import { Transform } from "../game_objects/Transform.js";
-import { Buffer } from "../rendering/Buffer.js";
-import { MeshCreator } from "../rendering/init-buffers.js";
-import { ColorUtil } from "../util/ColorUtil.js";
-import { MathUtil, MUtil } from "../util/MathUtil.js";
+import { SBPyramid } from "../rendering/BufferData.js";
+import { MeshCreator } from "../rendering/Buffers.js";
+import { MathUtil } from "../util/MathUtil.js";
 import { Random } from "../util/Random.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { Enemy } from "./Enemy.js";
 import { EnemyType } from "./EnemyType.js";
-import { Fly } from "./Fly.js";
 
 export class EnemyController {
     "use strict";
-    types = [
+    static types = [
         new EnemyType("fly", 0, 10, 0.3),
         new EnemyType("ground", 200, 5, 0.4)
     ];
 
-    theta = 0;
+    static theta = 0;
 
-    GetRandomType() {
+    static GetRandomType() {
         let sumOfWeights = 0;
 
         for (const v of this.types) {
@@ -47,16 +44,8 @@ export class EnemyController {
     }
 
     static enemySpawnRadius=0.5;
-
-    constructor() {
-        this.enemies = [];
-
-        // if(enemies.length>0){
-        //     for(const e in enemies){
-        //         this.SpawnEnemy(e);
-        //     }
-        // }
-    }
+    static enemySpawnInterval=5;
+    
 
     static GetRandomVectorAroundThePlayer() {
         const theta = (Math.random() * 360) * MathUtil.Deg2Rad;
@@ -64,10 +53,9 @@ export class EnemyController {
         return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), pp.y, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
     }
 
-    HandleAI() {
+    static HandleAI() {
         for (let i = 0; i < objects.enemies.length; i++) {
             const enem = objects.enemies[i].components.enemy;
-            console.log(enem);
             if (enem.intelligent) {
 
                 enem.GetStationary();
@@ -99,6 +87,15 @@ export class EnemyController {
         }
     }
 
+    static Update(tick){
+        EnemyController.HandleAI();
+        if(Math.floor(tick) % this.enemySpawnInterval==0){
+            tick=1;
+            EnemyController.SpawnEnemy(player.gl);
+        }
+        return tick;
+    }
+
     static SpawnEnemy() {
         // const spawnHoard = Random.RandInt(0, 10) === 0;
         // let type = this.GetRandomType();
@@ -110,14 +107,19 @@ export class EnemyController {
         objects.enemies.push(mesh);
     }
 
+    static KillAllEnemies(){
+        for(let enemy of objects.enemies){
+            enemy.components.enemy.Die();
+        }
+    }
+
     static CreateEnemyMesh(gl, enemy){
         
         const sp = this.GetRandomVectorAroundThePlayer();
-        console.log(sp)
         sp.y=15;
 
-        const buffer = Buffer.default();
-        buffer.color = ColorUtil.randomOne();
+        const buffer = SBPyramid();
+
         
         const mesh = MeshCreator.CreateMesh(
             gl, 
@@ -133,40 +135,4 @@ export class EnemyController {
         return mesh;
     }
 
-    static CreateEnemyMeshs(gl) {
-
-        // Get the currently alive enemies
-        return objects.enemies;
-        const enemyMeshs = [];
-
-        // Go through them
-        for(let i = 0; i < ae.length; i++){
-            enemyMeshs.push(ae[i]);
-        }
-
-        // objects.enemies = [];
-    
-        // for (let i = 0; i < EController.enemies.length; i++) {
-        //     const enemy = EController.enemies[i];
-        //     const buffer = Buffer.default();
-        //     buffer.color = Mesh.GetColor("red");
-            
-        //     const eMesh = MeshCreator.CreateMesh(gl, buffer, { enemy: enemy, collider: BoxCollider.default() });
-    
-        //     eMesh.transform.position = enemy.transform.position;
-        //     eMesh.transform.scale = enemy.transform.scale;
-        //     eMesh.transform.rotation = enemy.transform.rotation;
-    
-        //     // eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-        //     eMesh.properties.name = "enemy";
-    
-    
-        //     objects.enemies.push(eMesh);
-        //     enemyMeshs.push(eMesh);
-        // }
-    
-        return enemyMeshs;
-    }
 }
-
-export const EController = new EnemyController(20);

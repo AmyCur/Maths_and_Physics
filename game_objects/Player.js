@@ -65,6 +65,12 @@ class Player extends TransObject{
     }
 
 
+    Update(){
+        this.UpdatePosition();
+        this.Gravity();
+        if(input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
+    }
+
 
     TakeDamage(damage) {
         if (!this.godMode) this.health -= damage;

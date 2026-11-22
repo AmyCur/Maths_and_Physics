@@ -1,21 +1,17 @@
-import { MeshCreator } from "./init-buffers.js";
+import { MeshCreator } from "./Buffers.js";
 import { input } from "../input/input.js";
 import { initShaderProgram } from "./shaders.js";
-import { floor, RenderObject } from "./RenderObject.js";
 import { player } from "../game_objects/Player.js";
 import { camera } from "../game_objects/camera.js";
 import { Vector3 } from "../vectors/Vector3.js";
-import { EController, EnemyController } from "../enemies/EnemyController.js";
 import { Mat4 } from "../vectors/Mat4.js";
 import { objects } from "../game_objects/Objects.js";
 import { BoxCollider, ColliderUtils } from "../game_objects/Colliders.js";
-import { GetSceneSettings } from "./RenderStart.js";
 import { Buffer } from "./Buffer.js";
-import { Mesh } from "../game_objects/Mesh.js";
-import { Transform } from "../game_objects/Transform.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { MUtil } from "../util/MathUtil.js";
 import { CreateWalls, GenerateStaticMeshs } from "./RenderingHack.js";
+import { Texturing } from "./textures/Texturing.js";
 
 //#region Initialisation
 
@@ -57,17 +53,19 @@ export function InitRendering() {
     // for the vertices and so forth is established.
     const shaderProgram = initShaderProgram(gl);
 
+    //
     const programInfo = {
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
             vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor"),
+            textureCoord: gl.getAttribLocation(shaderProgram, "aTextureCoord"),
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
             modelMatrix: gl.getUniformLocation(shaderProgram, "modelMatrix"),
-            depth: gl.getUniformLocation(shaderProgram, "depth")
+            uSampler: gl.getUniformLocation(shaderProgram, "uSampler"),
         },
     };
 
@@ -75,8 +73,8 @@ export function InitRendering() {
 
     const fb = GenerateStaticMeshs(gl);
 
-    // const walls = CreateWalls(fb, gl);
-    // objects.static.push(...walls);
+    const walls = CreateWalls(fb, gl);
+    objects.static.push(...walls);
 
     // for (let i = 0; i < walls.length; i++) {
     //     const wall = walls[i];
@@ -103,13 +101,13 @@ export function InitRendering() {
 
 function CreateMatricies(gl) {
     // Get scene settings
-    const s = GetSceneSettings(gl);
+    // const s = GetSceneSettings(gl);
 
     // Init projection matrix
     const projectionMatrix = new Mat4();
 
     // Set the projection matrix to an actual projection matrix
-    projectionMatrix.perspective(s.fieldOfView, s.zNear, s.zFar);
+    projectionMatrix.perspective(camera.fov, camera.zNear, camera.zFar);
 
     // Initialise the model view matrix (Not to be confused with the model matrix)
     const modelViewMatrix = new Mat4();
@@ -131,13 +129,13 @@ function CreateMatricies(gl) {
 }
 
 
-function CreateMeshWithTargets(gl, sp, ep){
-    const mesh = MeshCreator.CreateMesh(gl, Buffer.default(), {collider: BoxCollider.default()}, {name: "new obj", raycastable: true});
-    
+function CreateMeshWithTargets(gl, sp, ep) {
+    const mesh = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "new obj", raycastable: true });
+
     const tp = VectorUtil.Subtract(ep, sp);
     // mesh.transform.scale = tp
-    mesh.transform.position=tp;
-    
+    mesh.transform.position = tp;
+
     mesh.transform.scale = new Vector3(
         MUtil.magnitude(ep.x),
         MUtil.magnitude(ep.y),
@@ -147,15 +145,15 @@ function CreateMeshWithTargets(gl, sp, ep){
     mesh.components.collider = BoxCollider.default();
 
     // mesh.transform.position = VectorUtil.Add(sp, VectorUtil.Multiply(tp, 0.5));
-    
+
     return mesh;
 }
 
 
-function ResetBuffers(){
-    objects.other =      [];
+function ResetBuffers() {
+    objects.other = [];
     // objects.enemies =    [];
-    objects.colliders =  [];
+    objects.colliders = [];
 }
 
 export function Render(gl, programInfo) {
@@ -168,25 +166,6 @@ export function Render(gl, programInfo) {
 
     // Get matricies
     const [projectionMatrix, modelViewMatrix] = CreateMatricies(gl);
-
-    // Get all of the enemies and create buffers for them
-    // objects.enemies = EnemyController.CreateEnemyMeshs(gl);
-
-    // const wall = CreateMeshWithTargets(gl, new Vector3(-100,0,-99), new Vector3(0,20,-100));
-    // const wall2 = CreateMeshWithTargets(gl, new Vector3(100,0,99), new Vector3(0,20,100));
-    // objects.other.push(wall);
-    // objects.other.push(wall2);
-    
-    // const ob = MeshCreator.CreateMesh(gl, Buffer.default(), {}, {});
-
-    // ob.transform = 
-    //     Transform.default()
-    //     .SetPosition(VectorUtil.Add(camera.GetCameraPosition(), Vector3.zero()))
-    //     .SetScale(new Vector3(0.1,0.1,0.1));
-
-    // objects.other.push(ob);
-
-
 
     /*
         The static buffers and enemy buffers are seperated into individual arrays and worked on differently 
@@ -202,11 +181,10 @@ export function Render(gl, programInfo) {
         RenderBuffer(gl, objects.other[i], programInfo);
     }
 
-    console.log(objects.enemies);
 
     // Render all the enemies 
     for (let i = 0; i < objects.enemies.length; i++) {
-        RenderBuffer(gl, objects.enemies[i], programInfo);
+        RenderBuffer(gl, objects.enemies[i], programInfo, 12);
     }
 
 
@@ -220,11 +198,6 @@ export function Render(gl, programInfo) {
         projectionMatrix.m,
     );
 
-    gl.uniform4fv(
-        programInfo.uniformLocations.depth,
-        [0, 0, 0, 1]
-    )
-
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.modelViewMatrix,
         false,
@@ -232,17 +205,14 @@ export function Render(gl, programInfo) {
     );
 }
 
-function RenderBuffer(gl, mesh, programInfo, vertexCount=36) {
+function RenderBuffer(gl, mesh, programInfo, vertexCount = 36) {
 
-    const modelMatrix = new Mat4();
+    const modelMatrix = mesh.GetModelMatrix();
 
+    //? AQUI
+    // gl.enableVertexAttribArray(programInfo.attribLocations.textureCoord);
+    // gl.vertexAttribPointer(programInfo.attribLocations.textureCoord, 2, gl.FLOAT, false,0,0);
 
-    modelMatrix.translate([mesh.transform.position.x, mesh.transform.position.y, mesh.transform.position.z]);
-    modelMatrix.scale([mesh.transform.scale.x, mesh.transform.scale.y, mesh.transform.scale.z]);
-
-    modelMatrix.rotate([1, 0, 0], mesh.transform.rotation.x);
-    modelMatrix.rotate([0, 1, 0], mesh.transform.rotation.y);
-    modelMatrix.rotate([0, 0, 1], mesh.transform.rotation.z);
 
     //* Set the modelMatrix (NOT MODEL VIEW MATRIX)
 
@@ -252,12 +222,22 @@ function RenderBuffer(gl, mesh, programInfo, vertexCount=36) {
         modelMatrix.m
     )
 
-
     setPositionAttribute(gl, mesh.buffers, programInfo);
-    setColorAttribute(gl, mesh.buffers, programInfo);
+
+    gl.activeTexture(gl.TEXTURE0);
+
+    // Bind the texture to texture unit 0
+    gl.bindTexture(gl.TEXTURE_2D, mesh.texture);
+
+    // Tell the shader we bound the texture to texture unit 0
+    gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+
+    setTextureAttribute(gl, mesh.buffers, programInfo);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.buffers.index);
     gl.useProgram(programInfo.program);
+
+
 
 
     //! RENDERING
@@ -290,22 +270,23 @@ function setPositionAttribute(gl, buffers, programInfo) {
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
-function setColorAttribute(gl, buffers, programInfo) {
-    const numComponents = 4;
-    const type = gl.FLOAT;
-    const normalize = false;
-    const stride = 0;
-    const offset = 0;
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
+function setTextureAttribute(gl, buffers, programInfo) {
+    const num = 2; // every coordinate composed of 2 values
+    const type = gl.FLOAT; // the data in the buffer is 32-bit float
+    const normalize = false; // don't normalize
+    const stride = 6*Float32Array.BYTES_PER_ELEMENT; // how many bytes to get from one set to the next
+    const offset = 8*Float32Array.BYTES_PER_ELEMENT; // how many bytes inside the buffer to start from
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.texCoord);
     gl.vertexAttribPointer(
-        programInfo.attribLocations.vertexColor,
-        numComponents,
+        programInfo.attribLocations.texCoord,
+        num,
         type,
         normalize,
         stride,
         offset,
     );
-    gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
+    gl.enableVertexAttribArray(programInfo.attribLocations.texCoord);
 }
+
 //#endregion
 

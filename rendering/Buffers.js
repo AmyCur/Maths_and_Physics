@@ -1,13 +1,11 @@
 import { Mesh } from "../game_objects/Mesh.js";
-import { ColliderUtils } from "../game_objects/Colliders.js";
-import { RenderObject } from "./RenderObject.js";
 import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "./Buffer.js";
 
 export const MeshCreator = {
-  CreateMesh(gl, bufferData, components, properties, transform=Transform.default()) {
-    const ib = this.CreateBuffer(gl, bufferData.position, bufferData.color, bufferData.index);
-
+  CreateMesh(gl, bufferData, components, properties, transform = Transform.default()) {
+    const ib = this.CreateBuffer(gl, bufferData.position, bufferData.texCoord, bufferData.index);
+    
 
     const BE = new Mesh(
       //* Buffers
@@ -20,25 +18,27 @@ export const MeshCreator = {
       //* Components
       components,
       properties,
-      
+
       new Buffer(
         ib.positionBuffer,
-        ib.colorBuffers,
+        ib.textureBuffer,
         ib.indexBuffer,
       ),
     );
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
     return BE;
   },
 
-  CreateBuffer(gl, positions, colors, indices) {
+  CreateBuffer(gl, positions, textures, indices) {
     const positionBuffer = this.CreatePositionBuffer(gl, positions);
-    const colorBuffer = this.CreateColorBuffer(gl, colors);
+    const textureBuffer = this.CreateTextureBuffer(gl, textures);
     const indexBuffer = this.CreateIndexBuffer(gl, indices);
 
     return {
       positionBuffer: positionBuffer,
-      colorBuffers: colorBuffer,
+      textureBuffer: textureBuffer,
       indexBuffer: indexBuffer,
     };
   },
@@ -99,6 +99,19 @@ export const MeshCreator = {
     );
 
     return indexBuffer;
+  },
+
+  CreateTextureBuffer(gl, textureCoordinates) {
+    const textureCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
+
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array(textureCoordinates),
+      gl.STATIC_DRAW,
+    );
+
+    return textureCoordBuffer;
   }
 }
 
