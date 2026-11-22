@@ -14,4 +14,16 @@ export class Transform {
         this.rotation = rotation;
         this.scale = scale;
     }
+
+    SetPosition(position){
+        return new Transform(position, this.rotation, this.scale);
+    }
+
+    SetRotation(rotation){
+        return new Transform(this.position, rotation, this.scale);
+    }
+
+    SetScale(scale){
+        return new Transform(this.position, this.rotation, scale);
+    }
 }

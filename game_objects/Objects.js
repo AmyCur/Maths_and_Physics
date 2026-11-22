@@ -1,11 +1,12 @@
 
 //? Vital object that contains all of the buffers
 
-export const objects = {
-    enemies: [],
-    static: [],
-    other: [],
-    colliders: [],
+
+export class Objects {
+    enemies = []
+    static = []
+    other = []
+    colliders = []
 
     GetAllColliderObjects(){
         let colObjs = [];
@@ -17,13 +18,13 @@ export const objects = {
         }
 
         return colObjs;
-    },
+    }
 
     RemoveItemFromArray(item, array){
         const index = array.indexOf(item);
         if(index > -1)return array.splice(index, 1);
         return array;
-    },
+    }
 
     GetAllRaycastableObjects(){
         const raycastables = [];
@@ -34,11 +35,11 @@ export const objects = {
         }
 
         return raycastables;
-    },
+    }
 
     GetAllObjects(){
         return this.enemies.concat(this.static, this.other, this.colliders);
     }
-
-
 }
+
+export const objects = new Objects();

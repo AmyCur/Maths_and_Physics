@@ -52,7 +52,6 @@ export const Raycast = {
 
 
             if (VectorUtil.WithinRange(rayVec, minPos, maxPos)) {
-                console.log(col.properties.name);
                 return {
                     obj: col,
                     position: rayVec

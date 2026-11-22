@@ -17,6 +17,11 @@ export class MathUtil {
         
         return ((1-t)*a)+(t*b);
     }
+
+    magnitude(v){
+        if(v<0) return -v;
+        return v;
+    }
 }
 
 export const MUtil = new MathUtil();

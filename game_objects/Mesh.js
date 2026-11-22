@@ -12,7 +12,16 @@ export class Mesh extends TransObject{
         Transform.default(),
     )
 
-    constructor(bufferData, transform,  components = {}, properties = {name: "Kevin", raycastable: true}, buffers){
+    static defaultProperties(){
+        return {
+            name: "Kevin",
+            raycastable: true,
+        }
+    };
+
+
+
+    constructor(bufferData, transform,  components = {}, properties = Mesh.defaultProperties(), buffers){
         
         super(transform, components, properties);
 

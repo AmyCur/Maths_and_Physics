@@ -130,7 +130,6 @@ class Player extends TransObject{
 
     Grounded() {
         const obj = Raycast.ShootRay(this.transform.position, Vector3.down(), 1, player.gl);
-        console.log(obj);
         return obj !== undefined;
     }
 
