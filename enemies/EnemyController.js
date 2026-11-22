@@ -52,8 +52,8 @@ export class EnemyController {
 
     GetRandomVectorAroundThePlayer() {
         const theta = (Math.random() * 360) * MathUtil.Deg2Rad;
-        const pp = new Vector3(player.transform.position.x, player.transform.position.y + 3, player.transform.position.z);
-        return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), 0, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
+        const pp = player.transform.position;
+        return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), pp.y, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
     }
 
     HandleAI() {
@@ -120,7 +120,7 @@ export class EnemyController {
                         {
                             position: enemyStats.pos,
                             rotation: new Vector3(0, 0, 0),
-                            scale: new Vector3(0.8, 1, 0.8),
+                            scale: new Vector3(2, 6, 2),
                         },
                         enemyStats.speed,
                         true,

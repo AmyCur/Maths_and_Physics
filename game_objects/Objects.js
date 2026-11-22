@@ -3,10 +3,11 @@
 
 
 export class Objects {
-    enemies = []
-    static = []
-    other = []
-    colliders = []
+    enemies =   [];
+    static =    [];
+    other =     [];
+    colliders = [];
+    floor =     null;
 
     GetAllColliderObjects(){
         let colObjs = [];

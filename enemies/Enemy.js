@@ -81,7 +81,7 @@ export class Enemy extends TransObject{
         tv.normalized.y *= this.speed;
         tv.normalized.z *= this.speed;
         
-        this.transform.position.y=this.type==="fly" ? 5 : -1;
+        this.transform.position.y=this.type==="fly" ? 10 : 5;
 
         const cp = this.transform.position;
         

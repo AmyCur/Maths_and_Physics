@@ -189,7 +189,7 @@ export function InitRendering() {
 
     objects.static.push(cb);
 
-    // const walls = CreateWalls(fb, gl);
+    const walls = CreateWalls(fb, gl);
 
     // for (let i = 0; i < walls.length; i++) {
     //     const wall = walls[i];
@@ -200,7 +200,7 @@ export function InitRendering() {
 
     // console.log(walls);
 
-    // objects.static.push(...walls);
+    objects.static.push(...walls);
 
     return {
         gl: gl,
@@ -305,10 +305,10 @@ export function Render(gl, programInfo) {
     // Get all of the enemies and create buffers for them
     objects.enemies = CreateEnemyBuffer(gl);
 
-    const wall = CreateMeshWithTargets(gl, new Vector3(-100,0,-100), new Vector3(0,20,-100));
-    const wall2 = CreateMeshWithTargets(gl, new Vector3(100,0,100), new Vector3(0,20,100));
-    objects.other.push(wall);
-    objects.other.push(wall2);
+    // const wall = CreateMeshWithTargets(gl, new Vector3(-100,0,-99), new Vector3(0,20,-100));
+    // const wall2 = CreateMeshWithTargets(gl, new Vector3(100,0,99), new Vector3(0,20,100));
+    // objects.other.push(wall);
+    // objects.other.push(wall2);
     
     // const ob = MeshCreator.CreateMesh(gl, Buffer.default(), {}, {});
 
