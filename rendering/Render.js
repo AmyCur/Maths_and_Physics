@@ -16,6 +16,7 @@ import { Transform } from "../game_objects/Transform.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { MUtil } from "../util/MathUtil.js";
 import { CreateWalls, GenerateStaticMeshs } from "./RenderingHack.js";
+import { loadTexture } from "./Textures.js";
 
 //#region Initialisation
 
@@ -61,13 +62,13 @@ export function InitRendering() {
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
-            vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor"),
+            textureCoord: gl.getAttribLocation(shaderProgram, "aTextureCoord"),
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
             modelMatrix: gl.getUniformLocation(shaderProgram, "modelMatrix"),
-            depth: gl.getUniformLocation(shaderProgram, "depth")
+            uSampler: gl.getUniformLocation(shaderProgram, "uSampler"),
         },
     };
 
@@ -75,8 +76,8 @@ export function InitRendering() {
 
     const fb = GenerateStaticMeshs(gl);
 
-    // const walls = CreateWalls(fb, gl);
-    // objects.static.push(...walls);
+    const walls = CreateWalls(fb, gl);
+    objects.static.push(...walls);
 
     // for (let i = 0; i < walls.length; i++) {
     //     const wall = walls[i];
@@ -131,31 +132,10 @@ function CreateMatricies(gl) {
 }
 
 
-function CreateMeshWithTargets(gl, sp, ep){
-    const mesh = MeshCreator.CreateMesh(gl, Buffer.default(), {collider: BoxCollider.default()}, {name: "new obj", raycastable: true});
-    
-    const tp = VectorUtil.Subtract(ep, sp);
-    // mesh.transform.scale = tp
-    mesh.transform.position=tp;
-    
-    mesh.transform.scale = new Vector3(
-        MUtil.magnitude(ep.x),
-        MUtil.magnitude(ep.y),
-        MUtil.magnitude(ep.z),
-    )
-
-    mesh.components.collider = BoxCollider.default();
-
-    // mesh.transform.position = VectorUtil.Add(sp, VectorUtil.Multiply(tp, 0.5));
-    
-    return mesh;
-}
-
-
-function ResetBuffers(){
-    objects.other =      [];
+function ResetBuffers() {
+    objects.other = [];
     // objects.enemies =    [];
-    objects.colliders =  [];
+    objects.colliders = [];
 }
 
 export function Render(gl, programInfo) {
@@ -176,7 +156,7 @@ export function Render(gl, programInfo) {
     // const wall2 = CreateMeshWithTargets(gl, new Vector3(100,0,99), new Vector3(0,20,100));
     // objects.other.push(wall);
     // objects.other.push(wall2);
-    
+
     // const ob = MeshCreator.CreateMesh(gl, Buffer.default(), {}, {});
 
     // ob.transform = 
@@ -201,8 +181,6 @@ export function Render(gl, programInfo) {
     for (let i = 0; i < objects.other.length; i++) {
         RenderBuffer(gl, objects.other[i], programInfo);
     }
-
-    console.log(objects.enemies);
 
     // Render all the enemies 
     for (let i = 0; i < objects.enemies.length; i++) {
@@ -232,7 +210,7 @@ export function Render(gl, programInfo) {
     );
 }
 
-function RenderBuffer(gl, mesh, programInfo, vertexCount=36) {
+function RenderBuffer(gl, mesh, programInfo, vertexCount = 36) {
 
     const modelMatrix = new Mat4();
 
@@ -252,12 +230,23 @@ function RenderBuffer(gl, mesh, programInfo, vertexCount=36) {
         modelMatrix.m
     )
 
-
-    setPositionAttribute(gl, mesh.buffers, programInfo);
-    setColorAttribute(gl, mesh.buffers, programInfo);
-
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.buffers.index);
+    player.gl.pixelStorei(player.gl.UNPACK_FLIP_Y_WEBGL, true);
+
+    gl.activeTexture(gl.TEXTURE0);
+
+    // Bind the texture to texture unit 0
+    gl.bindTexture(gl.TEXTURE_2D, mesh.texture);
+
+    // Tell the shader we bound the texture to texture unit 0
+    gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+
+    // setTextureAttribute(gl, mesh.buffers, programInfo);
+    setPositionAttribute(gl, mesh.buffers, programInfo);
+    setTextureAttribute(gl, mesh.buffers, programInfo);
+
     gl.useProgram(programInfo.program);
+
 
 
     //! RENDERING
@@ -290,22 +279,23 @@ function setPositionAttribute(gl, buffers, programInfo) {
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
-function setColorAttribute(gl, buffers, programInfo) {
-    const numComponents = 4;
-    const type = gl.FLOAT;
-    const normalize = false;
-    const stride = 0;
-    const offset = 0;
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
+
+function setTextureAttribute(gl, buffers, programInfo) {
+    const num = 2; // every coordinate composed of 2 values
+    const type = gl.FLOAT; // the data in the buffer is 32-bit float
+    const normalize = false; // don't normalize
+    const stride = 0; // how many bytes to get from one set to the next
+    const offset = 0; // how many bytes inside the buffer to start from
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.texCoord);
     gl.vertexAttribPointer(
-        programInfo.attribLocations.vertexColor,
-        numComponents,
+        programInfo.attribLocations.textureCoord,
+        num,
         type,
         normalize,
         stride,
         offset,
     );
-    gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
+    gl.enableVertexAttribArray(programInfo.attribLocations.textureCoord);
 }
 //#endregion
 

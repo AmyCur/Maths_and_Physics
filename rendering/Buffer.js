@@ -21,12 +21,18 @@ export class Buffer {
             -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0,
         ],
         [
-            [0, 0, 1.0, 1.0], // Front face: white
-            [0, 1, 1, 1.0], // Back face: red
-            [0.0, 1.0, 0.0, 1.0], // Top face: green
-            [0.0, 0.0, 1.0, 1.0], // Bottom face: blue
-            [1.0, 1.0, 0.0, 1.0], // Right face: yellow
-            [1.0, 0.0, 1.0, 1.0], // Left face: purple
+            // Front
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            // Back
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            // Top
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            // Bottom
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            // Right
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            // Left
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
         ],
         [
             0,
@@ -68,13 +74,9 @@ export class Buffer {
         ],
     );
 
-    constructor(position, color, index) {
+    constructor(position, texCoord, index) {
         this.position = position,
-        this.color = color,
+        this.texCoord = texCoord,
         this.index = index;
-    }
-
-    SetColor(color){
-        return new Buffer(this.position, color, this.index);
     }
 }

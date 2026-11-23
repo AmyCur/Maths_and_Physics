@@ -5,7 +5,6 @@ import { player } from "../game_objects/Player.js";
 import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "../rendering/Buffer.js";
 import { MeshCreator } from "../rendering/init-buffers.js";
-import { ColorUtil } from "../util/ColorUtil.js";
 import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { Random } from "../util/Random.js";
 import { VectorUtil } from "../util/VectorUtil.js";
@@ -67,7 +66,6 @@ export class EnemyController {
     HandleAI() {
         for (let i = 0; i < objects.enemies.length; i++) {
             const enem = objects.enemies[i].components.enemy;
-            console.log(enem);
             if (enem.intelligent) {
 
                 enem.GetStationary();
@@ -117,7 +115,7 @@ export class EnemyController {
         sp.y=15;
 
         const buffer = Buffer.default();
-        buffer.color = ColorUtil.randomOne();
+      
         
         const mesh = MeshCreator.CreateMesh(
             gl, 

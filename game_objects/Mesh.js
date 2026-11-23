@@ -1,7 +1,8 @@
 import { Buffer } from "../rendering/Buffer.js";
 import { Transform } from "./Transform.js";
 import { TransObject } from "./TransObject.js";
-import {ColorUtil} from "../util/ColorUtil.js";
+import { loadTexture } from "../rendering/Textures.js";
+import { player } from "./Player.js";
 
 
 "use strict";
@@ -32,19 +33,12 @@ export class Mesh extends TransObject{
 
         this.components=components;
         this.properties=properties;
+
+        this.texture = loadTexture(player.gl, "../assets/germany.png");
+
         // console.log(this.IsEnemy());
     }
 
-    static GetColor(tc){
-        let targetColor;
-
-        if(tc==="red") targetColor=ColorUtil.red();
-        if(tc==="green") targetColor=ColorUtil.green();
-        if(tc==="blue") targetColor=ColorUtil.blue();
-
-
-        return targetColor;
-    }
 
     IsEnemy(){
         if(this.components===undefined) return false;

@@ -1,7 +1,7 @@
 
 const vsSource = `
     attribute vec4 aVertexPosition;
-    attribute vec4 aVertexColor;
+    attribute vec2 aTextureCoord;
 
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
@@ -10,21 +10,20 @@ const vsSource = `
     uniform vec4 position;
     uniform vec4 scale;
 
-    varying lowp vec4 vColor;
-
+    varying highp vec2 vTextureCoord;
     void main(void) {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * modelMatrix  * aVertexPosition;
-      vColor = aVertexColor;
+        vTextureCoord = aTextureCoord;
+        gl_Position = uProjectionMatrix * uModelViewMatrix * modelMatrix  * aVertexPosition;
     }
       
   `;
 
 const fsSource = `
-    varying lowp vec4 vColor;
-    uniform lowp vec4 depth;
-
+   varying highp vec2 vTextureCoord;
+    uniform sampler2D uSampler;
+    
     void main(void) {
-      gl_FragColor = vec4(vColor.x-depth.x, vColor.y-depth.y, vColor.z-depth.z, 1);
+      gl_FragColor = texture2D(uSampler, vTextureCoord);
     }
   `;
 

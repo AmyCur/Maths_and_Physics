@@ -174,7 +174,7 @@ class Player extends TransObject{
 }
 
 export const player = new Player({
-    position: new Vector3(0, 2, 0),
+    position: new Vector3(0, 10, 0),
     rotation: new Vector3(0, 0, 0),
     scale: new Vector3(1, 10, 1)
 }, 15);

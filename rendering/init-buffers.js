@@ -5,8 +5,8 @@ import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "./Buffer.js";
 
 export const MeshCreator = {
-  CreateMesh(gl, bufferData, components, properties, transform=Transform.default()) {
-    const ib = this.CreateBuffer(gl, bufferData.position, bufferData.color, bufferData.index);
+  CreateMesh(gl, bufferData, components, properties, transform = Transform.default()) {
+    const ib = this.CreateBuffer(gl, bufferData.position, bufferData.texCoords, bufferData.index);
 
 
     const BE = new Mesh(
@@ -20,10 +20,10 @@ export const MeshCreator = {
       //* Components
       components,
       properties,
-      
+
       new Buffer(
         ib.positionBuffer,
-        ib.colorBuffers,
+        ib.textureBuffer,
         ib.indexBuffer,
       ),
     );
@@ -31,14 +31,14 @@ export const MeshCreator = {
     return BE;
   },
 
-  CreateBuffer(gl, positions, colors, indices) {
+  CreateBuffer(gl, positions, uv, indices) {
     const positionBuffer = this.CreatePositionBuffer(gl, positions);
-    const colorBuffer = this.CreateColorBuffer(gl, colors);
+    const textureBuffer = this.CreateTextureBuffer(gl, uv);
     const indexBuffer = this.CreateIndexBuffer(gl, indices);
 
     return {
       positionBuffer: positionBuffer,
-      colorBuffers: colorBuffer,
+      textureBuffer: textureBuffer,
       indexBuffer: indexBuffer,
     };
   },
@@ -61,25 +61,21 @@ export const MeshCreator = {
     return positionBuffer;
   },
 
-  CreateColorBuffer(gl, faceColors) {
+  CreateTextureBuffer(gl, texCoords) {
+    const textureCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 
+  
 
-    // Convert the array of colors into a table for all the vertices.
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array(texCoords),
+      gl.STATIC_DRAW,
+    );
 
-    var colors = [];
-
-    for (var j = 0; j < faceColors.length; ++j) {
-      const c = faceColors[j];
-      // Repeat each color four times for the four vertices of the face
-      colors = colors.concat(c, c, c, c);
-    }
-
-    const colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
-    return colorBuffer;
+    return textureCoordBuffer;
   },
+
 
   CreateIndexBuffer(gl, indices) {
     const indexBuffer = gl.createBuffer();

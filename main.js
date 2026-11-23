@@ -43,8 +43,8 @@ function Main() {
 
         if(input.GetKey("Mouse")) player.Attack();
         if(input.GetKey("KeyK")) {
-            for(let enem of EController.enemies){
-                enem.Die();
+            for(let enem of objects.enemies){
+                enem.components.enemy.Die();
             }
         }
 
