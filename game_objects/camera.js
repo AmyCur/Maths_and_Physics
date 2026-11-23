@@ -51,7 +51,7 @@ class Camera extends TransObject {
     }
 
     GetCameraPosition() {
-        return VectorUtil.Add(player.transform.position, camera.transform.position)
+        return VectorUtil.Add(player.truePos, camera.transform.position)
     }
 
     AddListeners(canvas) {
@@ -71,6 +71,6 @@ export const camera = new Camera({
     },
     fov: 45,
     canvas: document.getElementById("gl-canvas"),
-    zNear: 0.1,
+    zNear: 0.001,
     zFar: 1000
 });

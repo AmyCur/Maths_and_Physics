@@ -27,8 +27,6 @@ export class SphereCollider {
 }
 
 export const ColliderUtils = {
-    defaultCollider: new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1)),
-
     GetColliderBounds(object, collider) {
         const objPos = object.transform.position;
         const colOffset = collider.offset;
@@ -51,6 +49,18 @@ export const ColliderUtils = {
             pos: colliderPos,
             size: colliderSize
         }
+    },
+
+    GetCollisionViaRaycasting(transObject){
+        const p = transObject.transform.position;
+        
+        const ao = objects.GetAllColliderObjects();
+
+        for(let obj of ao){
+            
+        }
+
+
     },
 
     IsColliding(position, addition) {

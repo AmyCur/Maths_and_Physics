@@ -1,18 +1,16 @@
 import { BoxCollider } from "../game_objects/Colliders.js";
-import { Mesh } from "../game_objects/Mesh.js";
 import { objects } from "../game_objects/Objects.js";
 import { player } from "../game_objects/Player.js";
 import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "../rendering/Buffer.js";
 import { MeshCreator } from "../rendering/BufferManager.js";
-import { loadTexture, textures } from "../rendering/Textures.js";
+import { textures } from "../rendering/Textures.js";
 import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { Random } from "../util/Random.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { Enemy } from "./Enemy.js";
 import { EnemyType } from "./EnemyType.js";
-import { Fly } from "./Fly.js";
 
 export class EnemyController {
     "use strict";
@@ -120,7 +118,7 @@ export class EnemyController {
             gl, 
             Buffer.default(), 
             {collider: BoxCollider.default()}, 
-            {name: "Jacob", raycastable: true, texture: loadTexture(gl, textures.paths.goomba)}, 
+            {name: "Jacob", raycastable: true, texture: textures.loadTexture(gl, textures.paths.goomba)}, 
             Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(30,0,0))).SetScalef(3,6,3)
         );
 

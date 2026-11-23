@@ -30,4 +30,48 @@ export class Vector3 {
 
         return new Vector3(nx, ny, 0);
     }
+
+    ToArray(){
+        return [this.x, this.y, this.z];
+    }
+
+    Dividef(f){
+
+        if(f===0){
+            console.error("Divide by zero error");
+            return this;
+        }
+
+        const nv = this;
+        
+        nv.x/=f;
+        nv.y/=f;
+        nv.z/=f;
+
+        return nv;
+    }
+
+    Divide(v){
+
+        if(v===0){
+            console.error("Divide by zero error");
+            return this;
+        }
+
+        const nv = this;
+        
+        nv.x/=v.x;
+        nv.y/=v.y;
+        nv.z/=v.z;
+
+        return nv;
+    }
+
+    Subtract(x,y,z){
+        const nv = this;
+        nv.x-=x;
+        nv.y-=y;
+        nv.z-=z;
+        return nv;
+    }
 }

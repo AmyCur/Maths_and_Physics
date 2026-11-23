@@ -25,6 +25,8 @@ function Main() {
     camera.AddListeners(gl.canvas);
     camera.LockMouse(gl.canvas);
 
+    player.CreateGun(gl);
+
     function GameLoop(now) {
         //#region Timing
         now *= 0.001; // convert to seconds
@@ -36,7 +38,7 @@ function Main() {
 
         if(Math.floor(tick)%enemySpawnInterval==0){
             tick=1;
-            EnemyController.SpawnEnemy(gl);
+            // EnemyController.SpawnEnemy(gl);
         }
 
         EController.HandleAI();
@@ -56,7 +58,6 @@ function Main() {
 
         Render(gl, programInfo);
        
-        if(input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
 
         requestAnimationFrame(GameLoop);
     }

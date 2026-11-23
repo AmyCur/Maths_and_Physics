@@ -6,6 +6,10 @@ import { Mat4 } from "../vectors/Mat4.js";
 import { objects } from "../game_objects/Objects.js";
 import { CreateWalls, GenerateStaticMeshs } from "./RenderingHack.js";
 import {InitTextures} from "./RenderStart.js";
+import { Transform } from "../game_objects/Transform.js";
+import { MathUtil } from "../util/MathUtil.js";
+import { VectorUtil } from "../util/VectorUtil.js";
+import { Vector3 } from "../vectors/Vector3.js";
 
 //#region Initialisation
 
@@ -106,12 +110,12 @@ function CreateMatricies(gl) {
     const modelViewMatrix = new Mat4();
 
     // Move the world based on player inverted position (so that enemies going towards the player go to the player)
-    modelViewMatrix.translate([-player.transform.position.x, -player.transform.position.y - camera.transform.position.y, -player.transform.position.z])
+    modelViewMatrix.translate([-player.truePos.x - camera.transform.position.x, -player.truePos.y - camera.transform.position.y, -player.truePos.z-camera.transform.position.z])
 
     // Apply viewbobbing
     const bobRate = player.sprinting ? 1.2 : 1;
 
-    projectionMatrix.translate([0, Math.sin((input.angle / 1.3)* bobRate)  / 5, 0]);
+    modelViewMatrix.translate([0, Math.sin((input.angle / 1.3)* bobRate)  / 5, 0]);
 
 
     // Rotate the camera
@@ -141,23 +145,6 @@ export function Render(gl, programInfo) {
     // Get matricies
     const [projectionMatrix, modelViewMatrix] = CreateMatricies(gl);
 
-    // Get all of the enemies and create buffers for them
-    // objects.enemies = EnemyController.CreateEnemyMeshs(gl);
-
-    // const wall = CreateMeshWithTargets(gl, new Vector3(-100,0,-99), new Vector3(0,20,-100));
-    // const wall2 = CreateMeshWithTargets(gl, new Vector3(100,0,99), new Vector3(0,20,100));
-    // objects.other.push(wall);
-    // objects.other.push(wall2);
-
-    // const ob = MeshCreator.CreateMesh(gl, Buffer.default(), {}, {});
-
-    // ob.transform = 
-    //     Transform.default()
-    //     .SetPosition(VectorUtil.Add(camera.GetCameraPosition(), Vector3.zero()))
-    //     .SetScale(new Vector3(0.1,0.1,0.1));
-
-    // objects.other.push(ob);
-
 
 
     /*
@@ -165,20 +152,40 @@ export function Render(gl, programInfo) {
         for simplicity and so that the code can be cleaner
     */
 
-    // Render all static objects (like the floor)
-    for (let i = 0; i < objects.static.length; i++) {
-        RenderBuffer(gl, objects.static[i], programInfo);
-    }
 
-    for (let i = 0; i < objects.other.length; i++) {
-        RenderBuffer(gl, objects.other[i], programInfo);
-    }
+   
+    const allObjs = objects.GetAllObjects();
+   
+    // for(let obj of objects.player){
 
-    // Render all the enemies 
-    for (let i = 0; i < objects.enemies.length; i++) {
-        RenderBuffer(gl, objects.enemies[i], programInfo);
-    }
+    //     let tp = camera.GetCameraPosition();
+    //     const rot = camera.transform.rotation;
+        
+    //     let fw = VectorUtil.Invert(VectorUtil.GetVectorFromAngles(rot.x, rot.y)).Dividef(6);
 
+       
+    //     // addition = VectorUtil.Add(addition, addition.Rotate(-90*MathUtil.Deg2Rad))
+
+    //     // const nf = fw.Dividef(3);
+        
+
+    //     tp = VectorUtil.Subtract(tp, fw);
+    //     // tp.Subtract(0,0.4,0);
+        
+    //     // tp = VectorUtil.Add(tp, new Vector3(
+    //     //     0,
+    //     //     Math.cos(camera.transform.rotation.x),
+    //     //     Math.sin(camera.transform.rotation.x)
+    //     // ))
+
+    //     obj.transform = obj.transform.SetPosition(tp)
+    
+        
+    // }
+
+    for(let obj of allObjs){
+        RenderBuffer(gl, obj, programInfo);
+    }
 
     // Assign the projection matrix and model view matrix
     //? Note that the mode matrix (not the mode view matrix) is set on a per buffer basis
@@ -204,15 +211,7 @@ export function Render(gl, programInfo) {
 
 function RenderBuffer(gl, mesh, programInfo, vertexCount = 36) {
 
-    const modelMatrix = new Mat4();
-
-
-    modelMatrix.translate([mesh.transform.position.x, mesh.transform.position.y, mesh.transform.position.z]);
-    modelMatrix.scale([mesh.transform.scale.x, mesh.transform.scale.y, mesh.transform.scale.z]);
-
-    modelMatrix.rotate([1, 0, 0], mesh.transform.rotation.x);
-    modelMatrix.rotate([0, 1, 0], mesh.transform.rotation.y);
-    modelMatrix.rotate([0, 0, 1], mesh.transform.rotation.z);
+    const modelMatrix = mesh.InitModelMatrix();
 
     //* Set the modelMatrix (NOT MODEL VIEW MATRIX)
 

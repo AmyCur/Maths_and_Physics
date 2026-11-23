@@ -1,6 +1,9 @@
 import { Attack } from "../input/Attack.js";
 import { input } from "../input/input.js";
 import { Raycast } from "../input/Raycast.js";
+import { Buffer } from "../rendering/Buffer.js";
+import { MeshCreator } from "../rendering/BufferManager.js";
+import { textures } from "../rendering/Textures.js";
 import { MUtil } from "../util/MathUtil.js";
 import { Time } from "../util/Time.js";
 import { VectorUtil } from "../util/VectorUtil.js";
@@ -8,12 +11,15 @@ import { Vector2 } from "../vectors/Vector2.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { camera } from "./camera.js";
 import { ColliderUtils } from "./Colliders.js";
+import { objects } from "./Objects.js";
+import { Transform } from "./Transform.js";
 import { TransObject } from "./TransObject.js";
 
 class Player extends TransObject {
     "use strict";
     velocity = 0;
     idle = false;
+    truePos;
 
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
     constructor(transform, jumpForce) {
@@ -183,17 +189,29 @@ class Player extends TransObject {
         this.GetMovementInput();
         this.Gravity();
         this.UpdatePosition();
-        console.log(this.GetCollisions());
 
         if (input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
     }
 
+
     UpdatePosition() {
 
-        const cp = player.transform.position;
-        if (cp.y < -1000 || cp.y > 1000) console.log(cp);
+        this.truePos = player.transform.position;
+        if (this.truePos.y < -1000 || this.truePos.y > 1000) console.log(this.truePos);
         player.transform.position = ColliderUtils.MoveWithRespect(player.transform.position, player.GetMovementInput());
-        this.velocity = VectorUtil.GetLength(VectorUtil.Subtract(cp, player.transform.position));
+        this.velocity = VectorUtil.GetLength(VectorUtil.Subtract(this.truePos, player.transform.position));
+    }
+
+    CreateGun(gl){
+        const mesh = MeshCreator.CreateMesh(
+            gl, 
+            Buffer.default(), 
+            {}, 
+            {name: "Jacob", texture: textures.loadTexture(gl, textures.paths.goomba)}, 
+            Transform.default().SetScalef(0.1,0.1,0.1)
+        );
+        
+        objects.player.push(mesh);
     }
 }
 

@@ -7,7 +7,7 @@ export class Objects {
     static =    [];
     other =     [];
     colliders = [];
-    floor =     null;
+    player =    [];
 
     GetAllColliderObjects(){
         let colObjs = [];
@@ -39,7 +39,7 @@ export class Objects {
     }
 
     GetAllObjects(){
-        return this.enemies.concat(this.static, this.other, this.colliders);
+        return this.enemies.concat(this.static, this.other, this.colliders, this.player);
     }
 }
 
