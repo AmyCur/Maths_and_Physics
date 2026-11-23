@@ -2,19 +2,24 @@ import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { objects } from "./Objects.js";
 
+"use strict";
+
 export class BoxCollider {
-    "use strict";
 
     static default = () => new BoxCollider(Vector3.zero(), Vector3.one());
 
-    constructor(offset, scale) {
+    constructor(offset, scale, trigger=false) {
         this.offset = offset;
         this.scale = scale;
+        this.trigger=trigger;
+    }
+
+    SetTrigger(value){
+        return new BoxCollider(this.offset, this.scale, value);
     }
 }
 
 export class SphereCollider {
-    "use strict";
     constructor(offset, radius) {
         this.offset = offset;
         this.radius = radius;
@@ -51,7 +56,7 @@ export const ColliderUtils = {
     IsColliding(position, addition) {
         // Despite the name (its an array of BufferObjects not colliders)
         const objs = objects.GetAllColliderObjects();
-
+        const collisions = [];
 
         for (let i = 0; i < objs.length; i++) {
             const co = objs[i];
@@ -65,19 +70,26 @@ export const ColliderUtils = {
                 const maxBound = VectorUtil.Add(colliderPosition, colliderScale);
 
                 if (VectorUtil.VectorInRange(VectorUtil.Add(position, addition), minBound, maxBound)) {
-                    return { position: position, object: co };
+                    collisions.push(co);
                 }
             }
         }
 
-        return { position: VectorUtil.Add(position, addition), object: null };
+        if(collisions.length>0) return { position: position, objects: collisions };
+
+        return { position: VectorUtil.Add(position, addition), objects: [null] };
     },
 
     MoveWithRespect(position, addition) {
         const collisions = this.IsColliding(position, addition);
+        
+        for(const col of collisions.objects){
+            
+            if(col && !col.components.collider.trigger) return collisions.position;
+        }
 
         // if(collisions.x.value) console.log(collisions.x.object);
 
-        return collisions.position;
+        return VectorUtil.Add(position, addition);
     },
 }

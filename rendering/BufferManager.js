@@ -1,6 +1,5 @@
 import { Mesh } from "../game_objects/Mesh.js";
 import { ColliderUtils } from "../game_objects/Colliders.js";
-import { RenderObject } from "./RenderObject.js";
 import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "./Buffer.js";
 
@@ -10,8 +9,8 @@ export const MeshCreator = {
 
 
     const BE = new Mesh(
-      //* Buffers
 
+      //* Buffer
       bufferData,
 
       //* Transform
@@ -61,15 +60,30 @@ export const MeshCreator = {
     return positionBuffer;
   },
 
+  //TODO Fix the tex coords not working
   CreateTextureBuffer(gl, texCoords) {
     const textureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 
-  
+
+    const tc = [
+      // Front
+      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+      // Back
+      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+      // Top
+      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+      // Bottom
+      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+      // Right
+      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+      // Left
+      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+    ];
 
     gl.bufferData(
       gl.ARRAY_BUFFER,
-      new Float32Array(texCoords),
+      new Float32Array(tc),
       gl.STATIC_DRAW,
     );
 

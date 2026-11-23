@@ -3,7 +3,8 @@ import { Mesh } from "../game_objects/Mesh.js";
 import { objects } from "../game_objects/Objects.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { Buffer } from "./Buffer.js";
-import { MeshCreator } from "./init-buffers.js";
+import { MeshCreator } from "./BufferManager.js";
+import { loadTexture, textures } from "./Textures.js";
 
 export function CreateWalls(fb, gl) {
 
@@ -82,7 +83,7 @@ export function CreateWalls(fb, gl) {
 
     const wb = Buffer.default();
 
-    const w5 = MeshCreator.CreateMesh(gl, wb, { collider: BoxCollider.default() });
+    const w5 = MeshCreator.CreateMesh(gl, wb, { collider: BoxCollider.default().SetTrigger(true) });
 
     w5.transform.position = new Vector3(
         30, 0, 30
@@ -116,16 +117,17 @@ export function GenerateStaticMeshs(gl) {
 
     const buffer = Buffer.default();
 
-    const fb = MeshCreator.CreateMesh(gl, buffer, { collider: BoxCollider.default() }, { name: "floor", raycastable: true });
+    const fb = MeshCreator.CreateMesh(gl, buffer, { collider: BoxCollider.default() }, { name: "floor", raycastable: true, texture: loadTexture(gl, textures.paths.stone) });
     fb.transform.scale = new Vector3(100, 1, 100)
     fb.transform.position = new Vector3(0, 0, 0);
+
 
     objects.static.push(fb);
 
     const cbuffer = Buffer.default();
 
 
-    const cb = MeshCreator.CreateMesh(gl, cbuffer, { collider: BoxCollider.default() }, { name: "ceiling", raycastable: true });
+    const cb = MeshCreator.CreateMesh(gl, cbuffer, { collider: BoxCollider.default() }, { name: "ceiling", raycastable: true, texture: loadTexture(gl, textures.paths.stone) });
     cb.transform.scale = new Vector3(100, 1, 100)
     cb.transform.position = new Vector3(0, 30, 0);
 

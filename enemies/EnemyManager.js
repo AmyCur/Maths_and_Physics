@@ -4,7 +4,8 @@ import { objects } from "../game_objects/Objects.js";
 import { player } from "../game_objects/Player.js";
 import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "../rendering/Buffer.js";
-import { MeshCreator } from "../rendering/init-buffers.js";
+import { MeshCreator } from "../rendering/BufferManager.js";
+import { loadTexture, textures } from "../rendering/Textures.js";
 import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { Random } from "../util/Random.js";
 import { VectorUtil } from "../util/VectorUtil.js";
@@ -114,14 +115,12 @@ export class EnemyController {
         console.log(sp)
         sp.y=15;
 
-        const buffer = Buffer.default();
-      
         
         const mesh = MeshCreator.CreateMesh(
             gl, 
-            buffer, 
+            Buffer.default(), 
             {collider: BoxCollider.default()}, 
-            {name: "Jacob", raycastable: true}, 
+            {name: "Jacob", raycastable: true, texture: loadTexture(gl, textures.paths.goomba)}, 
             Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(30,0,0))).SetScalef(3,6,3)
         );
 
@@ -135,35 +134,6 @@ export class EnemyController {
 
         // Get the currently alive enemies
         return objects.enemies;
-        const enemyMeshs = [];
-
-        // Go through them
-        for(let i = 0; i < ae.length; i++){
-            enemyMeshs.push(ae[i]);
-        }
-
-        // objects.enemies = [];
-    
-        // for (let i = 0; i < EController.enemies.length; i++) {
-        //     const enemy = EController.enemies[i];
-        //     const buffer = Buffer.default();
-        //     buffer.color = Mesh.GetColor("red");
-            
-        //     const eMesh = MeshCreator.CreateMesh(gl, buffer, { enemy: enemy, collider: BoxCollider.default() });
-    
-        //     eMesh.transform.position = enemy.transform.position;
-        //     eMesh.transform.scale = enemy.transform.scale;
-        //     eMesh.transform.rotation = enemy.transform.rotation;
-    
-        //     // eb.components.collider = new BoxCollider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-        //     eMesh.properties.name = "enemy";
-    
-    
-        //     objects.enemies.push(eMesh);
-        //     enemyMeshs.push(eMesh);
-        // }
-    
-        return enemyMeshs;
     }
 }
 

@@ -1,9 +1,9 @@
-import { InitRendering, Render } from "./rendering/Render.js";
+import { InitRendering, Render } from "./rendering/RenderManager.js";
 import { input } from "./input/input.js";
 import { camera } from "./game_objects/camera.js";
 import { player } from "./game_objects/Player.js";
 import { Time } from "./util/Time.js";
-import { EController, EnemyController } from "./enemies/EnemyController.js";
+import { EController, EnemyController } from "./enemies/EnemyManager.js";
 import { VectorUtil } from "./util/VectorUtil.js";
 import { objects } from "./game_objects/Objects.js";
 import { Vector3 } from "./vectors/Vector3.js";
@@ -48,8 +48,7 @@ function Main() {
             }
         }
 
-        player.UpdatePosition();
-        player.Gravity();
+        player.Update();
 
         UIManager.UpdateUI();
 

@@ -10,7 +10,7 @@ import { camera } from "./camera.js";
 import { ColliderUtils } from "./Colliders.js";
 import { TransObject } from "./TransObject.js";
 
-class Player extends TransObject{
+class Player extends TransObject {
     "use strict";
     velocity = 0;
     idle = false;
@@ -33,8 +33,9 @@ class Player extends TransObject{
 
         this.health = 100
         this.jumpForce = jumpForce / 100;
-        this.godMode = true;
+        this.godMode = false;
         this.devMode = false;
+        this.sprinting=false;
 
         this.speed = {
             base: 1,
@@ -51,7 +52,7 @@ class Player extends TransObject{
 
             console.log(attackDir.Print());
 
-            const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y+camera.transform.position.y, player.transform.position.z), attackDir, 10, this.gl);
+            const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y + camera.transform.position.y, player.transform.position.z), attackDir, 10, this.gl);
 
             if (hitObj?.IsEnemy()) {
                 console.log("Hit");
@@ -62,6 +63,10 @@ class Player extends TransObject{
 
             this.attack.Cooldown();
         });
+    }
+
+    Die() {
+
     }
 
 
@@ -82,11 +87,17 @@ class Player extends TransObject{
     HandleSprinting() {
         if (!this.Moving() || !this.Grounded()) this.stamina += 0.1;
 
-        if (input.GetKey("ShiftLeft") && this.Grounded()) {
+        this.sprinting=input.GetKey("ShiftLeft") && this.Grounded() && this.stamina>0;
+
+        if (this.sprinting) {
             this.speed.current = this.speed.sprint;
+
             if (this.Moving()) this.stamina -= 0.2;
         }
-        else this.speed.current = this.speed.base;
+        else {
+            
+            this.speed.current = this.speed.base;
+        }
 
         this.stamina = MUtil.clamp(this.stamina, 0, 100)
     }
@@ -145,7 +156,7 @@ class Player extends TransObject{
         else {
             this.gravityScale *= 1.01
             const distancePerTick = MUtil.clamp(this.gravityScale * 0.1, 0, (this.position + (this.gravityScale * 0.1)));
-            
+
             this.transform.position = ColliderUtils.MoveWithRespect(this.transform.position, new Vector3(0, -distancePerTick, 0));
         }
     }
@@ -164,10 +175,23 @@ class Player extends TransObject{
         this.jumping = false;
     }
 
+    GetCollisions() {
+        return ColliderUtils.IsColliding(this.transform.position, Vector3.zero);
+    }
+
+    Update() {
+        this.GetMovementInput();
+        this.Gravity();
+        this.UpdatePosition();
+        console.log(this.GetCollisions());
+
+        if (input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
+    }
+
     UpdatePosition() {
-        
+
         const cp = player.transform.position;
-        if(cp.y < -1000 || cp.y>1000) console.log(cp);
+        if (cp.y < -1000 || cp.y > 1000) console.log(cp);
         player.transform.position = ColliderUtils.MoveWithRespect(player.transform.position, player.GetMovementInput());
         this.velocity = VectorUtil.GetLength(VectorUtil.Subtract(cp, player.transform.position));
     }

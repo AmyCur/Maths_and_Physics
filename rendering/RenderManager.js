@@ -1,22 +1,11 @@
-import { MeshCreator } from "./init-buffers.js";
 import { input } from "../input/input.js";
 import { initShaderProgram } from "./shaders.js";
-import { floor, RenderObject } from "./RenderObject.js";
 import { player } from "../game_objects/Player.js";
 import { camera } from "../game_objects/camera.js";
-import { Vector3 } from "../vectors/Vector3.js";
-import { EController, EnemyController } from "../enemies/EnemyController.js";
 import { Mat4 } from "../vectors/Mat4.js";
 import { objects } from "../game_objects/Objects.js";
-import { BoxCollider, ColliderUtils } from "../game_objects/Colliders.js";
-import { GetSceneSettings } from "./RenderStart.js";
-import { Buffer } from "./Buffer.js";
-import { Mesh } from "../game_objects/Mesh.js";
-import { Transform } from "../game_objects/Transform.js";
-import { VectorUtil } from "../util/VectorUtil.js";
-import { MUtil } from "../util/MathUtil.js";
 import { CreateWalls, GenerateStaticMeshs } from "./RenderingHack.js";
-import { loadTexture } from "./Textures.js";
+import {InitTextures} from "./RenderStart.js";
 
 //#region Initialisation
 
@@ -72,6 +61,8 @@ export function InitRendering() {
         },
     };
 
+    InitTextures(gl, programInfo);
+
     //* Create the buffers
 
     const fb = GenerateStaticMeshs(gl);
@@ -104,13 +95,12 @@ export function InitRendering() {
 
 function CreateMatricies(gl) {
     // Get scene settings
-    const s = GetSceneSettings(gl);
 
     // Init projection matrix
     const projectionMatrix = new Mat4();
 
     // Set the projection matrix to an actual projection matrix
-    projectionMatrix.perspective(s.fieldOfView, s.zNear, s.zFar);
+    projectionMatrix.perspective(camera.fov, camera.zNear, camera.zFar);
 
     // Initialise the model view matrix (Not to be confused with the model matrix)
     const modelViewMatrix = new Mat4();
@@ -119,7 +109,9 @@ function CreateMatricies(gl) {
     modelViewMatrix.translate([-player.transform.position.x, -player.transform.position.y - camera.transform.position.y, -player.transform.position.z])
 
     // Apply viewbobbing
-    projectionMatrix.translate([0, Math.sin(input.angle / 1.3) / 5, 0]);
+    const bobRate = player.sprinting ? 1.2 : 1;
+
+    projectionMatrix.translate([0, Math.sin((input.angle / 1.3)* bobRate)  / 5, 0]);
 
 
     // Rotate the camera
@@ -231,17 +223,10 @@ function RenderBuffer(gl, mesh, programInfo, vertexCount = 36) {
     )
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.buffers.index);
-    player.gl.pixelStorei(player.gl.UNPACK_FLIP_Y_WEBGL, true);
 
-    gl.activeTexture(gl.TEXTURE0);
-
-    // Bind the texture to texture unit 0
     gl.bindTexture(gl.TEXTURE_2D, mesh.texture);
-
-    // Tell the shader we bound the texture to texture unit 0
     gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
-    // setTextureAttribute(gl, mesh.buffers, programInfo);
     setPositionAttribute(gl, mesh.buffers, programInfo);
     setTextureAttribute(gl, mesh.buffers, programInfo);
 

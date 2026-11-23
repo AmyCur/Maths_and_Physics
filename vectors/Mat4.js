@@ -42,10 +42,11 @@ export class Mat4 {
 
     perspective(fov, near, far) {
 
-        const upFov=45;
-        const downFov=45;
-        const leftFov=50;
-        const rightFov=50;
+
+        const upFov=fov;
+        const downFov=fov;
+        const leftFov=fov+5;
+        const rightFov=fov+5;
 
         const out = this.m;
         let upTan = Math.tan((upFov * Math.PI) / 180.0);

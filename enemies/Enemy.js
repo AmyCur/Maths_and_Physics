@@ -8,7 +8,7 @@ import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { Time } from "../util/Time.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
-import { EController } from "./EnemyController.js";
+import { EController } from "./EnemyManager.js";
 
 export class Enemy {
     "use strict";

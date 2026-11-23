@@ -85,15 +85,6 @@ export const VectorUtil = {
         return v;
     },
 
-    ClampPositionInWorld(position, addition) {
-        const p = this.Add(position, addition);
-        const floor = objects.static[0];
-        const minPos = VectorUtil.Subtract(floor.transform.position, VectorUtil.Subtract(floor.transform.scale, new Vector3(1, 0, 1)));
-        const maxPos = VectorUtil.Add(floor.transform.position, VectorUtil.Subtract(floor.transform.scale, new Vector3(1, 0, 1)));
-        let newPos = VectorUtil.ClampPlayerPositon(p, minPos, maxPos);
-
-        return newPos;
-    },
 
     WithinRange(v, min, max) {
         const xInRange = v.x >= min.x && v.x <= max.x;

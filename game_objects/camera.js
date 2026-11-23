@@ -14,7 +14,7 @@ class Camera extends TransObject {
     constructor(cameraData) {
         super(cameraData.transform, {}, {})
 
-        this.fov = (cameraData.fov * Math.PI) / 180;
+        this.fov = cameraData.fov;
 
         this.canvas = cameraData.canvas;
 
@@ -69,7 +69,7 @@ export const camera = new Camera({
         rotation: new Vector3(0, -2, 0),
         scale: new Vector3(1, 1, 1),
     },
-    fov: 90,
+    fov: 45,
     canvas: document.getElementById("gl-canvas"),
     zNear: 0.1,
     zFar: 1000

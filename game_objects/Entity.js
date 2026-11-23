@@ -1,4 +1,4 @@
-import { EController } from "../enemies/EnemyController.js";
+import { EController } from "../enemies/EnemyManager.js";
 import { GameObject } from "./GameObject.js";
 
 //TODO Remove this!

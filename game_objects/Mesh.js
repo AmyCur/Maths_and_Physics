@@ -1,7 +1,7 @@
 import { Buffer } from "../rendering/Buffer.js";
 import { Transform } from "./Transform.js";
 import { TransObject } from "./TransObject.js";
-import { loadTexture } from "../rendering/Textures.js";
+import { loadTexture, textures } from "../rendering/Textures.js";
 import { player } from "./Player.js";
 
 
@@ -17,6 +17,7 @@ export class Mesh extends TransObject{
         return {
             name: "Kevin",
             raycastable: true,
+            texture: undefined
         }
     };
 
@@ -34,10 +35,18 @@ export class Mesh extends TransObject{
         this.components=components;
         this.properties=properties;
 
-        this.texture = loadTexture(player.gl, "../assets/germany.png");
+        
+        
+        if(properties.texture !== undefined) {
+            this.texture = properties.texture;
+        }
 
+        else {
+            this.texture=loadTexture(player.gl, textures.paths.null);
+        }
         // console.log(this.IsEnemy());
     }
+
 
 
     IsEnemy(){

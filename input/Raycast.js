@@ -1,12 +1,5 @@
-import { Enemy } from "../enemies/Enemy.js";
-import { EController } from "../enemies/EnemyController.js";
-import { Mesh } from "../game_objects/Mesh.js";
 import { objects } from "../game_objects/Objects.js";
-import { Buffer } from "../rendering/Buffer.js";
-import { MeshCreator } from "../rendering/init-buffers.js";
-import { RenderObject } from "../rendering/RenderObject.js";
 import { VectorUtil } from "../util/VectorUtil.js";
-import { Vector3 } from "../vectors/Vector3.js";
 
 export const Raycast = {
     allObjects: [],
@@ -79,35 +72,14 @@ export const Raycast = {
 
                 // Position that will be checked for colliders
                 const rayVec = VectorUtil.Add(startPos, outVec);
-                // console.log(rayVec);
-
-                // console.log(outVec);
-                // console.log(rayVec);
-                // console.log(this.allObjects);
 
                 // See if youve hit a collider
                 const hitObject = this.GetHitObject(rayVec);
 
                 // If you have return it, else keep going
                 if (hitObject?.obj != null) {
-                    // if (gl !== null) {
 
-                    //     const buffer = Buffer.default();
-                    //     buffer.color=Mesh.GetColor("blue");
-
-                    //     const bo = MeshCreator.CreateMesh(gl, buffer, {}, {});
-                    //     bo.transform.position=hitObject.position;
-                    //     bo.transform.scale= new Vector3(0.5,0.5,0.5);
-                    //     objects.other.push(
-                    //         bo
-                    //     )
-                    //     setTimeout(() => {
-                    //         objects.RemoveItemFromArray(bo, objects.other);
-                    //     }, 1000);
-                    // }
-
-
-                    //! This is a Mesh
+                    //! This is a Mesh (God i wish JS had types!)
                     return hitObject.obj;
                 }
             }
