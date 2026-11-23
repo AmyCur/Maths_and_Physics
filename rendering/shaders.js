@@ -15,8 +15,7 @@ const vsSource = `
         vTextureCoord = aTextureCoord;
         gl_Position = uProjectionMatrix * uModelViewMatrix * modelMatrix  * aVertexPosition;
     }
-      
-  `;
+`;
 
 const fsSource = `
     varying highp vec2 vTextureCoord;

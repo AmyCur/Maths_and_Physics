@@ -159,34 +159,7 @@ export function Render(gl, programInfo) {
 
 
     const allObjs = objects.GetAllObjects();
-
-    // for(let obj of objects.player){
-
-    //     let tp = camera.GetCameraPosition();
-    //     const rot = camera.transform.rotation;
-
-    //     let fw = VectorUtil.Invert(VectorUtil.GetVectorFromAngles(rot.x, rot.y)).Dividef(6);
-
-
-    //     // addition = VectorUtil.Add(addition, addition.Rotate(-90*MathUtil.Deg2Rad))
-
-    //     // const nf = fw.Dividef(3);
-
-
-    //     tp = VectorUtil.Subtract(tp, fw);
-    //     // tp.Subtract(0,0.4,0);
-
-    //     // tp = VectorUtil.Add(tp, new Vector3(
-    //     //     0,
-    //     //     Math.cos(camera.transform.rotation.x),
-    //     //     Math.sin(camera.transform.rotation.x)
-    //     // ))
-
-    //     obj.transform = obj.transform.SetPosition(tp)
-
-
-    // }
-
+    
     for (let obj of allObjs) {
         RenderBuffer(gl, obj, programInfo);
     }

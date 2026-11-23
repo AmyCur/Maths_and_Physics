@@ -20,7 +20,7 @@ class Player extends TransObject {
     velocity = 0;
     idle = false;
     truePos;
-  
+
 
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
     constructor(transform, jumpForce) {
@@ -42,9 +42,9 @@ class Player extends TransObject {
         this.jumpForce = jumpForce / 100;
         this.godMode = false;
         this.devMode = false;
-        this.sprinting=false;
+        this.sprinting = false;
 
-        this.angle=0;
+        this.angle = 0;
 
         this.speed = {
             base: 1,
@@ -75,6 +75,16 @@ class Player extends TransObject {
     }
 
     Die() {
+        this.dead = true;
+        let t = 0;
+        const cp = camera.transform.position.y;
+
+        // Minecraft reference
+        const interval = setInterval(() => {
+            camera.transform.position = new Vector3(camera.transform.position.x, MUtil.lerp(cp, 0, t), camera.transform.position.z);
+            t += 0.005;
+            if (t >= 1) clearInterval(interval);
+        }, 0)
 
     }
 
@@ -82,7 +92,7 @@ class Player extends TransObject {
 
     TakeDamage(damage) {
         if (!this.godMode) this.health -= damage;
-        if (this.health <= 0) this.Die();
+        if (this.health <= 0 && !this.dead) this.Die();
     }
 
     Attack() {
@@ -96,7 +106,7 @@ class Player extends TransObject {
     HandleSprinting() {
         if (!this.Moving() || !this.Grounded()) this.stamina += 0.1;
 
-        this.sprinting=input.GetKey("ShiftLeft") && this.Grounded() && this.stamina>0;
+        this.sprinting = input.GetKey("ShiftLeft") && this.Grounded() && this.stamina > 0;
 
         if (this.sprinting) {
             this.speed.current = this.speed.sprint;
@@ -104,7 +114,7 @@ class Player extends TransObject {
             if (this.Moving()) this.stamina -= 0.2;
         }
         else {
-            
+
             this.speed.current = this.speed.base;
         }
 
@@ -148,7 +158,7 @@ class Player extends TransObject {
         // console.log(movementVector);
 
 
-        return VectorUtil.Multiply(VectorUtil.Normalize(movementVector.ToVector3()), this.speed.current);
+        return VectorUtil.Multiply(VectorUtil.Normalize(movementVector.ToVector3()), this.speed.current*(MUtil.clamp(player.health/100, 0.6 ,1)));
     }
 
     Grounded() {
@@ -189,14 +199,17 @@ class Player extends TransObject {
     }
 
     Update() {
-        this.GetMovementInput();
-        this.Gravity();
-        this.UpdatePosition();
+        if (!this.dead) {
+            this.GetMovementInput();
+            this.Gravity();
+            this.UpdatePosition();
 
-        if (input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
+            if (input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
 
-        this.angle++;
-        if(this.angle>=360) this.angle=0;
+            this.angle++;
+            if (this.angle >= 360) this.angle = 0;
+        }
+
     }
 
 
@@ -208,15 +221,15 @@ class Player extends TransObject {
         this.velocity = VectorUtil.GetLength(VectorUtil.Subtract(this.truePos, player.transform.position));
     }
 
-    CreateGun(gl){
+    CreateGun(gl) {
         const mesh = MeshCreator.CreateMesh(
-            gl, 
-            Buffer.default(), 
-            {}, 
-            {name: "Jacob", texture: textures.loadTexture(gl, textures.paths.goomba)}, 
-            Transform.default().SetScalef(0.1,0.1,0.1)
+            gl,
+            Buffer.default(),
+            {},
+            { name: "Jacob", texture: textures.loadTexture(gl, textures.paths.goomba) },
+            Transform.default().SetScalef(0.1, 0.1, 0.1)
         );
-        
+
         objects.player.push(mesh);
     }
 }
