@@ -19,11 +19,30 @@ const vsSource = `
   `;
 
 const fsSource = `
-   varying highp vec2 vTextureCoord;
+    varying highp vec2 vTextureCoord;
     uniform sampler2D uSampler;
+    uniform lowp float uHealth;
+    
+    lowp float lerp(lowp float a, lowp float  b,lowp float t){
+        return ((1.0-t)*a+(t*b));
+    }
     
     void main(void) {
-      gl_FragColor = texture2D(uSampler, vTextureCoord);
+        highp vec4 tc = texture2D(uSampler, vTextureCoord);
+
+        highp float div = 0.1;
+
+        highp float r = tc.r;
+   
+
+        tc=vec4(
+            lerp(r*1.5, r,  uHealth),
+            lerp(0.0, tc.g,  uHealth),
+            lerp(0.0, tc.b,  uHealth),           
+            tc.a
+        );
+
+        gl_FragColor = tc;
     }
   `;
 

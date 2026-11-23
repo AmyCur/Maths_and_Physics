@@ -5,11 +5,12 @@ import { camera } from "../game_objects/camera.js";
 import { Mat4 } from "../vectors/Mat4.js";
 import { objects } from "../game_objects/Objects.js";
 import { CreateWalls, GenerateStaticMeshs } from "./RenderingHack.js";
-import {InitTextures} from "./RenderStart.js";
+import { InitTextures } from "./RenderStart.js";
 import { Transform } from "../game_objects/Transform.js";
-import { MathUtil } from "../util/MathUtil.js";
+import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
+import { EController, EnemyController } from "../enemies/EnemyManager.js";
 
 //#region Initialisation
 
@@ -62,8 +63,11 @@ export function InitRendering() {
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
             modelMatrix: gl.getUniformLocation(shaderProgram, "modelMatrix"),
             uSampler: gl.getUniformLocation(shaderProgram, "uSampler"),
+            health: gl.getUniformLocation(shaderProgram, "uHealth"),
         },
     };
+
+
 
     InitTextures(gl, programInfo);
 
@@ -110,12 +114,12 @@ function CreateMatricies(gl) {
     const modelViewMatrix = new Mat4();
 
     // Move the world based on player inverted position (so that enemies going towards the player go to the player)
-    modelViewMatrix.translate([-player.truePos.x - camera.transform.position.x, -player.truePos.y - camera.transform.position.y, -player.truePos.z-camera.transform.position.z])
+    modelViewMatrix.translate([-player.truePos.x - camera.transform.position.x, -player.truePos.y - camera.transform.position.y, -player.truePos.z - camera.transform.position.z])
 
     // Apply viewbobbing
     const bobRate = player.sprinting ? 1.2 : 1;
 
-    modelViewMatrix.translate([0, Math.sin((input.angle / 1.3)* bobRate)  / 5, 0]);
+    modelViewMatrix.translate([0, Math.sin((input.angle / 1.3) * bobRate) / 5, 0]);
 
 
     // Rotate the camera
@@ -153,25 +157,25 @@ export function Render(gl, programInfo) {
     */
 
 
-   
+
     const allObjs = objects.GetAllObjects();
-   
+
     // for(let obj of objects.player){
 
     //     let tp = camera.GetCameraPosition();
     //     const rot = camera.transform.rotation;
-        
+
     //     let fw = VectorUtil.Invert(VectorUtil.GetVectorFromAngles(rot.x, rot.y)).Dividef(6);
 
-       
+
     //     // addition = VectorUtil.Add(addition, addition.Rotate(-90*MathUtil.Deg2Rad))
 
     //     // const nf = fw.Dividef(3);
-        
+
 
     //     tp = VectorUtil.Subtract(tp, fw);
     //     // tp.Subtract(0,0.4,0);
-        
+
     //     // tp = VectorUtil.Add(tp, new Vector3(
     //     //     0,
     //     //     Math.cos(camera.transform.rotation.x),
@@ -179,11 +183,11 @@ export function Render(gl, programInfo) {
     //     // ))
 
     //     obj.transform = obj.transform.SetPosition(tp)
-    
-        
+
+
     // }
 
-    for(let obj of allObjs){
+    for (let obj of allObjs) {
         RenderBuffer(gl, obj, programInfo);
     }
 
@@ -197,10 +201,26 @@ export function Render(gl, programInfo) {
         projectionMatrix.m,
     );
 
-    gl.uniform4fv(
-        programInfo.uniformLocations.depth,
-        [0, 0, 0, 1]
-    )
+    let targetHealth = 0;
+
+    
+
+    if(player.health > 20){
+        targetHealth= MUtil.clamp(player.health / 100, 0, 1)
+    }
+    else{
+        const blinkSpeed = (101-player.health) / 20
+        targetHealth = MUtil.clamp((player.health / 100) + (Math.sin(player.angle * MathUtil.Deg2Rad*blinkSpeed)/5), 0, 1);
+    }
+
+
+    // Set Player health in shader
+    gl.uniform1f(
+        programInfo.uniformLocations.health,
+        targetHealth
+    );
+
+
 
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.modelViewMatrix,

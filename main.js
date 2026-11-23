@@ -38,7 +38,7 @@ function Main() {
 
         if(Math.floor(tick)%enemySpawnInterval==0){
             tick=1;
-            // EnemyController.SpawnEnemy(gl);
+            EnemyController.SpawnEnemy(gl);
         }
 
         EController.HandleAI();

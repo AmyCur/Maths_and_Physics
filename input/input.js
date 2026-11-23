@@ -27,6 +27,7 @@ export const input = {
 
     angle: 0,
 
+
     GetKey(code) {
         if (this.keysDown.hasOwnProperty(code)) return this.keysDown[code];
         else return false;

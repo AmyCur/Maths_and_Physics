@@ -20,6 +20,7 @@ class Player extends TransObject {
     velocity = 0;
     idle = false;
     truePos;
+  
 
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
     constructor(transform, jumpForce) {
@@ -42,6 +43,8 @@ class Player extends TransObject {
         this.godMode = false;
         this.devMode = false;
         this.sprinting=false;
+
+        this.angle=0;
 
         this.speed = {
             base: 1,
@@ -191,6 +194,9 @@ class Player extends TransObject {
         this.UpdatePosition();
 
         if (input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
+
+        this.angle++;
+        if(this.angle>=360) this.angle=0;
     }
 
 
