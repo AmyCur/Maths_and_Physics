@@ -40,7 +40,7 @@ class Player extends TransObject {
 
         this.health = 100
         this.jumpForce = jumpForce / 100;
-        this.godMode = false;
+        this.godMode = true;
         this.devMode = false;
         this.sprinting = false;
 
@@ -106,7 +106,18 @@ class Player extends TransObject {
     }
 
     HandleSprinting() {
-        if (!this.Moving() || !this.Grounded()) this.stamina += 0.1;
+        if(!this.Grounded()){
+            this.stamina+=0.1;
+        }
+        else{
+            if (!this.Moving()) {
+                this.stamina += 0.1;
+            }
+            else{
+                this.stamina+=0.025;
+            }
+        }
+        
 
         this.sprinting = input.GetKey("ShiftLeft") && this.Grounded() && this.stamina > 0;
 
@@ -170,7 +181,7 @@ class Player extends TransObject {
 
     Gravity() {
         if (this.Grounded() || this.jumping) {
-            this.gravityScale = 3;
+            this.gravityScale = 7;
             // this.transform.position.y = 0;
         }
 
@@ -185,14 +196,16 @@ class Player extends TransObject {
     Jump() {
         this.jumping = true;
         let i = 0;
+        let vta = this.jumpForce*2;
         const interval = setInterval(() => {
-            this.transform.position = ColliderUtils.MoveWithRespect(this.transform.position, new Vector3(0, this.jumpForce, 0));
+            vta=MUtil.lerp(this.jumpForce, this.jumpForce*3, i/150);
+            this.transform.position = ColliderUtils.MoveWithRespect(this.transform.position, new Vector3(0, vta, 0));
             // this.transform.position.y += this.jumpForce;
             i++;
             if (i >= 150 || this.Grounded()) clearInterval(interval);
         }, 1 * Time.deltaTime)
 
-
+        console.log("FIN");
         this.jumping = false;
     }
 
@@ -217,7 +230,7 @@ class Player extends TransObject {
             this.Gravity();
             this.UpdatePosition();
 
-            if (input.GetKey("Space") && (player.Grounded() || player.jumping)) player.Jump();
+            if (input.GetKey("Space") && (player.Grounded() && !player.jumping)) player.Jump();
 
             this.angle++;
             if (this.angle >= 360) this.angle = 0;

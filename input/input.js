@@ -16,7 +16,6 @@ export const input = {
         Mouse: false
     },
 
-
     forwards(cameraRotationX) {
         return new Vector3(
             Math.sin(cameraRotationX),
@@ -26,7 +25,6 @@ export const input = {
     },
 
     angle: 0,
-
 
     GetKey(code) {
         if (this.keysDown.hasOwnProperty(code)) return this.keysDown[code];
