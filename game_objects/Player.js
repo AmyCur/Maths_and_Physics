@@ -40,7 +40,7 @@ class Player extends TransObject {
 
         this.health = 100
         this.jumpForce = jumpForce / 100;
-        this.godMode = false;
+        this.godMode = true;
         this.devMode = false;
         this.sprinting = false;
 
@@ -53,6 +53,8 @@ class Player extends TransObject {
         };
         this.stamina = 100;
 
+        this.attackRange = 30;
+
 
         // I kinda love this
         this.attack = new Attack(0.3, 10, () => {
@@ -61,7 +63,7 @@ class Player extends TransObject {
 
             console.log(attackDir.Print());
 
-            const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y + camera.transform.position.y, player.transform.position.z), attackDir, 10, this.gl);
+            const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y + camera.transform.position.y, player.transform.position.z), attackDir, this.attackRange, this.gl);
 
             if (hitObj?.IsEnemy()) {
                 console.log("Hit");
@@ -87,8 +89,6 @@ class Player extends TransObject {
         }, 0)
 
     }
-
-
 
     TakeDamage(damage) {
         if (!this.godMode) this.health -= damage;
@@ -198,6 +198,10 @@ class Player extends TransObject {
         return ColliderUtils.IsColliding(this.transform.position, Vector3.zero);
     }
 
+    GetTriggerHits(){
+
+    }
+
     Update() {
         if (!this.dead) {
             this.GetMovementInput();
@@ -208,13 +212,16 @@ class Player extends TransObject {
 
             this.angle++;
             if (this.angle >= 360) this.angle = 0;
-        }
 
+            const rayObj = Raycast.ShootRay(this.transform.position, Vector3.down(), player.transform.scale.y/2, this.gl);            
+            if(rayObj?.properties.name!=="floor") console.log(rayObj);
+
+            
+        }
     }
 
 
     UpdatePosition() {
-
         this.truePos = player.transform.position;
         if (this.truePos.y < -1000 || this.truePos.y > 1000) console.log(this.truePos);
         player.transform.position = ColliderUtils.MoveWithRespect(player.transform.position, player.GetMovementInput());

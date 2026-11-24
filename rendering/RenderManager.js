@@ -10,7 +10,7 @@ import { Transform } from "../game_objects/Transform.js";
 import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
-import { EController, EnemyController } from "../enemies/EnemyManager.js";
+import { EController, EnemyManager } from "../enemies/EnemyManager.js";
 
 //#region Initialisation
 

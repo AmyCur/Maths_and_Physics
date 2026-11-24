@@ -83,7 +83,7 @@ export function CreateWalls(fb, gl) {
 
     const wb = Buffer.default();
 
-    const w5 = MeshCreator.CreateMesh(gl, wb, {raycastable: false},{ collider: BoxCollider.default().SetTrigger(true) });
+    const w5 = MeshCreator.CreateMesh(gl, wb, { collider: BoxCollider.default().SetTrigger(true) }, {raycastable: true, name: "Health Pack"});
 
     w5.transform.position = new Vector3(
         30, 0, 30

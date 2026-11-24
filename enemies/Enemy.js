@@ -10,22 +10,23 @@ import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { EController } from "./EnemyManager.js";
 
+"use strict";
+
 export class Enemy {
-    "use strict";
     maxSpeed;
     speed=0.01;
     type;
     dead =false;
     parent=null;
 
-    constructor(maxSpeed = 1, intelligent = true, health = 1, type="ground") {
+    constructor(maxSpeed = .5, intelligent = true, health = 1, type="ground") {
         
         // this.health=health;
         this.maxSpeed = maxSpeed;
         this.intelligent = true;
-        this.stoppingDistance = 6;
+        this.stoppingDistance = 50;
         this.health=health;
-        this.forceStopDistance = 3;
+        this.forceStopDistance = 12;
 
         this.attack = new Attack(1, 10, () => {
             player.TakeDamage(this.attack.damage);
@@ -85,6 +86,12 @@ export class Enemy {
         
         
         this.parent.transform.position = ColliderUtils.MoveWithRespect(cp, tv.normalized);
+        const pp = this.parent.transform.position;
+        this.parent.transform.position = new Vector3(
+            MUtil.clamp(pp.x, -95, 95),
+            pp.y,
+            MUtil.clamp(pp.z, -95, 95),
+        )
 
         
     }

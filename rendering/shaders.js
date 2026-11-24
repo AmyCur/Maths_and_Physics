@@ -29,13 +29,8 @@ const fsSource = `
     void main(void) {
         highp vec4 tc = texture2D(uSampler, vTextureCoord);
 
-        highp float div = 0.1;
-
-        highp float r = tc.r;
-   
-
         tc=vec4(
-            lerp(r*1.5, r,  uHealth),
+            tc.r,
             lerp(0.0, tc.g,  uHealth),
             lerp(0.0, tc.b,  uHealth),           
             tc.a

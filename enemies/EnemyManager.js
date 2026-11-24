@@ -1,4 +1,4 @@
-import { BoxCollider } from "../game_objects/Colliders.js";
+import { BoxCollider, ColliderUtils } from "../game_objects/Colliders.js";
 import { objects } from "../game_objects/Objects.js";
 import { player } from "../game_objects/Player.js";
 import { Transform } from "../game_objects/Transform.js";
@@ -12,10 +12,10 @@ import { Vector3 } from "../vectors/Vector3.js";
 import { Enemy } from "./Enemy.js";
 import { EnemyType } from "./EnemyType.js";
 
-export class EnemyController {
+export class EnemyManager {
     "use strict";
     types = [
-        new EnemyType("fly", 0, 10, 0.3),
+        new EnemyType("fly", 300, 10, 0.3),
         new EnemyType("ground", 200, 5, 0.4)
     ];
 
@@ -44,7 +44,7 @@ export class EnemyController {
 
     }
 
-    static enemySpawnRadius=0.5;
+    static enemySpawnRadius=30;
 
     constructor() {
         this.enemies = [];
@@ -57,7 +57,7 @@ export class EnemyController {
     }
 
     static GetRandomVectorAroundThePlayer() {
-        const theta = (Math.random() * 360) * MathUtil.Deg2Rad;
+        const theta = MUtil.clamp((Math.random() * 360) * MathUtil.Deg2Rad, 3, 8);
         const pp = player.transform.position;
         return new Vector3(pp.x + (Math.cos(theta) * this.enemySpawnRadius), pp.y, pp.z + (Math.sin(theta) * this.enemySpawnRadius));
     }
@@ -103,13 +103,19 @@ export class EnemyController {
         // if (spawnHoard) type = this.types[1];
         // const iterations = spawnHoard ? 5 : 1;
 
-        const mesh = EnemyController.CreateEnemyMesh(player.gl, new Enemy());
+        const mesh = EnemyManager.CreateEnemyMesh(player.gl, new Enemy());
         objects.enemies.push(mesh);
     }
 
     static CreateEnemyMesh(gl, enemy){
         
-        const sp = this.GetRandomVectorAroundThePlayer();
+        let sp = this.GetRandomVectorAroundThePlayer();
+        
+        for(let i = 0; i < 100; i++){
+            if(!ColliderUtils.IsColliding(sp, Vector3.zero())) break;
+            sp = this.GetRandomVectorAroundThePlayer();
+        }
+        console.log(sp);
         console.log(sp)
         sp.y=15;
 
@@ -118,7 +124,7 @@ export class EnemyController {
             gl, 
             Buffer.default(), 
             {collider: BoxCollider.default()}, 
-            {name: "Jacob", raycastable: true, texture: textures.loadTexture(gl, textures.paths.goomba)}, 
+            {name: "Jacob", raycastable: true, texture: textures.loadTexture(gl, textures.paths.tung)}, 
             Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(30,0,0))).SetScalef(3,6,3)
         );
 
@@ -128,11 +134,7 @@ export class EnemyController {
         return mesh;
     }
 
-    static CreateEnemyMeshs(gl) {
-
-        // Get the currently alive enemies
-        return objects.enemies;
-    }
+    
 }
 
-export const EController = new EnemyController(20);
+export const EController = new EnemyManager(20);

@@ -17,6 +17,7 @@ export const textures = {
         goomba: "/assets/goomba.png",
         null: "/assets/null.png",
         health_pack: "/assets/health_pack.png",
+        tung: "/assets/tung.webp",
     },
 
     loadTexture(gl, url) {
