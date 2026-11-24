@@ -214,7 +214,11 @@ class Player extends TransObject {
             if (this.angle >= 360) this.angle = 0;
 
             const rayObj = Raycast.ShootRay(this.transform.position, Vector3.down(), player.transform.scale.y/2, this.gl);            
-            if(rayObj?.properties.name!=="floor") console.log(rayObj);
+            const medKit = rayObj?.components.medKit;
+            if(medKit!==undefined){
+                objects.RemoveItemFromArray(rayObj, objects.other);
+                player.health+=medKit.heal;
+            }
 
             
         }

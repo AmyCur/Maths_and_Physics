@@ -5,6 +5,7 @@ import { Vector3 } from "../vectors/Vector3.js";
 import { Buffer } from "./Buffer.js";
 import { MeshCreator } from "./BufferManager.js";
 import { textures } from "./Textures.js";
+import {MedKit} from "../game_objects/MedKit.js";
 
 export function CreateWalls(fb, gl) {
 
@@ -81,22 +82,7 @@ export function CreateWalls(fb, gl) {
     walls.push(w4);
 
 
-    const wb = Buffer.default();
-
-    const w5 = MeshCreator.CreateMesh(gl, wb, { collider: BoxCollider.default().SetTrigger(true) }, {raycastable: true, name: "Health Pack"});
-
-    w5.transform.position = new Vector3(
-        30, 0, 30
-    )
-
-    w5.transform.scale = new Vector3(
-        10, 5, 10
-    )
-
-
-
-
-    walls.push(w5);
+    
 
 
 
