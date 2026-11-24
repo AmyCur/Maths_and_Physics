@@ -84,7 +84,6 @@ export class Enemy {
 
         const cp = this.parent.transform.position;
         
-        
         this.parent.transform.position = ColliderUtils.MoveWithRespect(cp, tv.normalized);
         const pp = this.parent.transform.position;
         this.parent.transform.position = new Vector3(

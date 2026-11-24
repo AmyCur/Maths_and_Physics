@@ -133,7 +133,7 @@ function CreateMatricies(gl) {
 
 
 function ResetBuffers() {
-    objects.other = [];
+    // objects.other = [];
     // objects.enemies =    [];
     objects.colliders = [];
 }

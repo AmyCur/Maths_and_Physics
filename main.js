@@ -8,13 +8,15 @@ import { VectorUtil } from "./util/VectorUtil.js";
 import { objects } from "./game_objects/Objects.js";
 import { Vector3 } from "./vectors/Vector3.js";
 import { UIManager } from "./UI/UIManager.js";
+import { MedKit } from "./game_objects/MedKit.js";  
 
 
 function Main() {
     const rendering = InitRendering();
     const gl = rendering.gl;
     const programInfo = rendering.programInfo;
-
+    
+    MedKit.CreateNewMedKit(gl);
 
     const enemySpawnInterval = 5;
     

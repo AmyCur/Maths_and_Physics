@@ -20,7 +20,7 @@ export function CreateWalls(fb, gl) {
 
     w1.transform.scale = new Vector3(
         w1.transform.scale.x,
-        20,
+        50,
         fb.transform.scale.z + 1
     )
 
@@ -39,7 +39,7 @@ export function CreateWalls(fb, gl) {
 
     w2.transform.scale = new Vector3(
         w2.transform.scale.x,
-        20,
+        50,
         fb.transform.scale.z + 1
     )
 
@@ -57,7 +57,7 @@ export function CreateWalls(fb, gl) {
 
     w3.transform.scale = new Vector3(
         fb.transform.scale.x + 1,
-        20,
+        50,
         w3.transform.scale.z,
     )
 
@@ -75,7 +75,7 @@ export function CreateWalls(fb, gl) {
 
     w4.transform.scale = new Vector3(
         fb.transform.scale.x + 1,
-        20,
+        50,
         w4.transform.scale.z,
     )
 

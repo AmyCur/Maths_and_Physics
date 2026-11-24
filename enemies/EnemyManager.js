@@ -124,7 +124,7 @@ export class EnemyManager {
             gl, 
             Buffer.default(), 
             {collider: BoxCollider.default()}, 
-            {name: "Jacob", raycastable: true, texture: textures.loadTexture(gl, textures.paths.tung)}, 
+            {name: "Jacob", raycastable: true, texture: textures.loadTexture(gl, textures.paths.goomba)}, 
             Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(30,0,0))).SetScalef(3,6,3)
         );
 

@@ -40,7 +40,7 @@ class Player extends TransObject {
 
         this.health = 100
         this.jumpForce = jumpForce / 100;
-        this.godMode = true;
+        this.godMode = false;
         this.devMode = false;
         this.sprinting = false;
 
@@ -58,21 +58,23 @@ class Player extends TransObject {
 
         // I kinda love this
         this.attack = new Attack(0.3, 10, () => {
+            if (!this.dead) {
+                const attackDir = VectorUtil.GetCameraForwardVector();
 
-            const attackDir = VectorUtil.GetCameraForwardVector();
+                console.log(attackDir.Print());
 
-            console.log(attackDir.Print());
+                const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y + camera.transform.position.y, player.transform.position.z), attackDir, this.attackRange, this.gl);
 
-            const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y + camera.transform.position.y, player.transform.position.z), attackDir, this.attackRange, this.gl);
+                if (hitObj?.IsEnemy()) {
+                    console.log("Hit");
+                    hitObj.components.enemy.TakeDamage(this.attack.damage);
+                }
 
-            if (hitObj?.IsEnemy()) {
-                console.log("Hit");
-                hitObj.components.enemy.TakeDamage(this.attack.damage);
+
+
+                this.attack.Cooldown();
             }
 
-
-
-            this.attack.Cooldown();
         });
     }
 
@@ -158,7 +160,7 @@ class Player extends TransObject {
         // console.log(movementVector);
 
 
-        return VectorUtil.Multiply(VectorUtil.Normalize(movementVector.ToVector3()), this.speed.current*(MUtil.clamp(player.health/100, 0.6 ,1)));
+        return VectorUtil.Multiply(VectorUtil.Normalize(movementVector.ToVector3()), this.speed.current * (MUtil.clamp(player.health / 100, 0.6, 1)));
     }
 
     Grounded() {
@@ -198,11 +200,18 @@ class Player extends TransObject {
         return ColliderUtils.IsColliding(this.transform.position, Vector3.zero);
     }
 
-    GetTriggerHits(){
-
+    GetTriggerHits(rayObj) {
+        const medKit = rayObj?.components.medKit;
+        if (medKit !== undefined && this.health !== 100) {
+            objects.RemoveItemFromArray(rayObj, objects.other);
+            player.health += medKit.heal;
+        }
     }
 
     Update() {
+
+        this.health = MUtil.clamp(this.health, 0, 100);
+
         if (!this.dead) {
             this.GetMovementInput();
             this.Gravity();
@@ -213,14 +222,10 @@ class Player extends TransObject {
             this.angle++;
             if (this.angle >= 360) this.angle = 0;
 
-            const rayObj = Raycast.ShootRay(this.transform.position, Vector3.down(), player.transform.scale.y/2, this.gl);            
-            const medKit = rayObj?.components.medKit;
-            if(medKit!==undefined){
-                objects.RemoveItemFromArray(rayObj, objects.other);
-                player.health+=medKit.heal;
-            }
+            const rayObj = Raycast.ShootRay(this.transform.position, Vector3.down(), player.transform.scale.y / 2, this.gl);
+            this.GetTriggerHits(rayObj);
 
-            
+
         }
     }
 
