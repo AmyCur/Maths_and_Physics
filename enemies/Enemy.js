@@ -58,7 +58,7 @@ export class Enemy {
     Die() {
         console.log("dead");
         this.dead=true;
-        objects.RemoveItemFromArray(this.parent, objects.enemies);
+        objects.RemoveItemFromArray(this.parent, objects.mesh.enemies);
     }
 
     Attack() {

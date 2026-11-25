@@ -108,7 +108,7 @@ export function GenerateStaticMeshs(gl) {
     fb.transform.position = new Vector3(0, 0, 0);
 
 
-    objects.static.push(fb);
+    objects.mesh.static.push(fb);
 
     const cbuffer = Buffer.default();
 
@@ -117,7 +117,7 @@ export function GenerateStaticMeshs(gl) {
     cb.transform.scale = new Vector3(100, 1, 100)
     cb.transform.position = new Vector3(0, 30, 0);
 
-    objects.static.push(cb);
+    objects.mesh.static.push(cb);
 
     return fb;
 }

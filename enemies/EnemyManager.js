@@ -45,6 +45,7 @@ export class EnemyManager {
     }
 
     static enemySpawnRadius=30;
+    static lastEnemySpawnTick=0;
 
     constructor() {
         this.enemies = [];
@@ -63,8 +64,8 @@ export class EnemyManager {
     }
 
     HandleAI() {
-        for (let i = 0; i < objects.enemies.length; i++) {
-            const enem = objects.enemies[i].components.enemy;
+        for (let i = 0; i < objects.mesh.enemies.length; i++) {
+            const enem = objects.mesh.enemies[i].components.enemy;
             if (enem.intelligent) {
 
                 enem.GetStationary();
@@ -78,6 +79,14 @@ export class EnemyManager {
                     enem.MoveToTargetPositon();
                 }
             }
+        }
+    }
+
+    static Update(gl, tick, enemySpawnInterval){
+        if(Math.floor(tick)%enemySpawnInterval===0 && Math.floor(tick)!==this.lastEnemySpawnTick){
+            EnemyManager.SpawnEnemy(gl);
+
+            this.lastEnemySpawnTick=Math.floor(tick);
         }
     }
 
@@ -104,7 +113,7 @@ export class EnemyManager {
         // const iterations = spawnHoard ? 5 : 1;
 
         const mesh = EnemyManager.CreateEnemyMesh(player.gl, new Enemy());
-        objects.enemies.push(mesh);
+        objects.mesh.enemies.push(mesh);
     }
 
     static CreateEnemyMesh(gl, enemy){

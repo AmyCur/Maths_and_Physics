@@ -4,6 +4,7 @@ import { TransObject } from "./TransObject.js";
 import { textures } from "../rendering/Textures.js";
 import { player } from "./Player.js";
 import { Mat4 } from "../vectors/Mat4.js";
+import { Vector3 } from "../vectors/Vector3.js";
 
 
 "use strict";
@@ -39,22 +40,23 @@ export class Mesh extends TransObject {
         return mm;
     }
 
-    constructor(bufferData, transform, components = {}, properties = Mesh.defaultProperties(), buffers) {
+    constructor(mesh) {
 
-        super(transform, components, properties);
+        if(mesh.properties===undefined) mesh.properties=Mesh.defaultProperties();
 
-        this.buffers = buffers;
-        this.bufferData = bufferData;
+        super(mesh.transform, mesh.velocity, mesh.components, mesh.properties);
 
-        this.transform = transform;
+        this.buffers = mesh.buffers;
+        this.bufferData = mesh.bufferData;
 
-        this.components = components;
-        this.properties = properties;
+
+        this.components = mesh.components;
+        this.properties = mesh.properties;
 
 
 
         if (properties.texture !== undefined) {
-            this.texture = properties.texture;
+            this.texture = mesh.properties.texture;
         }
 
         else {

@@ -51,6 +51,18 @@ export class Vector3 {
         return nv;
     }
 
+    Add(v) {
+        const nx = this.x+v.x;
+        const ny = this.y+v.y;
+        const nz = this.z+v.z;
+
+        this.x=nx;
+        this.y=ny;
+        this.z=nz;
+
+        
+    }
+
     Divide(v){
 
         if(v===0){

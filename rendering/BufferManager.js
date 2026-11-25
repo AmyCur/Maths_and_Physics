@@ -4,28 +4,30 @@ import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "./Buffer.js";
 
 export const MeshCreator = {
-  CreateMesh(gl, bufferData, components, properties, transform = Transform.default()) {
+  CreateMesh(gl, bufferData, components, properties, transform = Transform.default(), velocity) {
     const ib = this.CreateBuffer(gl, bufferData.position, bufferData.texCoords, bufferData.index);
 
+    if(properties===undefined) properties=Mesh.defaultProperties();
 
-    const BE = new Mesh(
+    const BE = new Mesh({
 
       //* Buffer
-      bufferData,
+      bufferData: bufferData,
 
       //* Transform
-      transform,
+      transform: transform,
+      velocity: velocity,
 
       //* Components
-      components,
-      properties,
+      components: components,
+      properties: properties,
 
-      new Buffer(
+      buffer: new Buffer(
         ib.positionBuffer,
         ib.textureBuffer,
         ib.indexBuffer,
       ),
-    );
+    });
 
     return BE;
   },

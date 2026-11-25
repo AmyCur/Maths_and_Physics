@@ -76,7 +76,7 @@ export function InitRendering() {
     const fb = GenerateStaticMeshs(gl);
 
     const walls = CreateWalls(fb, gl);
-    objects.static.push(...walls);
+    objects.mesh.static.push(...walls);
 
     // for (let i = 0; i < walls.length; i++) {
     //     const wall = walls[i];
@@ -114,7 +114,7 @@ function CreateMatricies(gl) {
     const modelViewMatrix = new Mat4();
 
     // Move the world based on player inverted position (so that enemies going towards the player go to the player)
-    modelViewMatrix.translate([-player.truePos.x - camera.transform.position.x, -player.truePos.y - camera.transform.position.y, -player.truePos.z - camera.transform.position.z])
+    modelViewMatrix.translate([-player.transform.position.x - camera.transform.position.x, -player.transform.position.y - camera.transform.position.y, -player.transform.position.z - camera.transform.position.z])
 
     // Apply viewbobbing
     const bobRate = player.sprinting ? 1.2 : 1;
@@ -133,8 +133,8 @@ function CreateMatricies(gl) {
 
 
 function ResetBuffers() {
-    // objects.other = [];
-    // objects.enemies =    [];
+    // objects.mesh.other = [];
+    // objects.mesh.enemies =    [];
     objects.colliders = [];
 }
 
@@ -149,16 +149,7 @@ export function Render(gl, programInfo) {
     // Get matricies
     const [projectionMatrix, modelViewMatrix] = CreateMatricies(gl);
 
-
-
-    /*
-        The static buffers and enemy buffers are seperated into individual arrays and worked on differently 
-        for simplicity and so that the code can be cleaner
-    */
-
-
-
-    const allObjs = objects.GetAllObjects();
+    const allObjs = objects.mesh.GetAll();
     
     for (let obj of allObjs) {
         RenderBuffer(gl, obj, programInfo);

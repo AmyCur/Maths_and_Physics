@@ -17,9 +17,7 @@ import { TransObject } from "./TransObject.js";
 
 class Player extends TransObject {
     "use strict";
-    velocity = 0;
     idle = false;
-    truePos;
 
 
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
@@ -189,23 +187,23 @@ class Player extends TransObject {
             this.gravityScale *= 1.01
             const distancePerTick = MUtil.clamp(this.gravityScale * 0.1, 0, (this.position + (this.gravityScale * 0.1)));
 
-            this.transform.position = ColliderUtils.MoveWithRespect(this.transform.position, new Vector3(0, -distancePerTick, 0));
+            this.velocity=VectorUtil.Add(this.velocity, new Vector3(0, -distancePerTick, 0));
         }
     }
 
     Jump() {
         this.jumping = true;
-        let i = 0;
-        let vta = this.jumpForce*2;
-        const interval = setInterval(() => {
-            vta=MUtil.lerp(this.jumpForce, this.jumpForce*3, i/150);
-            this.transform.position = ColliderUtils.MoveWithRespect(this.transform.position, new Vector3(0, vta, 0));
-            // this.transform.position.y += this.jumpForce;
-            i++;
-            if (i >= 150 || this.Grounded()) clearInterval(interval);
-        }, 1 * Time.deltaTime)
+        // let i = 0;
+        // let vta = this.jumpForce*2;
+        // const interval = setInterval(() => {
+        //     vta=MUtil.lerp(this.jumpForce, this.jumpForce*3, i/150);
+        //     this.transform.position = ColliderUtils.MoveWithRespect(this.transform.position, new Vector3(0, vta, 0));
+        //     // this.transform.position.y += this.jumpForce;
+        //     i++;
+        //     if (i >= 150 || this.Grounded()) clearInterval(interval);
+        // }, 1 * Time.deltaTime)
 
-        console.log("FIN");
+        // console.log("FIN");
         this.jumping = false;
     }
 
@@ -216,7 +214,7 @@ class Player extends TransObject {
     GetTriggerHits(rayObj) {
         const medKit = rayObj?.components.medKit;
         if (medKit !== undefined && this.health !== 100) {
-            objects.RemoveItemFromArray(rayObj, objects.other);
+            objects.RemoveItemFromArray(rayObj, objects.mesh.other);
             player.health += medKit.heal;
         }
     }
@@ -244,23 +242,10 @@ class Player extends TransObject {
 
 
     UpdatePosition() {
-        this.truePos = player.transform.position;
-        if (this.truePos.y < -1000 || this.truePos.y > 1000) console.log(this.truePos);
-        player.transform.position = ColliderUtils.MoveWithRespect(player.transform.position, player.GetMovementInput());
-        this.velocity = VectorUtil.GetLength(VectorUtil.Subtract(this.truePos, player.transform.position));
+        // player.transform.position = ColliderUtils.MoveWithRespect(player.transform.position, player.GetMovementInput());
+        this.velocity = player.GetMovementInput();
     }
 
-    CreateGun(gl) {
-        const mesh = MeshCreator.CreateMesh(
-            gl,
-            Buffer.default(),
-            {},
-            { name: "Jacob", texture: textures.loadTexture(gl, textures.paths.goomba) },
-            Transform.default().SetScalef(0.1, 0.1, 0.1)
-        );
-
-        objects.player.push(mesh);
-    }
 }
 
 export const player = new Player({

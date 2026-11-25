@@ -1,19 +1,36 @@
 
-//? Vital object that contains all of the buffers
+//? Vital object that contains all of the objects
 
 
 export class Objects {
-    enemies =   [];
-    static =    [];
-    other =     [];
-    colliders = [];
-    player =    [];
+    // Stores variables of type Mesh
+    mesh = {
+        enemies: [],
+        static: [],
+        other: [],
 
-    GetAllColliderObjects(){
+        GetAll(){
+            return this.enemies.concat(this.static, this.other);
+        }
+    }
+
+    // Stores variables of type TransObject
+    trans = {
+        // Player, camera and other required objects
+        core: [],
+        other: [],
+
+        GetAll(){
+            return this.core.concat(this.other);
+        }
+
+    }
+
+    GetAllColliderObjects() {
         let colObjs = [];
-        const allObj = this.GetAllObjects();
-        for(let obj of allObj){
-            if(obj.components.collider !== undefined){
+        const allObj = this.GetAllTransObjects();
+        for (let obj of allObj) {
+            if (obj.components.collider !== undefined) {
                 colObjs.push(obj);
             }
         }
@@ -21,26 +38,37 @@ export class Objects {
         return colObjs;
     }
 
-    RemoveItemFromArray(item, array){
+    RemoveItemFromArray(item, array) {
         const index = array.indexOf(item);
-        if(index > -1)return array.splice(index, 1);
+        if (index > -1) return array.splice(index, 1);
         return array;
     }
 
-    GetAllRaycastableObjects(){
+    GetAllRaycastableObjects() {
         const raycastables = [];
-        const allObjs = this.GetAllObjects();
-        
-        for(let obj of allObjs){
-            if(obj["properties"].raycastable === true) raycastables.push(obj);
+        const allObjs = this.GetAllTransObjects();
+
+        for (let obj of allObjs) {
+            if (obj["properties"].raycastable === true) raycastables.push(obj);
         }
 
         return raycastables;
     }
 
-    GetAllObjects(){
-        return this.enemies.concat(this.static, this.other, this.colliders, this.player);
+    GetAllTransObjects(){
+        const allMesh = this.mesh.GetAll();
+        const allTrans = this.trans.GetAll();
+
+        return allMesh.concat(allTrans);
     }
+
+    MoveAllObjects(){
+        const all = this.GetAllTransObjects();
+        for(let obj of all){
+            obj.Move();
+        }
+    }
+    
 }
 
 export const objects = new Objects();

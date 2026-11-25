@@ -30,7 +30,7 @@ export class MedKit{
         )
 
 
-        objects.other.push(w5);
-        console.log(objects.other);
+        objects.mesh.other.push(w5);
+        console.log(objects.mesh.other);
     }
 }

@@ -11,7 +11,7 @@ export class Button extends Mesh{
         
         this.func=func;
         this.parent=MeshCreator.CreateMesh(player.gl, bufferData, components, properties, transform);
-        objects.other.push(this.parent);
+        objects.mesh.other.push(this.parent);
     }
 
     PressButton(){

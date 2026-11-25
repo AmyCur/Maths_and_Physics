@@ -27,32 +27,33 @@ function Main() {
     camera.AddListeners(gl.canvas);
     camera.LockMouse(gl.canvas);
 
-    player.CreateGun(gl);
-
-    function GameLoop(now) {
-        //#region Timing
-        now *= 0.001; // convert to seconds
+    function CalculateDeltaTime(now){
+        now *= 0.001;
         Time.deltaTime = now - then;
         then = now;
         tick+=Time.deltaTime;
+    }
 
+
+    function GlobalUpdate(now) {
+        //#region Timing
+        
+        CalculateDeltaTime(now);
         //#endregion
 
-        if(Math.floor(tick)%enemySpawnInterval==0){
-            tick=1;
-            EnemyManager.SpawnEnemy(gl);
-        }
+        EnemyManager.Update(gl, tick, enemySpawnInterval);
 
         EController.HandleAI();
 
         if(input.GetKey("Mouse")) player.Attack();
         if(input.GetKey("KeyK")) {
-            for(let enem of objects.enemies){
+            for(let enem of objects.mesh.enemies){
                 enem.components.enemy.Die();
             }
         }
 
         player.Update();
+        objects.MoveAllObjects();
 
         UIManager.UpdateUI();
 
@@ -61,10 +62,10 @@ function Main() {
         Render(gl, programInfo);
        
 
-        requestAnimationFrame(GameLoop);
+        requestAnimationFrame(GlobalUpdate);
     }
 
-    requestAnimationFrame(GameLoop);
+    requestAnimationFrame(GlobalUpdate);
 }
 
 

@@ -1,5 +1,6 @@
 "use strict";
 
+import { Vector3 } from "../vectors/Vector3.js";
 import { Transform } from "./Transform.js";
 
 export class TransObject {
@@ -9,6 +10,7 @@ export class TransObject {
     static default = () => new TransObject
     (
         Transform.default(),
+        Vector3.zero(),
         {
             collider: null,
 
@@ -22,12 +24,16 @@ export class TransObject {
     transform;
     components;
     properties;
+    velocity;
 
-   
-
-    constructor(transform = Transform.default(), components, properties) {
+    constructor(transform = Transform.default(), velocity = Vector3.zero(), components, properties) {
         this.transform = transform;
         this.components = components;
         this.properties = properties;
+        this.velocity = velocity;
+    }
+
+    Move(){
+        this.transform.position.Add(this.velocity);
     }
 }
