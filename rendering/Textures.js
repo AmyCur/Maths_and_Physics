@@ -18,6 +18,7 @@ export const textures = {
         null: "/assets/null.png",
         health_pack: "/assets/health_pack.png",
         tung: "/assets/tung.webp",
+        grass: "/assets/grass.png"
     },
 
     loadTexture(gl, url) {

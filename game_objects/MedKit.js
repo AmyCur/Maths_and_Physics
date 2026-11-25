@@ -15,13 +15,12 @@ export class MedKit{
     static CreateNewMedKit(gl){
         const tv = EnemyManager.GetRandomVectorAroundThePlayer();
 
-        // const w5 = MeshCreator.CreateMesh(gl, wb, { collider: BoxCollider.default().SetTrigger(true), medKit: new MedKit(100) }, {raycastable: true, name: "Health Pack"}, Transform.default().SetPosition(new Vector3(tv.x, 3, tv.z)));
-        
         MeshCreator.CreateMesh(gl, {
             shape: "cube",
             properties: {
                 name: "MedKit",
                 raycastable: false,
+                texture: textures.paths.health_pack
             },            
             components: {
                 collider: BoxCollider.default().SetTrigger(true)

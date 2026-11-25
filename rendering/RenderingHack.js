@@ -9,11 +9,15 @@ import { Transform } from "../game_objects/Transform.js";
 
 export function CreateWalls(fb, gl) {
 
+    const texture = textures.paths.stone;
+
+
     MeshCreator.CreateMesh(gl, {
         shape: "cube",
         properties: {
             raycastable: true,
-            name: "W1"
+            name: "W1",
+            texture: texture
         },
         components: {
             collider: BoxCollider.default(),
@@ -28,7 +32,8 @@ export function CreateWalls(fb, gl) {
         shape: "cube",
         properties: {
             raycastable: true,
-            name: "W2"
+            name: "W2",
+            texture: texture
         },
         components: {
             collider: BoxCollider.default(),
@@ -43,7 +48,8 @@ export function CreateWalls(fb, gl) {
         shape: "cube",
         properties: {
             raycastable: true,
-            name: "W3"
+            name: "W3",
+            texture: texture
         },
         components: {
             collider: BoxCollider.default(),
@@ -57,7 +63,8 @@ export function CreateWalls(fb, gl) {
         shape: "cube",
         properties: {
             raycastable: true,
-            name: "W4"
+            name: "W4",
+            texture: texture
         },
         components: {
             collider: BoxCollider.default(),
@@ -76,7 +83,8 @@ export function GenerateStaticMeshs(gl) {
         shape: "cube",
         properties: {
             raycastable: true,
-            name: "Floor"
+            name: "Floor",
+            texture: textures.paths.grass
         },
         components: {
             collider: BoxCollider.default(),
@@ -91,7 +99,8 @@ export function GenerateStaticMeshs(gl) {
         shape: "cube",
         properties: {
             raycastable: true,
-            name: "Ceiling"
+            name: "Ceiling",
+            texture: textures.paths.stone
         },
         components: {
             collider: BoxCollider.default(),

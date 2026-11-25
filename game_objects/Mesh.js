@@ -60,7 +60,7 @@ export class Mesh extends TransObject {
         else {
             this.texture = textures.loadTexture(player.gl, textures.paths.null);
         }
-        // console.log(this.IsEnemy());
+
     }
 
 
