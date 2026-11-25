@@ -3,7 +3,7 @@ import { objects } from "../game_objects/Objects.js";
 import { player } from "../game_objects/Player.js";
 import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "../rendering/Buffer.js";
-import { MeshCreator } from "../rendering/BufferManager.js";
+import { MeshCreator } from "../rendering/MeshCreator.js";
 import { textures } from "../rendering/Textures.js";
 import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { Random } from "../util/Random.js";
@@ -87,7 +87,7 @@ export class EnemyManager {
             EnemyManager.SpawnEnemy(gl);
 
             this.lastEnemySpawnTick=Math.floor(tick);
-        }
+    }
     }
 
     static GetEnemyStats(enemy) {
@@ -129,13 +129,28 @@ export class EnemyManager {
         sp.y=15;
 
         
-        const mesh = MeshCreator.CreateMesh(
-            gl, 
-            Buffer.default(), 
-            {collider: BoxCollider.default()}, 
-            {name: "Jacob", raycastable: true, texture: textures.loadTexture(gl, textures.paths.goomba)}, 
-            Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(30,0,0))).SetScalef(3,6,3)
-        );
+        // const mesh = MeshCreator.CreateMesh(
+        //     gl, 
+        //     Buffer.default(), 
+        //     {collider: BoxCollider.default()}, 
+        //     {name: "Jacob", raycastable: true, texture: textures.loadTexture(gl, textures.paths.goomba)}, 
+        //     Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(30,0,0))).SetScalef(3,6,3)
+        // );
+
+        const mesh = MeshCreator.CreateMesh(gl, {
+            shape: "cube",
+            properties: {
+                name: "Enemy",
+                raycastable: true,
+                texture: textures.paths.goomba
+            },            
+            components: {
+                collider: BoxCollider.default()
+            },
+            transform: Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(0,30,0))).SetScalef(3,6,3),
+            velocity: Vector3.zero(),
+            targetArray: (v) => objects.mesh.other.push(v)
+        })
 
         enemy.parent=mesh;
         mesh.components.enemy=enemy;

@@ -1,123 +1,106 @@
-import { BoxCollider, ColliderUtils } from "../game_objects/Colliders.js";
-import { Mesh } from "../game_objects/Mesh.js";
+import { BoxCollider } from "../game_objects/Colliders.js";
 import { objects } from "../game_objects/Objects.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { Buffer } from "./Buffer.js";
-import { MeshCreator } from "./BufferManager.js";
+import { MeshCreator } from "./MeshCreator.js";
 import { textures } from "./Textures.js";
-import {MedKit} from "../game_objects/MedKit.js";
+import { GetCube } from "./shapes/Cube.js";
+import { Transform } from "../game_objects/Transform.js";
 
 export function CreateWalls(fb, gl) {
 
-    const walls = [];
+    MeshCreator.CreateMesh(gl, {
+        shape: "cube",
+        properties: {
+            raycastable: true,
+            name: "W1"
+        },
+        components: {
+            collider: BoxCollider.default(),
+        },
+        transform: Transform.default().SetPositionf(100, 0, 0).SetScalef(1, 30, 100),
+        velocity: Vector3.zero(),
+        targetArray: (v) => objects.mesh.static.push(v)
 
-    const w1 = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "floor", raycastable: true });
-    w1.transform.position = new Vector3(
-        (fb.transform.position.x - fb.transform.scale.x + w1.transform.scale.x - (w1.transform.scale.x * 2)),
-        0,
-        w1.transform.position.z
-    )
+    });
 
-    w1.transform.scale = new Vector3(
-        w1.transform.scale.x,
-        50,
-        fb.transform.scale.z + 1
-    )
+    MeshCreator.CreateMesh(gl, {
+        shape: "cube",
+        properties: {
+            raycastable: true,
+            name: "W2"
+        },
+        components: {
+            collider: BoxCollider.default(),
+        },
+        transform: Transform.default().SetPositionf(-100, 0, 0).SetScalef(1, 30, 100),
+        velocity: Vector3.zero(),
+        targetArray: (v) => objects.mesh.static.push(v)
 
+    });
 
-    walls.push(w1);
+    MeshCreator.CreateMesh(gl, {
+        shape: "cube",
+        properties: {
+            raycastable: true,
+            name: "W3"
+        },
+        components: {
+            collider: BoxCollider.default(),
+        },
+        transform: Transform.default().SetPositionf(0, 0, 100).SetScalef(100, 30, 1),
+        velocity: Vector3.zero(),
+        targetArray: (v) => objects.mesh.static.push(v)
+    });
 
-    const w2 = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "w2", raycastable: true });
-
-
-
-    w2.transform.position = new Vector3(
-        -(fb.transform.position.x - fb.transform.scale.x + w2.transform.scale.x - (w2.transform.scale.x * 2)),
-        0,
-        w2.transform.position.z
-    )
-
-    w2.transform.scale = new Vector3(
-        w2.transform.scale.x,
-        50,
-        fb.transform.scale.z + 1
-    )
-
-    walls.push(w2);
-
-    const w3 = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "w3", raycastable: true });
-
-
-
-    w3.transform.position = new Vector3(
-        w3.transform.position.x,
-        0,
-        -(fb.transform.position.x - fb.transform.scale.x + w3.transform.scale.x - (w3.transform.scale.x * 2)),
-    )
-
-    w3.transform.scale = new Vector3(
-        fb.transform.scale.x + 1,
-        50,
-        w3.transform.scale.z,
-    )
-
-    walls.push(w3);
-
-
-    const w4 = MeshCreator.CreateMesh(gl, Buffer.default(), { collider: BoxCollider.default() }, { name: "w4", raycastable: true });
-
-
-    w4.transform.position = new Vector3(
-        w4.transform.position.x,
-        0,
-        (fb.transform.position.x - fb.transform.scale.x + w4.transform.scale.x - (w4.transform.scale.x * 2)),
-    )
-
-    w4.transform.scale = new Vector3(
-        fb.transform.scale.x + 1,
-        50,
-        w4.transform.scale.z,
-    )
-
-    walls.push(w4);
-
-
-    
-
-
-
-    // for (let wall of walls) {
-    //     wall.SetColor("red");
-    // }
-
-    // w1.properties.name = "Wall 1";
-    // w2.properties.name = "Wall 2";
-    // w3.properties.name = "Wall 3";
-    // w4.properties.name = "Wall 4";
-
-
-    return walls;
+    MeshCreator.CreateMesh(gl, {
+        shape: "cube",
+        properties: {
+            raycastable: true,
+            name: "W4"
+        },
+        components: {
+            collider: BoxCollider.default(),
+        },
+        transform: Transform.default().SetPositionf(0, 0, -100).SetScalef(100, 30, 1),
+        velocity: Vector3.zero(),
+        targetArray: (v) => objects.mesh.static.push(v)
+    });
 }
 
 export function GenerateStaticMeshs(gl) {
 
-    const buffer = Buffer.default();
+    const buffer = GetCube();
+    //  buffer, { collider: BoxCollider.default() }, { name: "floor", raycastable: true, texture: textures.loadTexture(gl, textures.paths.stone) }
+    const fb = MeshCreator.CreateMesh(gl, {
+        shape: "cube",
+        properties: {
+            raycastable: true,
+            name: "Floor"
+        },
+        components: {
+            collider: BoxCollider.default(),
+        },
+        transform: Transform.default().SetPosition(Vector3.zero()).SetScalef(100, 1, 100),
+        velocity: Vector3.zero(),
+        targetArray: (v) => objects.mesh.static.push(v)
 
-    const fb = MeshCreator.CreateMesh(gl, buffer, { collider: BoxCollider.default() }, { name: "floor", raycastable: true, texture: textures.loadTexture(gl, textures.paths.stone) });
-    fb.transform.scale = new Vector3(100, 1, 100)
-    fb.transform.position = new Vector3(0, 0, 0);
+    });
 
+    MeshCreator.CreateMesh(gl, {
+        shape: "cube",
+        properties: {
+            raycastable: true,
+            name: "Ceiling"
+        },
+        components: {
+            collider: BoxCollider.default(),
+        },
+        transform: Transform.default().SetPositionf(0, 30, 0).SetScalef(100, 1, 100),
+        velocity: Vector3.zero(),
+        targetArray: (v) => objects.mesh.static.push(v)
 
-    objects.mesh.static.push(fb);
-
-    const cbuffer = Buffer.default();
-
-
-    const cb = MeshCreator.CreateMesh(gl, cbuffer, { collider: BoxCollider.default() }, { name: "ceiling", raycastable: true, texture: textures.loadTexture(gl, textures.paths.stone) });
-    cb.transform.scale = new Vector3(100, 1, 100)
-    cb.transform.position = new Vector3(0, 30, 0);
-
-    objects.mesh.static.push(cb);
+    });
 
     return fb;
 }

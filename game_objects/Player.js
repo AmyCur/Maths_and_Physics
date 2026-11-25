@@ -2,7 +2,7 @@ import { Attack } from "../input/Attack.js";
 import { input } from "../input/input.js";
 import { Raycast } from "../input/Raycast.js";
 import { Buffer } from "../rendering/Buffer.js";
-import { MeshCreator } from "../rendering/BufferManager.js";
+import { MeshCreator } from "../rendering/MeshCreator.js";
 import { textures } from "../rendering/Textures.js";
 import { MUtil } from "../util/MathUtil.js";
 import { Time } from "../util/Time.js";

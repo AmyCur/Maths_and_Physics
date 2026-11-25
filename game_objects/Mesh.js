@@ -42,8 +42,6 @@ export class Mesh extends TransObject {
 
     constructor(mesh) {
 
-        if(mesh.properties===undefined) mesh.properties=Mesh.defaultProperties();
-
         super(mesh.transform, mesh.velocity, mesh.components, mesh.properties);
 
         this.buffers = mesh.buffers;
@@ -55,8 +53,8 @@ export class Mesh extends TransObject {
 
 
 
-        if (properties.texture !== undefined) {
-            this.texture = mesh.properties.texture;
+        if (mesh.properties.texture !== undefined) {
+            this.texture = textures.loadTexture(player.gl, mesh.properties.texture);
         }
 
         else {

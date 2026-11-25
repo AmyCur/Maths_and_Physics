@@ -2,40 +2,47 @@ import { Mesh } from "../game_objects/Mesh.js";
 import { ColliderUtils } from "../game_objects/Colliders.js";
 import { Transform } from "../game_objects/Transform.js";
 import { Buffer } from "./Buffer.js";
+import { GetShape } from "./shapes/Shapes.js";
 
 export const MeshCreator = {
-  CreateMesh(gl, bufferData, components, properties, transform = Transform.default(), velocity) {
-    const ib = this.CreateBuffer(gl, bufferData.position, bufferData.texCoords, bufferData.index);
+  CreateMesh(gl, meshData) {
 
-    if(properties===undefined) properties=Mesh.defaultProperties();
+    const bufferData = GetShape(meshData.shape);
 
-    const BE = new Mesh({
+    console.log(bufferData);
+    const bufferInstance = this.CreateBuffer(gl, bufferData);
 
+    if(meshData.properties===undefined) meshData.properties=Mesh.defaultProperties();
+    if(meshData.components===undefined) meshData.components={};
+
+    const mesh = new Mesh({
       //* Buffer
       bufferData: bufferData,
 
       //* Transform
-      transform: transform,
-      velocity: velocity,
+      transform: meshData.transform,
+      velocity: meshData.velocity,
 
       //* Components
-      components: components,
-      properties: properties,
+      components: meshData.components,
+      properties: meshData.properties,
 
-      buffer: new Buffer(
-        ib.positionBuffer,
-        ib.textureBuffer,
-        ib.indexBuffer,
+      buffers: new Buffer(
+        bufferInstance.positionBuffer,
+        bufferInstance.textureBuffer,
+        bufferInstance.indexBuffer,
       ),
     });
 
-    return BE;
+    if(meshData.targetArray!==undefined) meshData.targetArray(mesh);
+
+    return mesh;
   },
 
-  CreateBuffer(gl, positions, uv, indices) {
-    const positionBuffer = this.CreatePositionBuffer(gl, positions);
-    const textureBuffer = this.CreateTextureBuffer(gl, uv);
-    const indexBuffer = this.CreateIndexBuffer(gl, indices);
+  CreateBuffer(gl, data) {
+    const positionBuffer = this.CreatePositionBuffer(gl, data.position);
+    const textureBuffer = this.CreateTextureBuffer(gl, data.texCoord);
+    const indexBuffer = this.CreateIndexBuffer(gl, data.index);
 
     return {
       positionBuffer: positionBuffer,
@@ -66,7 +73,6 @@ export const MeshCreator = {
   CreateTextureBuffer(gl, texCoords) {
     const textureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
-
 
     const tc = [
       // Front

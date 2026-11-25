@@ -76,8 +76,8 @@ export class Buffer {
 
     constructor(position, texCoord, index) {
         this.position = position,
-            this.texCoord = texCoord,
-            this.index = index;
+        this.texCoord = texCoord,
+        this.index = index;
 
 
     }

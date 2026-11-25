@@ -76,7 +76,7 @@ export function InitRendering() {
     const fb = GenerateStaticMeshs(gl);
 
     const walls = CreateWalls(fb, gl);
-    objects.mesh.static.push(...walls);
+
 
     // for (let i = 0; i < walls.length; i++) {
     //     const wall = walls[i];
@@ -150,6 +150,7 @@ export function Render(gl, programInfo) {
     const [projectionMatrix, modelViewMatrix] = CreateMatricies(gl);
 
     const allObjs = objects.mesh.GetAll();
+    console.log(allObjs);
     
     for (let obj of allObjs) {
         RenderBuffer(gl, obj, programInfo);

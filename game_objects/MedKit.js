@@ -1,6 +1,6 @@
 import { EnemyManager } from "../enemies/EnemyManager.js";
 import { Buffer } from "../rendering/Buffer.js";
-import { MeshCreator } from "../rendering/BufferManager.js";
+import { MeshCreator } from "../rendering/MeshCreator.js";
 import { textures } from "../rendering/Textures.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { BoxCollider } from "./Colliders.js";
@@ -13,24 +13,22 @@ export class MedKit{
     }
 
     static CreateNewMedKit(gl){
-        const wb = Buffer.default();
-
         const tv = EnemyManager.GetRandomVectorAroundThePlayer();
 
-        const w5 = MeshCreator.CreateMesh(gl, wb, { collider: BoxCollider.default().SetTrigger(true), medKit: new MedKit(100) }, {raycastable: true, name: "Health Pack"}, Transform.default().SetPosition(new Vector3(tv.x, 3, tv.z)));
-        w5.texture=textures.loadTexture(gl, textures.GetRandomTexture());
-        // const w5 = MeshCreator.CreateMesh(gl, Buffer.default(), {}, {}, Transform.default());
-
-        // w5.transform.position = new Vector3(
-        //     30, 0, 30
-        // )
-
-        w5.transform.scale = new Vector3(
-            10, 5, 10
-        )
-
-
-        objects.mesh.other.push(w5);
-        console.log(objects.mesh.other);
+        // const w5 = MeshCreator.CreateMesh(gl, wb, { collider: BoxCollider.default().SetTrigger(true), medKit: new MedKit(100) }, {raycastable: true, name: "Health Pack"}, Transform.default().SetPosition(new Vector3(tv.x, 3, tv.z)));
+        
+        MeshCreator.CreateMesh(gl, {
+            shape: "cube",
+            properties: {
+                name: "MedKit",
+                raycastable: false,
+            },            
+            components: {
+                collider: BoxCollider.default().SetTrigger(true)
+            },
+            transform: Transform.default().SetPosition(tv).SetScalef(10,5,10),
+            velocity: Vector3.zero(),
+            targetArray: (v) => objects.mesh.other.push(v)
+        })
     }
 }
