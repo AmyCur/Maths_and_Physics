@@ -42,7 +42,12 @@ export class Mesh extends TransObject {
 
     constructor(mesh) {
 
-        super(mesh.transform, mesh.velocity, mesh.components, mesh.properties);
+        super({
+            transform: mesh.transform,
+            velocity: mesh.velocity,
+            components: mesh.components, 
+            properties: mesh.properties
+        });
 
         this.buffers = mesh.buffers;
         this.bufferData = mesh.bufferData;

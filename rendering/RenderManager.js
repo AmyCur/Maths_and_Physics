@@ -150,7 +150,6 @@ export function Render(gl, programInfo) {
     const [projectionMatrix, modelViewMatrix] = CreateMatricies(gl);
 
     const allObjs = objects.mesh.GetAll();
-    console.log(allObjs);
     
     for (let obj of allObjs) {
         RenderBuffer(gl, obj, programInfo);

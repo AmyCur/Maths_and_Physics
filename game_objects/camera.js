@@ -12,7 +12,12 @@ import { player } from "./Player.js";
 class Camera extends TransObject {
 
     constructor(cameraData) {
-        super(cameraData.transform, {}, {})
+        
+        super({
+            transform: cameraData.transform, 
+            components: {}, 
+            properties: {}
+        })
 
         this.fov = cameraData.fov;
 
@@ -66,7 +71,7 @@ class Camera extends TransObject {
 export const camera = new Camera({
     transform: {
         position: new Vector3(0, 10, 0),
-        rotation: new Vector3(0, -2, 0),
+        rotation: new Vector3(0, 0, 0),
         scale: new Vector3(1, 1, 1),
     },
     fov: 45,

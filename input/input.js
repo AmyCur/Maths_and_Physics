@@ -37,6 +37,10 @@ export const input = {
 
     AddListeners() {
         document.addEventListener("keydown", (e) => {
+            // Prevent CTRL+W
+            e.preventDefault();
+            e.stopPropagation();
+
             this.SetKey(e.code, true);
         });
 

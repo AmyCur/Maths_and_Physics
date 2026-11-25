@@ -57,33 +57,35 @@ export const Raycast = {
 
 
 
-    ShootRay(startPos, dir, maxRange, gl) {
+    ShootRay(data) {
         if (objects.GetAllRaycastableObjects().length === 0) {
-            console.error("Nothing to raycast");
+            console.warn("Nothing to raycast");
         }
         else {
-            const increments = 400;
-            const increment = maxRange / increments;
+            const increments = data.increments === undefined ? 150 : data.increments;
+            const increment = data.maxRange / increments;
 
             for (let i = 0; i < increments; i++) {
                 // Distance to travel in this tick
-                const outVec = VectorUtil.Multiply(dir, i * increment);
+                const outVec = VectorUtil.Multiply(data.direction, i * increment);
 
 
                 // Position that will be checked for colliders
-                const rayVec = VectorUtil.Add(startPos, outVec);
+                const rayVec = VectorUtil.Add(data.startPos, outVec);
 
                 // See if youve hit a collider
                 const hitObject = this.GetHitObject(rayVec);
 
                 // If you have return it, else keep going
-                if (hitObject?.obj != null) {
+                if (hitObject?.obj != null && hitObject!==data.trans) {
 
                     //! This is a Mesh (God i wish JS had types!)
                     return hitObject.obj;
                 }
             }
         }
+
+        return null;
 
 
 

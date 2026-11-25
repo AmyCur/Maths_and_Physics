@@ -41,7 +41,7 @@ function Main() {
         CalculateDeltaTime(now);
         //#endregion
 
-        EnemyManager.Update(gl, tick, enemySpawnInterval);
+        // EnemyManager.Update(gl, tick, enemySpawnInterval);
 
         EController.HandleAI();
 
@@ -53,7 +53,7 @@ function Main() {
         }
 
         player.Update();
-        objects.MoveAllObjects();
+        objects.MoveAllObjects(gl);
 
         UIManager.UpdateUI();
 

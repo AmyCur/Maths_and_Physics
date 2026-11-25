@@ -65,7 +65,7 @@ export class Objects {
     MoveAllObjects(){
         const all = this.GetAllTransObjects();
         for(let obj of all){
-            obj.Move();
+            obj.HandleVelocity();
         }
     }
     

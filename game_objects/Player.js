@@ -15,15 +15,26 @@ import { objects } from "./Objects.js";
 import { Transform } from "./Transform.js";
 import { TransObject } from "./TransObject.js";
 
+"use strict";
+
 class Player extends TransObject {
-    "use strict";
     idle = false;
+    state = "walking"
 
 
     // The player is special because theyre not actually a rendered thing, hence the no scale or rotation
-    constructor(transform, jumpForce) {
+    constructor(data) {
 
-        super(transform, {}, {})
+        super({
+            transform: data.transform,
+            components: {},
+            properties: {},
+            velocity: {
+                current: Vector3.zero(),
+                min: -5,
+                max: 5
+            }
+        })
 
         this.text = {
             position: document.getElementById("player-pos"),
@@ -37,7 +48,7 @@ class Player extends TransObject {
         this.movementMode = "normal";
 
         this.health = 100
-        this.jumpForce = jumpForce / 100;
+        this.jumpForce = data.jumpForce ;
         this.godMode = true;
         this.devMode = false;
         this.sprinting = false;
@@ -45,13 +56,17 @@ class Player extends TransObject {
         this.angle = 0;
 
         this.speed = {
-            base: 1,
-            sprint: 1.3,
-            current: 1
+            base: 0.7,
+            sprint: 0.8,
+            current: 0.5
         };
         this.stamina = 100;
 
         this.attackRange = 30;
+
+        this.velocityReductionSpeed=new Vector3(0.7, 0.9, 0.7);
+
+        objects.trans.core.push(this);
 
 
         // I kinda love this
@@ -61,7 +76,11 @@ class Player extends TransObject {
 
                 console.log(attackDir.Print());
 
-                const hitObj = Raycast.ShootRay(new Vector3(player.transform.position.x, player.transform.position.y + camera.transform.position.y, player.transform.position.z), attackDir, this.attackRange, this.gl);
+                const hitObj = Raycast.ShootRay({
+                    startPos: new Vector3(player.transform.position.x, player.transform.position.y + camera.transform.position.y, player.transform.position.z), 
+                    direction: attackDir,
+                    maxRange: this.attackRange
+                });
 
                 if (hitObj?.IsEnemy()) {
                     console.log("Hit");
@@ -104,18 +123,18 @@ class Player extends TransObject {
     }
 
     HandleSprinting() {
-        if(!this.Grounded()){
-            this.stamina+=0.1;
+        if (!this.Grounded()) {
+            this.stamina += 0.1;
         }
-        else{
+        else {
             if (!this.Moving()) {
                 this.stamina += 0.1;
             }
-            else{
-                this.stamina+=0.025;
+            else {
+                this.stamina += 0.025;
             }
         }
-        
+
 
         this.sprinting = input.GetKey("ShiftLeft") && this.Grounded() && this.stamina > 0;
 
@@ -172,39 +191,27 @@ class Player extends TransObject {
         return VectorUtil.Multiply(VectorUtil.Normalize(movementVector.ToVector3()), this.speed.current * (MUtil.clamp(player.health / 100, 0.6, 1)));
     }
 
-    Grounded() {
-        const obj = Raycast.ShootRay(this.transform.position, Vector3.down(), 1, player.gl);
-        return obj !== undefined;
-    }
 
     Gravity() {
-        if (this.Grounded() || this.jumping) {
-            this.gravityScale = 7;
+        if (this.Grounded()) {
+            this.gravityScale = 50;
             // this.transform.position.y = 0;
         }
 
         else {
-            this.gravityScale *= 1.01
-            const distancePerTick = MUtil.clamp(this.gravityScale * 0.1, 0, (this.position + (this.gravityScale * 0.1)));
+            this.gravityScale *= 1.1
 
-            this.velocity=VectorUtil.Add(this.velocity, new Vector3(0, -distancePerTick, 0));
+
+            this.AddVelocity(new Vector3(0, -this.gravityScale, 0));
         }
-    }
+}
 
     Jump() {
+        this.gravityScale=0.01;
+        if(!this.jumping) this.AddVelocity(new Vector3(0, this.jumpForce, 0));
         this.jumping = true;
-        // let i = 0;
-        // let vta = this.jumpForce*2;
-        // const interval = setInterval(() => {
-        //     vta=MUtil.lerp(this.jumpForce, this.jumpForce*3, i/150);
-        //     this.transform.position = ColliderUtils.MoveWithRespect(this.transform.position, new Vector3(0, vta, 0));
-        //     // this.transform.position.y += this.jumpForce;
-        //     i++;
-        //     if (i >= 150 || this.Grounded()) clearInterval(interval);
-        // }, 1 * Time.deltaTime)
-
-        // console.log("FIN");
-        this.jumping = false;
+        
+        setTimeout(() => this.jumping = false, 600);
     }
 
     GetCollisions() {
@@ -221,19 +228,29 @@ class Player extends TransObject {
 
     Update() {
 
+        if(this.transform.position.y < -300){
+            this.transform.position=new Vector3(0,20,0);
+            this.velocity.current=Vector3.zero();
+        }
+
         this.health = MUtil.clamp(this.health, 0, 100);
 
         if (!this.dead) {
-            this.GetMovementInput();
             this.Gravity();
             this.UpdatePosition();
 
-            if (input.GetKey("Space") && (player.Grounded() && !player.jumping)) player.Jump();
+            if (input.GetKey("Space") && (player.Grounded() && !this.jumping)) player.Jump();
 
             this.angle++;
+
             if (this.angle >= 360) this.angle = 0;
 
-            const rayObj = Raycast.ShootRay(this.transform.position, Vector3.down(), player.transform.scale.y / 2, this.gl);
+            const rayObj = Raycast.ShootRay({
+                startPos: this.transform.position, 
+                direction: Vector3.down(),
+                maxRange: 2
+            });
+
             this.GetTriggerHits(rayObj);
 
 
@@ -243,13 +260,18 @@ class Player extends TransObject {
 
     UpdatePosition() {
         // player.transform.position = ColliderUtils.MoveWithRespect(player.transform.position, player.GetMovementInput());
-        this.velocity = player.GetMovementInput();
+        this.AddVelocity(this.GetMovementInput());
     }
 
 }
 
-export const player = new Player({
-    position: new Vector3(0, 10, 0),
-    rotation: new Vector3(0, 0, 0),
-    scale: new Vector3(1, 10, 1)
-}, 15);
+export const player = new Player(
+    {
+        transform: {
+            position: new Vector3(0, 20, 0),
+            rotation: new Vector3(0, 0, 0),
+            scale: new Vector3(2, 5, 2)
+        }, 
+        jumpForce: 8,
+    }
+);

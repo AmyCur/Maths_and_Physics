@@ -1,8 +1,4 @@
 import { camera } from "../game_objects/camera.js";
-import { ColliderUtils } from "../game_objects/Colliders.js";
-import { objects } from "../game_objects/Objects.js";
-import { player } from "../game_objects/Player.js";
-import { Vector2 } from "../vectors/Vector2.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { SUtil } from "./StringUtil.js";
 
@@ -83,6 +79,18 @@ export const VectorUtil = {
         v.z = v1.z * v2.z;
 
         return v;
+    },
+    
+    ClampVectorByLength(vec, min, max){
+
+        const length = this.GetLength(vec);
+
+
+        if(length>max) return VectorUtil.Multiply(VectorUtil.Normalize(vec), max);
+        if(length<min) return VectorUtil.Multiply(VectorUtil.Normalize(vec), min);
+        
+        return vec;
+
     },
 
 

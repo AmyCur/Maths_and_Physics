@@ -22,8 +22,10 @@ export function CreateWalls(fb, gl) {
         components: {
             collider: BoxCollider.default(),
         },
-        transform: Transform.default().SetPositionf(100, 0, 0).SetScalef(1, 30, 100),
-        velocity: Vector3.zero(),
+        transform: Transform.default().SetPositionf(100, 0, 0).SetScalef(1, 100, 100),
+        velocity: {
+            current: Vector3.zero(),
+        },
         targetArray: (v) => objects.mesh.static.push(v)
 
     });
@@ -38,8 +40,10 @@ export function CreateWalls(fb, gl) {
         components: {
             collider: BoxCollider.default(),
         },
-        transform: Transform.default().SetPositionf(-100, 0, 0).SetScalef(1, 30, 100),
-        velocity: Vector3.zero(),
+        transform: Transform.default().SetPositionf(-100, 0, 0).SetScalef(1, 100, 100),
+        velocity: {
+            current: Vector3.zero(),
+        },
         targetArray: (v) => objects.mesh.static.push(v)
 
     });
@@ -54,8 +58,10 @@ export function CreateWalls(fb, gl) {
         components: {
             collider: BoxCollider.default(),
         },
-        transform: Transform.default().SetPositionf(0, 0, 100).SetScalef(100, 30, 1),
-        velocity: Vector3.zero(),
+        transform: Transform.default().SetPositionf(0, 0, 100).SetScalef(100, 100, 1),
+        velocity: {
+            current: Vector3.zero(),
+        },
         targetArray: (v) => objects.mesh.static.push(v)
     });
 
@@ -69,8 +75,10 @@ export function CreateWalls(fb, gl) {
         components: {
             collider: BoxCollider.default(),
         },
-        transform: Transform.default().SetPositionf(0, 0, -100).SetScalef(100, 30, 1),
-        velocity: Vector3.zero(),
+        transform: Transform.default().SetPositionf(0, 0, -100).SetScalef(100, 12.5, 1),
+        velocity: {
+            current: Vector3.zero(),
+        },
         targetArray: (v) => objects.mesh.static.push(v)
     });
 }
@@ -90,7 +98,9 @@ export function GenerateStaticMeshs(gl) {
             collider: BoxCollider.default(),
         },
         transform: Transform.default().SetPosition(Vector3.zero()).SetScalef(100, 1, 100),
-        velocity: Vector3.zero(),
+        velocity: {
+            current: Vector3.zero(),
+        },
         targetArray: (v) => objects.mesh.static.push(v)
 
     });
@@ -105,8 +115,28 @@ export function GenerateStaticMeshs(gl) {
         components: {
             collider: BoxCollider.default(),
         },
-        transform: Transform.default().SetPositionf(0, 30, 0).SetScalef(100, 1, 100),
-        velocity: Vector3.zero(),
+        transform: Transform.default().SetPositionf(0, 100, 0).SetScalef(100, 1, 100),
+        velocity: {
+            current: Vector3.zero(),
+        },
+        targetArray: (v) => objects.mesh.static.push(v)
+
+    });
+
+    MeshCreator.CreateMesh(gl, {
+        shape: "cube",
+        properties: {
+            raycastable: true,
+            name: "Floor 2",
+            texture: textures.paths.grass
+        },
+        components: {
+            collider: BoxCollider.default(),
+        },
+        transform: Transform.default().SetPositionf(0,10,-200).SetScalef(100, 1, 100),
+        velocity: {
+            current: Vector3.zero(),
+        },
         targetArray: (v) => objects.mesh.static.push(v)
 
     });

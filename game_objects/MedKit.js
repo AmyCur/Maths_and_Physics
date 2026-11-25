@@ -26,7 +26,9 @@ export class MedKit{
                 collider: BoxCollider.default().SetTrigger(true)
             },
             transform: Transform.default().SetPosition(tv).SetScalef(10,5,10),
-            velocity: Vector3.zero(),
+            velocity: {
+                current: Vector3.zero(),
+            },
             targetArray: (v) => objects.mesh.other.push(v)
         })
     }
