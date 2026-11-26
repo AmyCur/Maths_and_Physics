@@ -8,6 +8,7 @@ export class Objects {
         enemies: [],
         static: [],
         other: [],
+        colliders: [],
 
         GetAll(){
             return this.enemies.concat(this.static, this.other);

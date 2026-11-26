@@ -128,6 +128,10 @@ export const VectorUtil = {
         return this.GetVectorFromAngles(alpha, beta);
     },
 
+    Dividef(v, f){
+        return new Vector3(v.x/f,v.y/f,v.z/f);
+    },
+
     GetVectorFromAngles(alpha, beta) {
 
 

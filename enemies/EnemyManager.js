@@ -147,7 +147,7 @@ export class EnemyManager {
             components: {
                 collider: BoxCollider.default()
             },
-            transform: Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(0,30,0))).SetScalef(3,6,3),
+            transform: Transform.default().SetPosition(VectorUtil.Add(sp, new Vector3(0,3,0))).SetScalef(.3,.6,.3),
             velocity: Vector3.zero(),
             targetArray: (v) => objects.mesh.other.push(v)
         })

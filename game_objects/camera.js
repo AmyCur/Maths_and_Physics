@@ -70,7 +70,7 @@ class Camera extends TransObject {
 
 export const camera = new Camera({
     transform: {
-        position: new Vector3(0, 10, 0),
+        position: new Vector3(0, player.transform.scale.y/2, 0),
         rotation: new Vector3(0, 0, 0),
         scale: new Vector3(1, 1, 1),
     },

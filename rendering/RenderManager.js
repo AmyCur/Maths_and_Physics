@@ -11,6 +11,9 @@ import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector3 } from "../vectors/Vector3.js";
 import { EController, EnemyManager } from "../enemies/EnemyManager.js";
+import { MeshCreator } from "./MeshCreator.js";
+import { BoxCollider } from "../game_objects/Colliders.js";
+import { textures } from "./Textures.js";
 
 //#region Initialisation
 
@@ -135,7 +138,7 @@ function CreateMatricies(gl) {
 function ResetBuffers() {
     // objects.mesh.other = [];
     // objects.mesh.enemies =    [];
-    objects.colliders = [];
+    objects.mesh.colliders = [];
 }
 
 export function Render(gl, programInfo) {
@@ -150,9 +153,45 @@ export function Render(gl, programInfo) {
     const [projectionMatrix, modelViewMatrix] = CreateMatricies(gl);
 
     const allObjs = objects.mesh.GetAll();
-    
+
     for (let obj of allObjs) {
         RenderBuffer(gl, obj, programInfo);
+    }
+
+    {
+    const cp = player.transform.position;
+    const scale = VectorUtil.Multiply(player.transform.scale, 10);
+
+    const corners = [
+        // Bottom Front Left corner
+        new Vector3(cp.x - (scale.x / 2), cp.y - (scale.y / 2), cp.z - (scale.z / 2)),
+
+        // Bottom Front Right corner
+        new Vector3(cp.x + (scale.x / 2), cp.y - (scale.y / 2), cp.z - (scale.z / 2)),
+
+        // Top Front Left corner
+        new Vector3(cp.x - (scale.x / 2), cp.y + (scale.y / 2), cp.z - (scale.z / 2)),
+
+        // Top Front Right corner
+        new Vector3(cp.x + (scale.x / 2), cp.y + (scale.y / 2), cp.z - (scale.z / 2)),
+
+        // Bottom Front Left corner
+        new Vector3(cp.x - (scale.x / 2), cp.y - (scale.y / 2), cp.z + (scale.z / 2)),
+
+        // Bottom Front Right corner
+        new Vector3(cp.x + (scale.x / 2), cp.y - (scale.y / 2), cp.z + (scale.z / 2)),
+
+        // Top Front Left corner
+        new Vector3(cp.x - (scale.x / 2), cp.y + (scale.y / 2), cp.z + (scale.z / 2)),
+
+        // Top Front Right corner
+        new Vector3(cp.x + (scale.x / 2), cp.y + (scale.y / 2), cp.z + (scale.z / 2)),
+    ]
+
+    for (let i = 0; i < corners.length; i++) {
+        const corner = corners[i];
+        
+    }
     }
 
     // Assign the projection matrix and model view matrix
@@ -167,14 +206,14 @@ export function Render(gl, programInfo) {
 
     let targetHealth = 0;
 
-    
 
-    if(player.health > 20){
-        targetHealth= MUtil.clamp(player.health / 100, 0, 1)
+
+    if (player.health > 20) {
+        targetHealth = MUtil.clamp(player.health / 100, 0, 1)
     }
-    else{
-        const blinkSpeed = (101-player.health) / 20
-        targetHealth = MUtil.clamp((player.health / 100) + (Math.sin(player.angle * MathUtil.Deg2Rad*blinkSpeed)/5), 0, 1);
+    else {
+        const blinkSpeed = (101 - player.health) / 20
+        targetHealth = MUtil.clamp((player.health / 100) + (Math.sin(player.angle * MathUtil.Deg2Rad * blinkSpeed) / 5), 0, 1);
     }
 
 

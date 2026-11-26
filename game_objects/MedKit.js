@@ -25,7 +25,7 @@ export class MedKit{
             components: {
                 collider: BoxCollider.default().SetTrigger(true)
             },
-            transform: Transform.default().SetPosition(tv).SetScalef(10,5,10),
+            transform: Transform.default().SetPosition(tv).SetScalef(1,.5,1),
             velocity: {
                 current: Vector3.zero(),
             },

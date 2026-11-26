@@ -9,7 +9,6 @@ export const MeshCreator = {
 
     const bufferData = GetShape(meshData.shape);
 
-    console.log(bufferData);
     const bufferInstance = this.CreateBuffer(gl, bufferData);
 
     if(meshData.properties===undefined) meshData.properties=Mesh.defaultProperties();

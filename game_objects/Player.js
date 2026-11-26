@@ -313,7 +313,7 @@ export const player = new Player(
         transform: {
             position: new Vector3(0, 20, -200),
             rotation: new Vector3(0, 0, 0),
-            scale: new Vector3(2, 5, 2)
+            scale: new Vector3(1, 1, 1)
         }, 
         jumpForce: 8,
     }

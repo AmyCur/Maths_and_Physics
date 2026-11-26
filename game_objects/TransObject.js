@@ -42,46 +42,69 @@ export class TransObject {
     }
 
     ClampVelocityByCollision() {
-
         const cp = this.transform.position;
         const cv = this.velocity.current;
-        const tp = VectorUtil.Add(cp, cv);
+        const vel = this.velocity.current;
+        const scale = this.transform.scale;
 
-        const allObjs = objects.GetAllColliderObjects();
+        // Get all 4 UNIQUE corners
+        const corners = [
+            // Bottom Front Left corner
+            new Vector3(cp.x - (scale.x / 2), cp.y - (scale.y / 2), cp.z - (scale.z / 2)),
 
-        for (let t = 0; t < 1; t += 0.1) {
+            // Bottom Front Right corner
+            new Vector3(cp.x + (scale.x / 2), cp.y - (scale.y / 2), cp.z - (scale.z / 2)),
 
-            const lerpCP = new Vector3(
-                MUtil.lerp(cp.x, tp.x, t),
-                MUtil.lerp(cp.y, tp.z, t),
-                MUtil.lerp(cp.y, tp.z, t)
-            );
+            // Top Front Left corner
+            new Vector3(cp.x - (scale.x / 2), cp.y + (scale.y / 2), cp.z - (scale.z / 2)),
 
-            for (let obj of allObjs) {
-                const op = obj.transform.position;
-                const os = obj.transform.scale;
+            // Top Front Right corner
+            new Vector3(cp.x + (scale.x / 2), cp.y + (scale.y / 2), cp.z - (scale.z / 2)),
 
-                const minPos = VectorUtil.Subtract(op, os);
-                const maxPos = VectorUtil.Add(op, os);
+            // Bottom Back Left corner
+            new Vector3(cp.x - (scale.x / 2), cp.y - (scale.y / 2), cp.z + (scale.z / 2)),
 
-                if (VectorUtil.VectorInRange(lerpCP, minPos, maxPos)) {
-                    console.log(lerpCP);
-                    
-                    const sx = Math.sign(this.velocity.current.x);
-                    const sy = Math.sign(this.velocity.current.y);
-                    const sz = Math.sign(this.velocity.current.z);
+            // Bottom Back Right corner
+            new Vector3(cp.x + (scale.x / 2), cp.y - (scale.y / 2), cp.z + (scale.z / 2)),
 
+            // Top Back Left corner
+            new Vector3(cp.x - (scale.x / 2), cp.y + (scale.y / 2), cp.z + (scale.z / 2)),
 
-                    cv.x = MUtil.clamp(cv.x, sx === -1 ? 0 : this.velocity.min, sx === 1 ? 0 : this.velocity.max);
-                    cv.y = MUtil.clamp(cv.y, sy === -1 ? 0 : this.velocity.min, sy === 1 ? 0 : this.velocity.max);
-                    cv.z = MUtil.clamp(cv.z, sz === -1 ? 0 : this.velocity.min, sz === 1 ? 0 : this.velocity.max);
-                    
+            // Top Back Right corner
+            new Vector3(cp.x + (scale.x / 2), cp.y + (scale.y / 2), cp.z + (scale.z / 2)),
+        ]
+
+        const allColliders = objects.GetAllColliderObjects();
+
+        for(const cornerPos of corners){
+            const tp = VectorUtil.Add(cornerPos, cv);
+            for(const mesh of allColliders){
+                const meshPos = mesh.transform.position;
+                const meshScale = mesh.transform.scale;
+                
+                const colliderPositionOffset = mesh.components.collider.offset;
+                const colliderScaleOffset = mesh.components.collider.scale;
+
+                const colliderPos=VectorUtil.Add(meshPos, colliderPositionOffset);
+                const colliderScale = VectorUtil.MultiplyVector(meshScale, colliderScaleOffset);
+
+                const minBounds = VectorUtil.Subtract(colliderPos, VectorUtil.Dividef(colliderScale, 2));
+                const maxBounds = VectorUtil.Add(colliderPos, VectorUtil.Dividef(colliderScale, 2));
+
+                if(VectorUtil.VectorInRange(tp, minBounds, maxBounds)){
+                    const xNeg = Math.sign(cv.x)===-1;
+                    const yNeg = Math.sign(cv.y)===-1;
+                    const zNeg = Math.sign(cv.z)===-1;
+
+                    vel.x = MUtil.clamp(vel.x, xNeg ? 0 : this.velocity.min, xNeg ? this.velocity.max : 0);
+                    vel.y = MUtil.clamp(vel.y, yNeg ? 0 : this.velocity.min, yNeg ? this.velocity.max : 0);
+                    vel.z = MUtil.clamp(vel.z, zNeg ? 0 : this.velocity.min, zNeg ? this.velocity.max : 0);
                 }
             }
-
         }
 
-        return cv;
+
+        return vel;
     }
 
     Move() {

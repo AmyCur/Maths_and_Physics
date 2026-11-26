@@ -29,7 +29,7 @@ export class Mesh extends TransObject {
     InitModelMatrix(){
         const mm = new Mat4();
         mm.translate([this.transform.position.x, this.transform.position.y, this.transform.position.z]);
-        mm.scale([this.transform.scale.x, this.transform.scale.y, this.transform.scale.z]);
+        mm.scale([this.transform.scale.x/2, this.transform.scale.y/2, this.transform.scale.z/2]);
 
         mm.rotate([1, 0, 0], this.transform.rotation.x);
         mm.rotate([0, 1, 0], this.transform.rotation.y);
