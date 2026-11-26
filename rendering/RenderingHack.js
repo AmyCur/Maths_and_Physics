@@ -9,7 +9,7 @@ import { Transform } from "../game_objects/Transform.js";
 
 export function CreateWalls(fb, gl) {
 
-    const texture = textures.paths.stone;
+    const texture = textures.paths.tung;
 
 
     MeshCreator.CreateMesh(gl, {

@@ -13,12 +13,12 @@ function isPowerOf2(value) {
 
 export const textures = {
     paths: {
-        stone: "/assets/stone.png",
-        goomba: "/assets/goomba.png",
-        null: "/assets/null.png",
-        health_pack: "/assets/health_pack.png",
+        stone: "/assets/tung.webp",
+        goomba: "/assets/tung.webp",
+        null: "/assets/tung.webp",
+        health_pack: "/assets/tung.webp",
         tung: "/assets/tung.webp",
-        grass: "/assets/grass.png"
+        grass: "/assets/tung.webp"
     },
 
     loadTexture(gl, url) {

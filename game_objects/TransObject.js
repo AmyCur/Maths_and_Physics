@@ -66,6 +66,7 @@ export class TransObject {
 
                 if (VectorUtil.VectorInRange(lerpCP, minPos, maxPos)) {
                     console.log(lerpCP);
+                    
                     const sx = Math.sign(this.velocity.current.x);
                     const sy = Math.sign(this.velocity.current.y);
                     const sz = Math.sign(this.velocity.current.z);

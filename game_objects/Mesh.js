@@ -50,6 +50,7 @@ export class Mesh extends TransObject {
         });
 
         this.buffers = mesh.buffers;
+        
         this.bufferData = mesh.bufferData;
 
 
