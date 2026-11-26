@@ -311,7 +311,7 @@ class Player extends TransObject {
 export const player = new Player(
     {
         transform: {
-            position: new Vector3(0, 20, 0),
+            position: new Vector3(0, 20, -200),
             rotation: new Vector3(0, 0, 0),
             scale: new Vector3(2, 5, 2)
         }, 
