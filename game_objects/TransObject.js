@@ -62,7 +62,7 @@ export class TransObject {
                     startPos: VectorUtil.Add(cp, VectorUtil.MultiplyVector(dir, camera.transform.position)),
                     direction: dir,
                     maxRange: (this.transform.scale.x) + 0.05,
-                    increments: 1000
+                    increments: 100
                 }) !== null
             )
         }
@@ -91,7 +91,6 @@ export class TransObject {
     }
 
     AddVelocity(nv) {
-        console.log(`Added ${nv.Print(1)}`)
         const currentVelocityVector = this.ClampVelocityVector(VectorUtil.Add(this.velocity.current, nv));
         this.velocity.current = currentVelocityVector;
     }

@@ -4,7 +4,7 @@ import { Raycast } from "../input/Raycast.js";
 import { Buffer } from "../rendering/Buffer.js";
 import { MeshCreator } from "../rendering/MeshCreator.js";
 import { textures } from "../rendering/Textures.js";
-import { MUtil } from "../util/MathUtil.js";
+import { MathUtil, MUtil } from "../util/MathUtil.js";
 import { Time } from "../util/Time.js";
 import { VectorUtil } from "../util/VectorUtil.js";
 import { Vector2 } from "../vectors/Vector2.js";
@@ -31,8 +31,8 @@ class Player extends TransObject {
             properties: {},
             velocity: {
                 current: Vector3.zero(),
-                min: -5,
-                max: 5
+                min: -30,
+                max: 30
             }
         })
 
@@ -43,7 +43,7 @@ class Player extends TransObject {
             dev: document.getElementById("dev"),
         }
 
-        this.gravityScale = 1;
+        this.gravityScale = 0.05;
         this.jumping = false;
         this.movementMode = "normal";
 
@@ -122,6 +122,40 @@ class Player extends TransObject {
         return this.velocity > 0.1;
     }
 
+    Slam(){
+        this.AddVelocity(new Vector3(0,-10,0));
+    }
+
+    Dash(){
+        this.gravityScale=0.05;
+        const backwards = input.forwards(camera.transform.rotation.x);
+        const forwards = VectorUtil.Invert(input.forwards(camera.transform.rotation.x));
+        const left = backwards.Rotate(90);
+        const right = VectorUtil.Invert(left);
+        const movementVector=new Vector2(0,0);
+
+        if(input.GetKey("KeyA")) movementVector.Add(left)
+        
+        if(input.GetKey("KeyD")){
+            movementVector.Add(right)
+        }
+
+        if(input.GetKey("KeyS")){
+            movementVector.Add(backwards);
+        }
+        else{
+        movementVector.Add(forwards);
+
+        }
+        
+
+        
+
+
+
+        this.AddVelocity(VectorUtil.Multiply(VectorUtil.Normalize(movementVector.ToVector3()), 200));
+    }
+
     HandleSprinting() {
         if (!this.Grounded()) {
             this.stamina += 0.1;
@@ -194,12 +228,12 @@ class Player extends TransObject {
 
     Gravity() {
         if (this.Grounded()) {
-            this.gravityScale = 50;
+            this.gravityScale = 0.05;
             // this.transform.position.y = 0;
         }
 
         else {
-            this.gravityScale *= 1.1
+            this.gravityScale *= 1.05
 
 
             this.AddVelocity(new Vector3(0, -this.gravityScale, 0));
@@ -207,7 +241,7 @@ class Player extends TransObject {
 }
 
     Jump() {
-        this.gravityScale=0.01;
+        this.gravityScale=0.05;
         if(!this.jumping) this.AddVelocity(new Vector3(0, this.jumpForce, 0));
         this.jumping = true;
         
@@ -226,8 +260,10 @@ class Player extends TransObject {
         }
     }
 
+
     Update() {
 
+        
         if(this.transform.position.y < -300){
             this.transform.position=new Vector3(0,20,0);
             this.velocity.current=Vector3.zero();
@@ -239,7 +275,9 @@ class Player extends TransObject {
             this.Gravity();
             this.UpdatePosition();
 
-            if (input.GetKey("Space") && (player.Grounded() && !this.jumping)) player.Jump();
+            if(input.GetKeyThisFrame("ShiftLeft")) this.Dash();
+            if(input.GetKeyThisFrame("ControlLeft")) this.Slam();
+            if (input.GetKeyThisFrame("Space") && (player.Grounded() && !this.jumping)) player.Jump();
 
             this.angle++;
 
@@ -255,6 +293,11 @@ class Player extends TransObject {
 
 
         }
+
+        for(let key in input.keysDownThisFrame){
+            input.keysDownThisFrame[key]=false;
+        }
+
     }
 
 

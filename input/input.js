@@ -16,6 +16,10 @@ export const input = {
         Mouse: false
     },
 
+    keysDownThisFrame: {
+
+    },
+
     forwards(cameraRotationX) {
         return new Vector3(
             Math.sin(cameraRotationX),
@@ -28,7 +32,12 @@ export const input = {
 
     GetKey(code) {
         if (this.keysDown.hasOwnProperty(code)) return this.keysDown[code];
-        else return false;
+        return false;
+    },
+
+    GetKeyThisFrame(code){
+        if(this.keysDownThisFrame.hasOwnProperty(code)) return this.keysDownThisFrame[code];
+        return false;
     },
 
     SetKey(code, value) {
@@ -41,6 +50,7 @@ export const input = {
             e.preventDefault();
             e.stopPropagation();
 
+            if(!e.repeat) this.keysDownThisFrame[e.code]=true;
             this.SetKey(e.code, true);
         });
 
