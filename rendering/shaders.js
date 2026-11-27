@@ -19,15 +19,23 @@ const vsSource = `
 
 const fsSource = `
     varying highp vec2 vTextureCoord;
-    uniform sampler2D uSampler;
+    uniform sampler2D uTexture;
     uniform lowp float uHealth;
+    uniform lowp float uDepth;
     
     lowp float lerp(lowp float a, lowp float  b,lowp float t){
         return ((1.0-t)*a+(t*b));
     }
     
     void main(void) {
-        highp vec4 tc = texture2D(uSampler, vTextureCoord);
+        highp vec4 tc = texture2D(uTexture, vTextureCoord);
+
+        tc = vec4(
+            lerp(tc.r, 0.0, uDepth),
+            lerp(tc.g, 0.0, uDepth),
+            lerp(tc.b, 0.0, uDepth),
+            tc.a
+        );
 
         tc=vec4(
             tc.r,

@@ -65,8 +65,9 @@ export function InitRendering() {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
             modelMatrix: gl.getUniformLocation(shaderProgram, "modelMatrix"),
-            uSampler: gl.getUniformLocation(shaderProgram, "uSampler"),
+            uTexture: gl.getUniformLocation(shaderProgram, "uTexture"),
             health: gl.getUniformLocation(shaderProgram, "uHealth"),
+            uDepth: gl.getUniformLocation(shaderProgram, "uDepth"),
         },
     };
 
@@ -158,41 +159,7 @@ export function Render(gl, programInfo) {
         RenderBuffer(gl, obj, programInfo);
     }
 
-    {
-    const cp = player.transform.position;
-    const scale = VectorUtil.Multiply(player.transform.scale, 10);
-
-    const corners = [
-        // Bottom Front Left corner
-        new Vector3(cp.x - (scale.x / 2), cp.y - (scale.y / 2), cp.z - (scale.z / 2)),
-
-        // Bottom Front Right corner
-        new Vector3(cp.x + (scale.x / 2), cp.y - (scale.y / 2), cp.z - (scale.z / 2)),
-
-        // Top Front Left corner
-        new Vector3(cp.x - (scale.x / 2), cp.y + (scale.y / 2), cp.z - (scale.z / 2)),
-
-        // Top Front Right corner
-        new Vector3(cp.x + (scale.x / 2), cp.y + (scale.y / 2), cp.z - (scale.z / 2)),
-
-        // Bottom Front Left corner
-        new Vector3(cp.x - (scale.x / 2), cp.y - (scale.y / 2), cp.z + (scale.z / 2)),
-
-        // Bottom Front Right corner
-        new Vector3(cp.x + (scale.x / 2), cp.y - (scale.y / 2), cp.z + (scale.z / 2)),
-
-        // Top Front Left corner
-        new Vector3(cp.x - (scale.x / 2), cp.y + (scale.y / 2), cp.z + (scale.z / 2)),
-
-        // Top Front Right corner
-        new Vector3(cp.x + (scale.x / 2), cp.y + (scale.y / 2), cp.z + (scale.z / 2)),
-    ]
-
-    for (let i = 0; i < corners.length; i++) {
-        const corner = corners[i];
-        
-    }
-    }
+    
 
     // Assign the projection matrix and model view matrix
     //? Note that the mode matrix (not the mode view matrix) is set on a per buffer basis
@@ -235,6 +202,14 @@ export function Render(gl, programInfo) {
 function RenderBuffer(gl, mesh, programInfo, vertexCount = 36) {
 
     const modelMatrix = mesh.InitModelMatrix();
+    const modelDist = VectorUtil.GetLength(VectorUtil.Subtract(mesh.transform.position, player.transform.position));
+
+    console.log(modelDist)
+
+    gl.uniform1f(
+        programInfo.uniformLocations.uDepth,
+        MUtil.clamp(modelDist/500,0,1)
+    )
 
     //* Set the modelMatrix (NOT MODEL VIEW MATRIX)
 

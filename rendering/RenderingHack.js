@@ -99,7 +99,7 @@ export function GenerateStaticMeshs(gl) {
         components: {
             collider: BoxCollider.default(),
         },
-        transform: Transform.default().SetPosition(Vector3.zero()).SetScalef(100, 1, 100),
+        transform: Transform.default().SetPosition(Vector3.zero()).SetScalef(1000, 1, 1000),
         velocity: {
             current: Vector3.zero(),
         },
