@@ -47,8 +47,19 @@ class Player extends TransObject {
         this.jumping = false;
         this.movementMode = "normal";
 
+        this.movementStates = {
+            dashed: false,
+            jumped: false,
+            slammed: false,
+
+            UpdateState(state){
+                this[state]=true;
+                setTimeout(() => this[state]=false, 300)
+            }
+        }
+
         this.health = 100
-        this.jumpForce = data.jumpForce ;
+        this.jumpForce = data.jumpForce;
         this.godMode = true;
         this.devMode = false;
         this.sprinting = false;
@@ -64,7 +75,7 @@ class Player extends TransObject {
 
         this.attackRange = 30;
 
-        this.velocityReductionSpeed=new Vector3(0.7, 0.9, 0.7);
+        this.drag = new Vector3(0.7, 0.9, 0.7);
 
         objects.trans.core.push(this);
 
@@ -77,7 +88,7 @@ class Player extends TransObject {
                 console.log(attackDir.Print());
 
                 const hitObj = Raycast.ShootRay({
-                    startPos: new Vector3(player.transform.position.x, player.transform.position.y + camera.transform.position.y, player.transform.position.z), 
+                    startPos: new Vector3(player.transform.position.x, player.transform.position.y + camera.transform.position.y, player.transform.position.z),
                     direction: attackDir,
                     maxRange: this.attackRange
                 });
@@ -122,34 +133,45 @@ class Player extends TransObject {
         return this.velocity > 0.1;
     }
 
-    Slam(){
-        this.AddVelocity(new Vector3(0,-10,0));
+    Slam() {
+        const mv = this.velocity.min;
+        this.velocity.min=-100;
+        this.velocity.current=Vector3.zero();
+        this.AddVelocity(new Vector3(0, -30, 0));
+        const invoker = setInterval(() => {
+            if(this.Grounded()){
+                this.velocity.min=mv;
+                clearInterval(invoker);
+            }
+        }, 200)
     }
 
-    Dash(){
-        this.gravityScale=0.05;
+    Dash() {
+        this.movementStates.UpdateState("dashed");
+
+        this.gravityScale = 0.05;
         const backwards = input.forwards(camera.transform.rotation.x);
         const forwards = VectorUtil.Invert(input.forwards(camera.transform.rotation.x));
         const left = backwards.Rotate(90);
         const right = VectorUtil.Invert(left);
-        const movementVector=new Vector2(0,0);
+        const movementVector = new Vector2(0, 0);
 
-        if(input.GetKey("KeyA")) movementVector.Add(left)
-        
-        if(input.GetKey("KeyD")){
+        if (input.GetKey("KeyA")) movementVector.Add(left)
+
+        if (input.GetKey("KeyD")) {
             movementVector.Add(right)
         }
 
-        if(input.GetKey("KeyS")){
+        if (input.GetKey("KeyS")) {
             movementVector.Add(backwards);
         }
-        else{
-        movementVector.Add(forwards);
+        else {
+            movementVector.Add(forwards);
 
         }
-        
 
-        
+
+
 
 
 
@@ -238,13 +260,33 @@ class Player extends TransObject {
 
             this.AddVelocity(new Vector3(0, -this.gravityScale, 0));
         }
-}
+    }
 
     Jump() {
-        this.gravityScale=0.05;
-        if(!this.jumping) this.AddVelocity(new Vector3(0, this.jumpForce, 0));
-        this.jumping = true;
+        this.movementStates.UpdateState("jumped");
+
+        this.gravityScale = 0.05;
+
         
+        if (!this.jumping) {
+            this.AddVelocity(new Vector3(0, this.jumpForce, 0));
+
+            if(this.movementStates.dashed===true){
+                
+                this.drag=new Vector3(0.8, 0.9, 0.8);
+                
+                const invoker = setInterval(() => {
+                    if(this.Grounded()){
+                        this.drag=new Vector3(0.7, 0.9, 0.7);
+                        clearInterval(invoker);
+                    }
+                }, 200)
+            }
+        }
+        
+        
+        
+        this.jumping = true;
         setTimeout(() => this.jumping = false, 600);
     }
 
@@ -263,10 +305,11 @@ class Player extends TransObject {
 
     Update() {
 
-        
-        if(this.transform.position.y < -300){
-            this.transform.position=new Vector3(0,20,0);
-            this.velocity.current=Vector3.zero();
+        console.log(this.movementStates);
+
+        if (this.transform.position.y < -300) {
+            this.transform.position = new Vector3(0, 20, 0);
+            this.velocity.current = Vector3.zero();
         }
 
         this.health = MUtil.clamp(this.health, 0, 100);
@@ -275,8 +318,8 @@ class Player extends TransObject {
             this.Gravity();
             this.UpdatePosition();
 
-            if(input.GetKeyThisFrame("ShiftLeft")) this.Dash();
-            if(input.GetKeyThisFrame("ControlLeft")) this.Slam();
+            if (input.GetKeyThisFrame("ShiftLeft")) this.Dash();
+            if (input.GetKeyThisFrame("ControlLeft")) this.Slam();
             if (input.GetKeyThisFrame("Space") && (player.Grounded() && !this.jumping)) player.Jump();
 
             this.angle++;
@@ -284,7 +327,7 @@ class Player extends TransObject {
             if (this.angle >= 360) this.angle = 0;
 
             const rayObj = Raycast.ShootRay({
-                startPos: this.transform.position, 
+                startPos: this.transform.position,
                 direction: Vector3.down(),
                 maxRange: 2
             });
@@ -294,8 +337,8 @@ class Player extends TransObject {
 
         }
 
-        for(let key in input.keysDownThisFrame){
-            input.keysDownThisFrame[key]=false;
+        for (let key in input.keysDownThisFrame) {
+            input.keysDownThisFrame[key] = false;
         }
 
     }
@@ -311,10 +354,10 @@ class Player extends TransObject {
 export const player = new Player(
     {
         transform: {
-            position: new Vector3(0, 20, -200),
+            position: new Vector3(0, 200, -200),
             rotation: new Vector3(0, 0, 0),
-            scale: new Vector3(1, 1, 1)
-        }, 
+            scale: new Vector3(5, 20, 5)
+        },
         jumpForce: 8,
     }
 );

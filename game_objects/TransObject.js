@@ -31,7 +31,7 @@ export class TransObject {
     transform;
     components;
     properties;
-    velocityReductionSpeed = new Vector3(0.9, 0.9, 0.9);
+    drag = new Vector3(0.9, 0.9, 0.9);
     // transform = Transform.default(), velocity = Vector3.zero(), components, properties
 
     constructor(transObj) {
@@ -72,34 +72,46 @@ export class TransObject {
 
             // Top Back Right corner
             new Vector3(cp.x + (scale.x / 2), cp.y + (scale.y / 2), cp.z + (scale.z / 2)),
-        ]
+    ]
 
         const allColliders = objects.GetAllColliderObjects();
 
-        for(const cornerPos of corners){
+        for (const cornerPos of corners) {
             const tp = VectorUtil.Add(cornerPos, cv);
-            for(const mesh of allColliders){
+            for (const mesh of allColliders) {
                 const meshPos = mesh.transform.position;
                 const meshScale = mesh.transform.scale;
-                
+
                 const colliderPositionOffset = mesh.components.collider.offset;
                 const colliderScaleOffset = mesh.components.collider.scale;
 
-                const colliderPos=VectorUtil.Add(meshPos, colliderPositionOffset);
+                const colliderPos = VectorUtil.Add(meshPos, colliderPositionOffset);
                 const colliderScale = VectorUtil.MultiplyVector(meshScale, colliderScaleOffset);
 
                 const minBounds = VectorUtil.Subtract(colliderPos, VectorUtil.Dividef(colliderScale, 2));
                 const maxBounds = VectorUtil.Add(colliderPos, VectorUtil.Dividef(colliderScale, 2));
 
-                if(VectorUtil.VectorInRange(tp, minBounds, maxBounds)){
-                    const xNeg = Math.sign(cv.x)===-1;
-                    const yNeg = Math.sign(cv.y)===-1;
-                    const zNeg = Math.sign(cv.z)===-1;
 
-                    vel.x = MUtil.clamp(vel.x, xNeg ? 0 : this.velocity.min, xNeg ? this.velocity.max : 0);
-                    vel.y = MUtil.clamp(vel.y, yNeg ? 0 : this.velocity.min, yNeg ? this.velocity.max : 0);
-                    vel.z = MUtil.clamp(vel.z, zNeg ? 0 : this.velocity.min, zNeg ? this.velocity.max : 0);
+                for (let t = 0; t < 1; t += 0.05) {
+
+                    const vLerp = new Vector3(
+                        MUtil.lerp(cornerPos.x, tp.x, t),
+                        MUtil.lerp(cornerPos.y, tp.y, t),
+                        MUtil.lerp(cornerPos.z, tp.z, t)
+                    )
+
+                    if (VectorUtil.VectorInRange(vLerp, minBounds, maxBounds)) {
+                        const xNeg = Math.sign(cv.x) === -1;
+                        const yNeg = Math.sign(cv.y) === -1;
+                        const zNeg = Math.sign(cv.z) === -1;
+
+                        vel.x = 0/*MUtil.clamp(vel.x, xNeg ? 0 : this.velocity.min, xNeg ? this.velocity.max : 0);*/
+                        vel.y = 0/*MUtil.clamp(vel.y, yNeg ? 0 : this.velocity.min, yNeg ? this.velocity.max : 0);*/
+                        vel.z = 0/*MUtil.clamp(vel.z, zNeg ? 0 : this.velocity.min, zNeg ? this.velocity.max : 0);*/
+                    }
                 }
+
+
             }
         }
 
@@ -131,7 +143,7 @@ export class TransObject {
 
 
     ReduceVelocity() {
-        this.velocity.current = VectorUtil.MultiplyVector(this.velocity.current, this.velocityReductionSpeed)
+        this.velocity.current = VectorUtil.MultiplyVector(this.velocity.current, this.drag)
 
         if (MUtil.magnitude(this.velocity.current.x) <= 0.01) this.velocity.current.x = 0;
         if (MUtil.magnitude(this.velocity.current.y) <= 0.01) this.velocity.current.y = 0;
@@ -140,9 +152,9 @@ export class TransObject {
 
     Grounded() {
         const obj = Raycast.ShootRay({
-            startPos: VectorUtil.Add(this.transform.position, VectorUtil.MultiplyVector(Vector3.down(), camera.transform.position)),
+            startPos: this.transform.position,
             direction: Vector3.down(),
-            maxRange: 3,
+            maxRange: (this.transform.scale.y),
             trans: this
         });
 
