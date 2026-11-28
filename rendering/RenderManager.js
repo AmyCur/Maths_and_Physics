@@ -204,7 +204,6 @@ function RenderBuffer(gl, mesh, programInfo, vertexCount = 36) {
     const modelMatrix = mesh.InitModelMatrix();
     const modelDist = VectorUtil.GetLength(VectorUtil.Subtract(mesh.transform.position, player.transform.position));
 
-    console.log(modelDist)
 
     gl.uniform1f(
         programInfo.uniformLocations.uDepth,

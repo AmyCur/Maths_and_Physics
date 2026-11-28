@@ -87,6 +87,8 @@ export function CreateWalls(fb, gl) {
 
 export function GenerateStaticMeshs(gl) {
 
+    const texture = textures.paths.stone;
+
     const buffer = GetCube();
     //  buffer, { collider: BoxCollider.default() }, { name: "floor", raycastable: true, texture: textures.loadTexture(gl, textures.paths.stone) }
     const fb = MeshCreator.CreateMesh(gl, {
@@ -94,7 +96,7 @@ export function GenerateStaticMeshs(gl) {
         properties: {
             raycastable: true,
             name: "Floor",
-            texture: textures.paths.grass
+            texture: texture
         },
         components: {
             collider: BoxCollider.default(),
@@ -112,7 +114,7 @@ export function GenerateStaticMeshs(gl) {
         properties: {
             raycastable: true,
             name: "Floor",
-            texture: textures.paths.grass
+            texture: texture
         },
         components: {
             collider: BoxCollider.default(),
@@ -130,12 +132,12 @@ export function GenerateStaticMeshs(gl) {
         properties: {
             raycastable: true,
             name: "Ceiling",
-            texture: textures.paths.stone
+            texture: texture
         },
         components: {
             collider: BoxCollider.default(),
         },
-        transform: Transform.default().SetPositionf(0, 100, 0).SetScalef(100, 1, 100),
+        transform: Transform.default().SetPositionf(0, 100, 0).SetScalef(100, 300, 100),
         velocity: {
             current: Vector3.zero(),
         },
@@ -148,7 +150,7 @@ export function GenerateStaticMeshs(gl) {
         properties: {
             raycastable: true,
             name: "Floor 2",
-            texture: textures.paths.grass
+            texture: texture
         },
         components: {
             collider: BoxCollider.default(),

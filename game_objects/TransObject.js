@@ -41,42 +41,38 @@ export class TransObject {
         this.velocity = transObj.velocity;
     }
 
-    ClampVelocityByCollision() {
+    GetCorners() {
         const cp = this.transform.position;
-        const cv = this.velocity.current;
-        const vel = this.velocity.current;
         const scale = this.transform.scale;
 
-        // Get all 4 UNIQUE corners
         const corners = [
-            // Bottom Front Left corner
+            // Bottom Front Left
             new Vector3(cp.x - (scale.x / 2), cp.y - (scale.y / 2), cp.z - (scale.z / 2)),
 
-            // Bottom Front Right corner
-            new Vector3(cp.x + (scale.x / 2), cp.y - (scale.y / 2), cp.z - (scale.z / 2)),
-
-            // Top Front Left corner
-            new Vector3(cp.x - (scale.x / 2), cp.y + (scale.y / 2), cp.z - (scale.z / 2)),
-
-            // Top Front Right corner
-            new Vector3(cp.x + (scale.x / 2), cp.y + (scale.y / 2), cp.z - (scale.z / 2)),
-
-            // Bottom Back Left corner
-            new Vector3(cp.x - (scale.x / 2), cp.y - (scale.y / 2), cp.z + (scale.z / 2)),
-
-            // Bottom Back Right corner
-            new Vector3(cp.x + (scale.x / 2), cp.y - (scale.y / 2), cp.z + (scale.z / 2)),
-
-            // Top Back Left corner
-            new Vector3(cp.x - (scale.x / 2), cp.y + (scale.y / 2), cp.z + (scale.z / 2)),
-
-            // Top Back Right corner
+            // Top Back Right
             new Vector3(cp.x + (scale.x / 2), cp.y + (scale.y / 2), cp.z + (scale.z / 2)),
-    ]
+        ]
 
+        return corners;
+    }
+
+    IsColliding() {
+        const cv = this.velocity.current;
+        const vel = this.velocity.current;
+
+        const corners = this.GetCorners();
         const allColliders = objects.GetAllColliderObjects();
 
-        for (const cornerPos of corners) {
+        for (let f = 0; f < 1; f += 0.01) {
+
+            if(f>1)f=1;
+
+            const cornerPos = new Vector3(
+                MUtil.lerp(corners[0].x, corners[1].x, f),
+                MUtil.lerp(corners[0].y, corners[1].y, f),
+                MUtil.lerp(corners[0].z, corners[1].z, f)
+            )
+
             const tp = VectorUtil.Add(cornerPos, cv);
             for (const mesh of allColliders) {
                 const meshPos = mesh.transform.position;
@@ -105,9 +101,13 @@ export class TransObject {
                         const yNeg = Math.sign(cv.y) === -1;
                         const zNeg = Math.sign(cv.z) === -1;
 
+                        // this.(VectorUtil.Invert(this.velocity.current));
+
                         vel.x = 0/*MUtil.clamp(vel.x, xNeg ? 0 : this.velocity.min, xNeg ? this.velocity.max : 0);*/
-                        vel.y = 0/*MUtil.clamp(vel.y, yNeg ? 0 : this.velocity.min, yNeg ? this.velocity.max : 0);*/
+                        vel.y = 0; MUtil.clamp(vel.y, yNeg ? 0 : this.velocity.min, yNeg ? this.velocity.max : 0);
                         vel.z = 0/*MUtil.clamp(vel.z, zNeg ? 0 : this.velocity.min, zNeg ? this.velocity.max : 0);*/
+
+                        return true;
                     }
                 }
 
@@ -116,16 +116,24 @@ export class TransObject {
         }
 
 
-        return vel;
+        return false;
+    }
+
+    ClampVelocityByCollision() {
+        if(this.IsColliding()) return Vector3.zero();
+        return this.velocity.current;
+
     }
 
     Move() {
+        // If colliding after movement (i.e object spawned on mobing object without collision checking) move backwards
+        if(this.IsColliding()) this.transform.position = VectorUtil.Subtract(this.transform.position, this.velocity.current);
         this.transform.position.Add(this.ClampVelocityByCollision());
     }
 
     HandleVelocity(gl) {
-        this.Move(gl);
         this.ReduceVelocity();
+        this.Move(gl);
     }
 
     ClampVelocityVector(vec) {

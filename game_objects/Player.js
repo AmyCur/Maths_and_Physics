@@ -305,7 +305,6 @@ class Player extends TransObject {
 
     Update() {
 
-        console.log(this.movementStates);
 
         if (this.transform.position.y < -300) {
             this.transform.position = new Vector3(0, 20, 0);
@@ -345,7 +344,6 @@ class Player extends TransObject {
 
 
     UpdatePosition() {
-        // player.transform.position = ColliderUtils.MoveWithRespect(player.transform.position, player.GetMovementInput());
         this.AddVelocity(this.GetMovementInput());
     }
 
